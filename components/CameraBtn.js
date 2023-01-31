@@ -1,9 +1,23 @@
-import {Button, Divider, Layout, StyleService, Text} from '@ui-kitten/components';
+import {Button, Divider, Icon, Layout, StyleService, Text} from '@ui-kitten/components';
+import { Camera, CameraType } from 'expo-camera';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
+import { CameraIcon } from '../assets/icons';
+import { useState } from 'react';
 
 function CameraBtn() {
+
+  function toggleCameraType() {
+    setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
+  }
     return (
         <>
-            <Text style={style.title} >Hi</Text>
+
+        {/* <Button accessoryRight={CameraIcon} style={style.button} >
+            <Text> 
+                Scan Bus
+            </Text>
+        </Button> */}
         </>
     )
 }
@@ -11,7 +25,7 @@ function CameraBtn() {
 
 export default CameraBtn
 
-const style = StyleService.create({
+const style = StyleSheet.create({
     title: { 
         marginVertical: 4,
         fontSize: 24,
@@ -23,6 +37,9 @@ const style = StyleService.create({
         alignItems: 'center',
     },
     button: {
-        marginVertical: 4,
+        marginTop: 10,
+        backgroundColor: '#00BFA5',
+        borderColor: 'transparent',
+        
     },
 });

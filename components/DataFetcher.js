@@ -8,7 +8,7 @@ import {
   StyleService,
   Text,
 } from '@ui-kitten/components'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 function DataFetcher() {
   const [data, setData] = useState([])
@@ -18,34 +18,34 @@ function DataFetcher() {
       .then((response) => response.json())
       .then((data) => {
         setData(data)
-        console.log(data)
       })
   }
 
   const renderItem = ({ item, index }) =>{ 
-    const renderItemAccessory = (props) => (
-        <Button size='tiny'>{item.status}</Button>
-      );
+    const renderItemAccessory = (props) => {
+      let colors = ['#048050', '#FCAC34', '#B40404']
+      let i = 0
+      if (item.status === 'online') {
+        i = 0
+      } else if (item.status === 'offline') {
+        i = 2
+      } else {
+        i = 1
+      }
+      return(
+        <Button size='small' style={{borderColor:'transparent', backgroundColor:colors[i]}} >{item.status}</Button>
+      )};
     return (
     <ListItem
       title={`${item.uniqueId}`}
-      description={`${item.lastUpdate}`}
+      description={new Date(`${item.lastUpdate}`).toLocaleString('en-US', {timeZone: 'America/New_York'} )}
     //   accessoryLeft={renderItemIcon}
       accessoryRight={renderItemAccessory}
     />
   )};
   return (
     <>
-      <Text style={styles.title}>Online Bus</Text>
-{/* 
-      {data.map((item, index) => (
-        <>
-          <Text key={index}>{item.id}</Text>
-          <Text key={index}>{item.uniqueId}</Text>
-          <Text key={index}>{item.status}</Text>
-          <Text>{item.lastUpdate}</Text>
-        </>
-      ))} */}
+      <Text style={styles.title}>Active Bus</Text>
       <List
       style={styles.container}
       data={data}
@@ -64,7 +64,7 @@ const styles = StyleService.create({
     fontWeight: 'bold',
   },
   container: {
-    maxHeight: '50%',
+    maxHeight: '40%',
     marginTop: 10,
     minWidth: '90%',
   },

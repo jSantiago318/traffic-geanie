@@ -4,12 +4,13 @@ import {LoginScreen, RegisterScreen} from "../screens/auth";
 import {BottomTabsNavigator} from "./BottomTabsNavigator";
 import {DetailsScreen} from "../screens/DetailsScreen";
 import { HomeScreen } from '../screens/HomeScreen';
+import { MapScreen } from '../screens/MapScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import React from 'react';
+import { TripScreen } from '../screens/TripScreen';
 import {createStackNavigator} from '@react-navigation/stack';
 import useStore from "../store/useStore";
-import { MapScreen } from '../screens/MapScreen';
-import { TripScreen } from '../screens/TripScreen';
+
 const {Navigator, Screen} = createStackNavigator();
 const leftIcon = (props) => (
   <Icon {...props} name='arrow-left-outline'/>
@@ -31,6 +32,7 @@ export const AppNavigator = () => {
         ) : (
           <>
             <Screen options={{headerShown: false}} name={'Login'} component={LoginScreen}/>
+            
             <Screen  name={'SignUp'} component={RegisterScreen} />
           </>
         )}

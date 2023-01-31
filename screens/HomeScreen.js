@@ -16,11 +16,11 @@ export const HomeScreen = () => {
   };
 
   return (
-    <Layout style={{flex: 1}}>
-      <Divider/>
-      <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+     <Layout style={{flex: 1}}>
+       <Divider/>
+       <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <DataFetcher/>
-      {/* <CameraBtn /> */}
+      <CameraBtn />
       </Layout>
     </Layout>
   );

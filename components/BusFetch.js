@@ -1,48 +1,65 @@
-import { Button, Icon, List,Card, Modal, ListItem, Layout, Text } from '@ui-kitten/components';
+import { Button, Card, Icon, Layout, List, ListItem, Modal, Text } from '@ui-kitten/components';
 import { StyleSheet, View } from 'react-native';
 
 import React from 'react';
 import getRoute from '../assets/gtfs/route'
 import  getTrips from '../assets/gtfs/trips';
-import { useNavigation } from '@react-navigation/native';
+
 const data = getRoute();
 
 export const BusFetch = () => {
-
-
+  const [selected , SetSelected] = React.useState(null);
+  function openModal(selected) {
+    setVisible(true);
+    SetSelected(selected);
+  }
 
   const renderItemIcon = (props) => (
     <Icon {...props} name='pin'/>
   );
+  const [visible, setVisible] = React.useState(false);
 
   const renderItem = ({ item, index }) => {
-    const navigation = useNavigation();
-    const trip = useStore(state => state.trip)
 
     return(
     <ListItem
-      title={`${item.title} ${index + 1}`}
-      description={`${item.description} ${index + 1}`}
+      onPress={() => openModal(item.description)}
+      title={`${item.description}`}
+      description={`${item.title}`}
       accessoryLeft={renderItemIcon}
       accessoryRight={
         (props) => (
           <Button style={{backgroundColor: item.color, borderColor: 'transparent'}} 
-      size='tiny' onPress={() => trip} >12:30pm</Button>
+      size='tiny'  > 12:50pm</Button>
         )
       }
       
     />
   )};
-  const [visible, setVisible] = React.useState(false);
 
   return (
     <View>
-
+ <Modal
+          animationType={"fade"}
+          visible={visible}
+          transparent={true} >
+ 
+            <View style={styles.modal}>
+ 
+              <Text style={styles.title}> Ticket: {selected}</Text>
+ 
+        <Button style={styles.btn}
+      size='tiny' onPressOut={
+        () => setVisible(false)
+      } > Cancel</Button>
+            </View>
+ 
+        </Modal>
     <List
       style={styles.container}
       data={data}
       renderItem={renderItem}
- 
+      
     />
     </View>
   );
@@ -72,6 +89,16 @@ const styles = StyleSheet.create({
     },
     backdrop: {
       backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    }, 
+    modal: {
+      width: 300,
+      height: 200,
+      backgroundColor: '#00BFA5',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 7,
+      borderWidth: 1,
+      borderColor: 'red'
     },
     
 });

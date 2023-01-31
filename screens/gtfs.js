@@ -20,6 +20,10 @@ const routes = [
     'routeCode': 'Ruta Rural 349',
     'color': '#fc06da'
     },
+    {'route':'RR106',
+    'routeCode': 'Ruta Rural 106',
+    'color': '#b9aa'
+    },
     
 ]
 
