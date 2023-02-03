@@ -1,33 +1,38 @@
-import {Button, Divider, Layout, StyleService} from '@ui-kitten/components';
+import {Button, Divider, Layout, Text} from '@ui-kitten/components';
+import { StyleSheet, View } from 'react-native';
+import {useNavigation, useTheme} from "@react-navigation/native";
 
 import AppLoading from 'expo-app-loading';
 import CameraBtn from "../components/CameraBtn";
 import DataFetcher from "../components/DataFetcher";
 import React from 'react';
-import {useNavigation} from "@react-navigation/native";
 import useStore from "../store/useStore";
 
 export const HomeScreen = () => {
-  const logout = useStore(state => state.logout)
-  const navigation = useNavigation();
-
-  const navigateDetails = () => {
-    navigation.navigate('Details');
-  };
-
+ 
   return (
-     <Layout style={{flex: 1}}>
-       <Divider/>
-       <Layout style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <View style={styles.container}>
       <DataFetcher/>
-      <CameraBtn />
-      </Layout>
-    </Layout>
-  );
-};
+      <CameraBtn/>
+    </View>
+  )
+}
 
-const styles = StyleService.create({
+const styles = StyleSheet.create({
   button: {
     marginTop: 5
-  }
+  },
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ddfff7',
+  },
+  layout: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

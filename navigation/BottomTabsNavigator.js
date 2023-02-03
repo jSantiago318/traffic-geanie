@@ -12,11 +12,13 @@ const {Navigator, Screen} = createBottomTabNavigator();
 
 const BottomTabBar = ({navigation, state}) => (
   <View>
-    <Divider/>
+  
     <BottomNavigation
       appearance='noIndicator'
       selectedIndex={state.index}
-      onSelect={index => navigation.navigate(state.routeNames[index])} >
+      onSelect={index => navigation.navigate(state.routeNames[index])} 
+      
+       >
       <BottomNavigationTab title='Home' icon={HomeIcon} />
       <BottomNavigationTab title='Map' icon={MapIcon}/>
       <BottomNavigationTab title='User' icon={VideoIcon}/>
@@ -31,9 +33,3 @@ export const BottomTabsNavigator = () => (
     <Screen name='User' component={DetailsScreen}/>
   </Navigator>
 );
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor : 'green',
-  }
-})

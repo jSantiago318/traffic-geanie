@@ -10,20 +10,20 @@ import {
 } from '@ui-kitten/components'
 import React, { useEffect, useState } from 'react'
 
+import { View } from 'react-native'
+import { getOnline } from './URLFetcher'
+
 function DataFetcher() {
   const [data, setData] = useState([])
 
   if (data.length === 0) {
-    fetch('http://143.198.119.7:8020/online')
-      .then((response) => response.json())
-      .then((data) => {
-        setData(data)
-      })
+    setData(getOnline())
   }
 
   const renderItem = ({ item, index }) =>{ 
     const renderItemAccessory = (props) => {
       let colors = ['#048050', '#FCAC34', '#B40404']
+      let icons = ['arrow-circle-right-outline', 'alert-circle-outline', 'arrow-circle-right-outline']
       let i = 0
       if (item.status === 'online') {
         i = 0
@@ -33,25 +33,31 @@ function DataFetcher() {
         i = 1
       }
       return(
-        <Button size='small' style={{borderColor:'transparent', backgroundColor:colors[i]}} >{item.status}</Button>
+    <Icon {...props} name={icons[i]} fill={colors[i]}  
+        style={{width: 20, height: 20, tintColor: colors[i] }}
+        />
       )};
     return (
     <ListItem
-      title={`${item.uniqueId}`}
+      title={`${item.uniqueId} - ${item.name}` }
       description={new Date(`${item.lastUpdate}`).toLocaleString('en-US', {timeZone: 'America/New_York'} )}
-    //   accessoryLeft={renderItemIcon}
-      accessoryRight={renderItemAccessory}
+      accessoryLeft={renderItemAccessory}
+      // accessoryRight={renderItemAccessory}
+      style={styles.containerListItem}
     />
   )};
   return (
     <>
-      <Text style={styles.title}>Active Bus</Text>
-      <List
-      style={styles.container}
-      data={data}
-      renderItem={renderItem}
-    />
-    </>
+    <Text style={styles.title}>
+      Bus Status
+    </Text>
+    <View style={styles.container}>
+        <List
+          style={styles.containerList}
+          data={data}
+          renderItem={renderItem} />
+      </View>
+      </> 
   )
 }
 
@@ -59,15 +65,25 @@ export default DataFetcher
 
 const styles = StyleService.create({
   title: {
-    marginVertical: 4,
     fontSize: 24,
     fontWeight: 'bold',
   },
   container: {
-    maxHeight: '40%',
-    marginTop: 10,
-    minWidth: '90%',
+    maxHeight: '90%',
+    minWidth: '85%',
+    backgroundColor: '#ddfff7',
+    borderRadius: 15,
+    padding: 10,
   },
+  containerList: {
+    backgroundColor: 'transparent',
+  },
+  containerListItem: {
+    marginVertical: 4,
+    backgroundColor: '#93e1d8',
+    borderRadius: 15,
+  },
+  // fc7a57
   button: {
     marginVertical: 4,
   },

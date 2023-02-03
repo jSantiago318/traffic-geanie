@@ -84,8 +84,15 @@
 
 
 
-function getStops() {
+export function getStops() {
     return stops;
 }
 
-export default getStops;
+
+export function getStopByTitle(title) {
+    return stops.find(stop => stop.title.includes(title));
+}
+
+export function getRandomStop() {
+    return stops[Math.floor(Math.random() * stops.length)].description;
+}

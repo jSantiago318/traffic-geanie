@@ -13,11 +13,7 @@ function CameraBtn() {
     return (
         <>
 
-        {/* <Button accessoryRight={CameraIcon} style={style.button} >
-            <Text> 
-                Scan Bus
-            </Text>
-        </Button> */}
+        {/* <Button > */}
         </>
     )
 }
