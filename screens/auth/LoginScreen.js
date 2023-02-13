@@ -2,13 +2,9 @@ import {Button, Divider, Icon, Layout, StyleService, Text} from '@ui-kitten/comp
 import { Image, View } from 'react-native';
 
 import React from 'react';
-import logo from '../../assets/logo-uprm.png'
+import logo from '../../assets/NICRlogo.png'
 import {useNavigation} from "@react-navigation/native";
 import useStore from "../../store/useStore";
-
-const FacebookIcon = (props) => (
-  <Icon name='facebook' {...props} />
-);
 
 export const LoginScreen = () => {
   const login = useStore(state => state.login)
@@ -17,22 +13,27 @@ export const LoginScreen = () => {
   const navigateRegister = () => {
     navigation.navigate('SignUp');
   };
+  const navigateCredits = () => {
+    navigation.navigate('Credits');
+  };
 
   return (
       <Layout style={styles.layout1}>
         <Image
           style={styles.logo}
           source={logo}
+          resizeMode={'contain'}
         />
         <Text style={styles.title}>
-          Welcome to the UPRM App!
+          Mayaguez Bus Tracker
         </Text>
 
-        <Button style={styles.button}
-        onPress={navigateRegister} >Sign Up </Button>
+        <Button size={'medium'} style={styles.button}
+        onPress={navigateRegister}> Sign Up </Button>
 
-        <Button style={styles.button}
+        <Button size={'medium'} style={styles.button}
         onPress={login} >Login </Button>
+         <Button appearance='ghost' status='basic' onPress={navigateCredits}   style={styles.button2}>Credits </Button>
           
       </Layout>
   );
@@ -40,13 +41,13 @@ export const LoginScreen = () => {
 
 const styles = StyleService.create({
   logo:{
-    width: 200,
-    height: 200,
+    width: '80%',
+    height: '20%',
     marginBottom: 20,
     marginTop: 70,
   },
   title:{
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 60,
   },
@@ -64,9 +65,17 @@ const styles = StyleService.create({
     margin: 5,
     backgroundColor: '#046C1C',
     borderRadius: 5,
-    
-    fontSize: 20,
-    minWidth: '60%',
+    height: '6%',
+    width: '60%',
+    fontWeight: 'bold',
+    borderColor: 'transparent',
+  },
+  button2: {
+    margin: 5,
+    backgroundColor: 'transparent',
+    borderRadius: 5,
+    height: '2%',
+    width: '60%',
     fontWeight: 'bold',
     borderColor: 'transparent',
   }

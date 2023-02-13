@@ -1,41 +1,26 @@
-import * as FileSystem from 'expo-file-system'
+import 'react-native-reanimated';
+
 import * as Location from 'expo-location'
 
 import {
-  Button,
-  Card,
-  Icon,
-  Layout,
-  List,
-  ListItem,
-  Text,
-} from '@ui-kitten/components'
-import {
   Dimensions,
-  SafeAreaView,
-  ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
-import { FlatList, TouchableHighlight } from 'react-native'
-import MapView, { Callout, Marker, Overlay, Polyline } from 'react-native-maps'
-import { getOnline, getPosition, getRouteArrivalTime, getTrip } from '../components/URLFetcher'
+import { Divider, Text } from '@ui-kitten/components';
+import MapView,{Marker, Polyline} from 'react-native-maps'
+import {getRouteColor, getRoutes} from '../assets/gtfs/route'
 import { useEffect, useState } from 'react'
 
-import Carousel from 'react-native-snap-carousel/src/carousel/Carousel'
-import { MapIcon } from '../assets/icons'
+import Carousel from 'react-native-reanimated-carousel';
 import React from 'react'
-import getRoutes from './gtfs'
+import csvToJson from 'convert-csv-to-json';
 import { getStops } from '../assets/gtfs/stops'
 
 export const MapScreen = () => {
- 
-
-   const [hideTrip, setHideTrip] = React.useState(true)
   const [location, setLocation] = useState(null)
   //[1 == lat], [2 == long], [3 == altitude], [4 == accuracy], [5 == heading], [6 == speed]
   const [errorMsg, setErrorMsg] = useState(null)
-  const [selected, SetSelected] = React.useState(null)
 
   useEffect(() => {
     ;(async () => {
@@ -56,148 +41,84 @@ export const MapScreen = () => {
   } else if (location) {
     text = JSON.stringify(location)
   }
+let RouteShapes = csvToJson.getJsonFromCsv("../assets/gtfs/shapes.csv");
+
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: 18.203273,
-          longitude: -67.14139,
-          latitudeDelta: 0.082,
-          longitudeDelta: 0.082,
+          latitude: 18.207329,
+          longitude: -67.140823,
+          latitudeDelta: 0.022,
+          longitudeDelta: 0.022,
         }}
-      >
-        {location != null && (
-          <Marker
-            coordinate={{
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-            }}
-            pinColor={'black'}
-            title={'user'}
-            description={text}
-          />
-        )}
-        {
-          getPosition().map((trip, index) => {
-            return (
-              <Marker 
-                key={index}
-                title={trip.deviceId}
-                coordinate={{
-                  latitude: trip.latitude,
-                  longitude: trip.longitude,
-                }}
-                pinColor={'yellow'}
-                // icon={MapIcon}
-                opacity={0.5}
-              >
-                <Callout>
-                  <Text>{trip.attributes.batteryLevel}</Text>
-                  </Callout>
-              </Marker>
-            )
-          })
-
-        }
-        
-        {getStops().map((stop, index) => {
-          const routes = getRoutes()
-          const color = stop.title.includes(routes[0].route)
-            ? routes[0].color
-            : stop.title.includes(routes[1].route)
-            ? routes[1].color
-            : stop.title.includes(routes[2].route)
-            ? routes[2].color
-            : stop.title.includes(routes[3].route)
-            ? routes[3].color
-            : stop.title.includes(routes[4].route)
-            ? routes[4].color
-            : routes[5].color
-
-          return (
-            <>
-              <Marker
-                opacity={0.3}
-
-                key={index}
-                coordinate={{
-                  latitude: stop.latitude,
-                  longitude: stop.longitude,
-                }}
-                pinColor={color}
-                title={stop.title}
-                description={stop.description}
-                icon={MapIcon}
-              />
-            </>
-          )
-        })}
-      </MapView>
-
-      <Carousel
-        layout={'default'}
-        data={getRoutes()}
-        sliderWidth={Dimensions.get('window').width}
-        itemWidth={
-          Dimensions.get('window').width - Dimensions.get('window').width * 0.2
-        }
-        containerCustomStyle={styles.carousel}
-        removeClippedSubviews={false}
-        renderItem={({ item, index }) => {
-          return (
-            <Layout
-              style={{
-                backgroundColor: item.color,
-                borderRadius: 10,
-                padding: 10,
-                // margin: 10,
-              }}
-              key={index}
-            >
-              <Text
-                style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}
-              >
-                {item.routeCode}
-              </Text>
-              <Text
-                style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}
-              >
-                {item.route}
-              </Text>
-
-              <List
-                data={getStops().filter((stop) =>
-                  stop.title.includes(item.route)
-                )}
-                style={{ backgroundColor: 'transparent', marginTop: 10 }}
-                keyExtractor={(item) => item.title}
-                
-                renderItem={({ item, index }) => (
-                  <ListItem
-                    style={styles.stopListContainer}
+        followsUserLocation={true}
+      >        
+      {
+        RouteShapes.map((shape, index) => {
+            return(
+                <Polyline
                     key={index}
-                    >
-                    <Icon name="pin" fill="black" style={{ width: 20, height: 20 }} />
-                    <View style={{ paddingLeft:10, flexDirection: 'column', justifyContent: 'space-between'}}>
+                    coordinates={[
+                        {latitude: shape.lat, longitude: shape.lon},
+                    ]}
+                    strokeColor={getRouteColor(shape.id)}
+                    strokeWidth={3}
+                />
 
-                    <Text style={styles.stopListTitle}>{item.title}</Text>
-                    <Text style={styles.stopListDescription}>
-                      {item.description}
-                    </Text>
-                    </View>
-                    <Text style={styles.stopListArrival}>
-                      {'12:50'}
-                    </Text>
-
-                    </ListItem>
-                )}/>
-            </Layout>
+            )})
+      }
+      
+      {/* { getStops().map((stop, index) => {
+          return (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: stop.lat,
+                longitude: stop.lon,
+              }}
+              title={stop.id}
+              description={stop.name}
+              pinColor={getRouteColor(stop.id)}
+            />
           )
-        }}
-      />
-
-      {/* <BusFetch/> */}
+        }
+        )
+      }    */}
+      <Carousel
+                loop
+                width={Dimensions.get('window').width  }
+                height={Dimensions.get('window').height * 0.3}
+                autoPlay={true}
+                data={getRoutes()}
+                style={styles.carousel}
+                scrollAnimationDuration={1000}
+                onSnapToItem={(index) => console.log('current index:', index)}
+                renderItem={({ index }) => (
+                    <View
+                        style={{
+                            ...styles.stopListContainer,
+                            backgroundColor: getRouteColor(getRoutes()[index].id),
+                        }}
+                    >
+                        <Text style={styles.stopListTitle}>
+                            {getRoutes()[index].id}
+                        </Text>
+                        <Text style={styles.stopListDescription}>
+                            {getRoutes()[index].cat}
+                        </Text>
+                        <Text style={styles.stopListDescription}>
+                            {getRoutes()[index].route}
+                        </Text>
+                        <Divider />
+                        
+                        
+                    </View>
+                )}
+            />
+       </MapView>
+       
     </View>
   )
 }
@@ -214,9 +135,9 @@ const styles = StyleSheet.create({
   },
 
   stopListContainer: {
-    backgroundColor: 'white',
+    padding: 10,
     borderRadius: 10,
-    marginVertical: 2,
+    width: Dimensions.get('window').width * 0.8,
   },
   container: {
     flex: 1,
@@ -225,15 +146,15 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   map: {
-    // width: '100%',
-    // height: '100%', //50%
     ...StyleSheet.absoluteFillObject,
   },
   carousel: {
     position: 'absolute',
-    left: 0,
-    marginBottom: 48,
-    top: Dimensions.get('window').height - Dimensions.get('window').height / 2,
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    left: Dimensions.get('window').width * 0.1,
+    top: Dimensions.get('window').height - Dimensions.get('window').height * 0.3,
   },
   contentContainer: {
     paddingVertical: 20,

@@ -52,15 +52,22 @@ export const RegisterScreen = () => {
             Sign Up
           </Text>
        </View>
-        <View style={{flex: 2, justifyContent:'center', alignItems: 'center' }} >
+        <View style={{flex: 2, justifyContent:'center', alignItems: 'center' }} >   
+        <Text style={styles.subtitle} > 
+          Email
+        </Text>
         <Input
         style={styles.input}
-        placeholder='email'
+        placeholder='enter email'
+        size='large'
         {...basicInputState}
       />
+      <Text style={styles.subtitle} > 
+          Email
+        </Text>
       <Input
           style={styles.input}
-          placeholder='password'
+          placeholder='enter password'
           value={value}
           secureTextEntry={secureTextEntry}
           onChangeText={setValue}
@@ -104,12 +111,19 @@ const styles = StyleService.create({
   input: {
     margin: 2,
     borderRadius: 4,
+    fontSize: 48,
     padding: 10,
     width: '100%',
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
   },
   rowContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
+  }, subtitle: {
+    alignItems: 'flex-start' ,
+    alignItems: 'flex-start', 
+    width: '80%' 
+  }
 });

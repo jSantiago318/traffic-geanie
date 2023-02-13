@@ -4,20 +4,18 @@ import { StyleSheet, View } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import CameraBtn from "../components/CameraBtn";
 import DataFetcher from "../components/DataFetcher";
-import { HistoricalView } from '../components/TabView';
 import React from 'react';
-import { faker } from '@faker-js/faker'
 import { getRandomStop } from '../assets/gtfs/stops'
 import {useNavigation} from "@react-navigation/native";
 import useStore from "../store/useStore";
 
 const data = new Array(10).fill({
   title: 'Item',
-  color: faker.internet.color(),
-  departureTime: faker.date.future(),
-  arrivalTime: faker.date.future(),
-  stop1: getRandomStop(),
-  stop2: getRandomStop(),
+  color: '#f577',
+  // departureTime: faker.date.future(),
+  // arrivalTime: faker.date.future(),
+  // stop1: getRandomStop(),
+  // stop2: getRandomStop(),
   stepsToBus: 44,
   stepsAtDestination: 47,
   stepsDestToBus: 588,
@@ -26,9 +24,6 @@ export const DetailsScreen = () => {
   const logout = useStore(state => state.logout)
   const navigation = useNavigation();
 
-  const navigateDetails = () => {
-    navigation.navigate('Details');
-  };
 
   return (
     <Layout style={styles.container}>

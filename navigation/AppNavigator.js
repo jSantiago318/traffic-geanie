@@ -1,6 +1,7 @@
 import {LoginScreen, RegisterScreen} from "../screens/auth";
 
 import {BottomTabsNavigator} from "./BottomTabsNavigator";
+import { CreditsScreen } from "../screens/CreditsScreen";
 import {DetailsScreen} from "../screens/DetailsScreen";
 import { HomeScreen } from '../screens/HomeScreen';
 import { MapScreen } from '../screens/MapScreen';
@@ -29,7 +30,7 @@ export const AppNavigator = () => {
         ) : (
           <>
             <Screen options={{headerShown: false}} name={'Login'} component={LoginScreen}/>
-            
+            <Screen   name={'Credits'} component={CreditsScreen}/>
             <Screen  name={'SignUp'} component={RegisterScreen} />
           </>
         )}

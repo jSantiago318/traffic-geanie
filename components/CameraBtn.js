@@ -1,5 +1,4 @@
 import {Button, Divider, Icon, Layout, StyleService, Text} from '@ui-kitten/components';
-import { Camera, CameraType } from 'expo-camera';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { CameraIcon } from '../assets/icons';
@@ -7,14 +6,9 @@ import { useState } from 'react';
 
 function CameraBtn() {
 
-  function toggleCameraType() {
-    setType(current => (current === CameraType.back ? CameraType.front : CameraType.back));
-  }
+ 
     return (
-        <>
-
-        {/* <Button > */}
-        </>
+        <Text style={style.title}>Camera</Text>
     )
 }
 

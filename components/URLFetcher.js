@@ -34,6 +34,26 @@ export function getOnline(){
         return gOnline
 }
 
+export function getOnlineCount(){
+    let count = 0
+    for (let i = 0; i < gOnline.length; i++) {
+        if (gOnline[i].status === 'online') {
+            count++
+        }
+    }
+    return count
+}
+
+export function getOnlineActiveTripsCount(){
+    let count  = 0
+    for (let i = 0; i < gTrip.length; i++) {
+        if (gTrip[i].distanceAlongTrip > 0) {
+            count++
+        }
+    }
+    return count
+}
+
 export function getPosition(){
     return gPosition
 }
