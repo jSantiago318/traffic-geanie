@@ -8,14 +8,40 @@ import {
   View,
 } from 'react-native'
 import { Divider, Text } from '@ui-kitten/components';
-import MapView,{Marker, Polyline} from 'react-native-maps'
+import { IndexPath, Layout, Select, SelectItem } from '@ui-kitten/components';
+import MapView,{Marker, Overlay, Polyline} from 'react-native-maps'
 import {getRouteColor, getRoutes} from '../assets/gtfs/route'
+import { getStops, getStopsByRouteId } from '../assets/gtfs/stops'
 import { useEffect, useState } from 'react'
 
-import Carousel from 'react-native-reanimated-carousel';
 import React from 'react'
-import csvToJson from 'convert-csv-to-json';
-import { getStops } from '../assets/gtfs/stops'
+
+export const SelectRoutes = () => {
+
+  const [selectedIndex, setSelectedIndex] = React.useState([]);
+  const groupDisplayValues = selectedIndex.map(index => getRoutes()[index.row].route  );
+  return (
+    <Layout style={{width:'80%'}} >
+      <Select
+        multiSelect={true}
+        value={groupDisplayValues.join(', ')}
+        selectedIndex={selectedIndex}
+        placeholder='Select Routes'
+        onSelect={index => setSelectedIndex(index)}>
+        
+        { getRoutes().map((stop, index) => {
+          return (
+            <SelectItem title={stop.route}/>
+          )
+        }
+        )
+      }
+      </Select>
+    </Layout>
+  );
+};
+
+
 
 export const MapScreen = () => {
   const [location, setLocation] = useState(null)
@@ -41,7 +67,6 @@ export const MapScreen = () => {
   } else if (location) {
     text = JSON.stringify(location)
   }
-let RouteShapes = csvToJson.getJsonFromCsv("../assets/gtfs/shapes.csv");
 
   return (
     <View style={styles.container}>
@@ -54,23 +79,8 @@ let RouteShapes = csvToJson.getJsonFromCsv("../assets/gtfs/shapes.csv");
           longitudeDelta: 0.022,
         }}
         followsUserLocation={true}
-      >        
-      {
-        RouteShapes.map((shape, index) => {
-            return(
-                <Polyline
-                    key={index}
-                    coordinates={[
-                        {latitude: shape.lat, longitude: shape.lon},
-                    ]}
-                    strokeColor={getRouteColor(shape.id)}
-                    strokeWidth={3}
-                />
-
-            )})
-      }
-      
-      {/* { getStops().map((stop, index) => {
+      >     
+      { getStops().map((stop, index) => {
           return (
             <Marker
               key={index}
@@ -83,42 +93,15 @@ let RouteShapes = csvToJson.getJsonFromCsv("../assets/gtfs/shapes.csv");
               pinColor={getRouteColor(stop.id)}
             />
           )
+          
         }
         )
-      }    */}
-      <Carousel
-                loop
-                width={Dimensions.get('window').width  }
-                height={Dimensions.get('window').height * 0.3}
-                autoPlay={true}
-                data={getRoutes()}
-                style={styles.carousel}
-                scrollAnimationDuration={1000}
-                onSnapToItem={(index) => console.log('current index:', index)}
-                renderItem={({ index }) => (
-                    <View
-                        style={{
-                            ...styles.stopListContainer,
-                            backgroundColor: getRouteColor(getRoutes()[index].id),
-                        }}
-                    >
-                        <Text style={styles.stopListTitle}>
-                            {getRoutes()[index].id}
-                        </Text>
-                        <Text style={styles.stopListDescription}>
-                            {getRoutes()[index].cat}
-                        </Text>
-                        <Text style={styles.stopListDescription}>
-                            {getRoutes()[index].route}
-                        </Text>
-                        <Divider />
-                        
-                        
-                    </View>
-                )}
-            />
+      }  
+      <View style={{ position: 'absolute', bottom: 10, width: '100%' }}>     
+        
+              <SelectRoutes/>
+      </View>
        </MapView>
-       
     </View>
   )
 }
@@ -129,6 +112,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
   },
+
   stopListDescription: {
     fontSize: 10,
     color: 'black',

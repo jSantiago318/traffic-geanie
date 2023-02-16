@@ -371,3 +371,7 @@ export function getStops() {
 export function getStopById(id) {
   return stops.find((s) => s.id === id)
 }
+
+export function getStopsByRouteId(routeId) {
+  return stops.filter((s) => s.id.startsWith(routeId))
+}
