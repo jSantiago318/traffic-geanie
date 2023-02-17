@@ -6,7 +6,8 @@ import {DetailsScreen} from "../screens/DetailsScreen";
 import { HomeScreen } from '../screens/HomeScreen';
 import { MapScreen } from '../screens/MapScreen';
 import {NavigationContainer} from '@react-navigation/native';
-import { TripScreen } from '../screens/TripScreen';
+// import { TripScreen } from '../screens/TripScreen';
+import {TicketScreen} from "../screens/TicketScreen";
 import {createStackNavigator} from '@react-navigation/stack';
 import useStore from "../store/useStore";
 
@@ -21,11 +22,11 @@ export const AppNavigator = () => {
         >
         {isSignedIn ? (
           <>
-            <Screen options={{headerShown: false}} name={'TabsNavigation'} component={BottomTabsNavigator}/>
+            <Screen options={{headerShown: false, header: false}} name={'TabsNavigation'} component={BottomTabsNavigator}/>
             <Screen name='Details' component={DetailsScreen}/>
-            <Screen options={{headerBackTitleVisible: false}} name='Home' component={HomeScreen}/>
+            <Screen options={{headerShown: false}} name='Home' component={HomeScreen}/>
             <Screen options={{headerBackTitleVisible: false}}  name='Map' component={MapScreen}/>
-            <Screen options={{headerShown: false}}  name='Trip' component={TripScreen}/>
+            <Screen name='Ticket'  options={{headerBackTitleVisible: true}} component={TicketScreen}/>
           </>
         ) : (
           <>

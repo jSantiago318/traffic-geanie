@@ -1,34 +1,33 @@
-import { Button, Icon, List, ListItem, Text } from '@ui-kitten/components';
+import { Button, Card, Icon, Layout, List, ListItem, Modal, Text } from '@ui-kitten/components';
+import { StyleSheet, View } from 'react-native';
 
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import { getRoutes } from '../assets/gtfs/route';
+import {useNavigation} from "@react-navigation/native";
 
 export const RoutesList = () => {
 
   const renderItemAccessory = (props) => (
-    <Button size='tiny'>Start</Button>
-  );
-
-  const renderItemIcon = (props) => (
-    <Icon {...props} name='person'/>
+    <Text category='h6' >12:50</Text>
   );
 
   const renderItem = ({ item, index }) => (
     <ListItem
-      title={`${item.id}`}
-      description={`${item.route}`}
-      accessoryLeft={<Text>🚌</Text>}
+      title={<Text >{item.id}</Text>}
+      description={<Text >{item.route}</Text>}
+      accessoryLeft={<Text category='h6'  >🚌</Text>}
       accessoryRight={renderItemAccessory}
+ 
     />
   );
 
   return (
+  <>
     <List
       style={styles.container}
       data={getRoutes()}
-      renderItem={renderItem}
-    />
+      renderItem={renderItem} />
+  </>
   );
 };
 
@@ -36,5 +35,10 @@ const styles = StyleSheet.create({
   container: {
     maxHeight: '50%',
     width: '80%',
-  },
+    borderRadius: 10,
+  }, timePred:{
+    fontSize: 20,
+    fontWeight: 'bold',
+  }, 
+  
 });

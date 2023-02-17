@@ -20,6 +20,9 @@ const route = [
 export function getRoutes() {
     return route
     } 
+export function getRoutesCat(){
+    return route.map(m => m.cat);
+}
 
 export function getRouteById(id) {
     return route.find(m => m.id === id);
@@ -33,7 +36,7 @@ export function getRouteByCat(cat) {
     
 export function getRouteColor(id) {
     for (let index = 0; index < route.length; index++) {
-        if (id.includes(route[index].id)) {
+        if (   id.toString().includes(route[index].id)) {
             return route[index].color
         }
     }

@@ -1,4 +1,4 @@
-import {Button, Card, Divider, Layout, Text, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
+import {Button, Card, Divider, Layout, Select, SelectItem, Text, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
 import { StyleSheet, View } from 'react-native';
 import { getOnlineActiveTripsCount, getOnlineCount } from '../components/URLFetcher';
 import {useNavigation, useTheme} from "@react-navigation/native";
@@ -7,37 +7,70 @@ import AppLoading from 'expo-app-loading';
 import CameraBtn from "../components/CameraBtn";
 import DataFetcher from "../components/DataFetcher";
 import React from 'react';
-import { faker } from '@faker-js/faker'
-import useStore from "../store/useStore";
+import { getRoutesCat } from '../assets/gtfs/route';
 
-const data = new Array(10).fill({
-    tripId: faker.random.numeric(5),
-    title: 'Route 1',
-    color: faker.internet.color(),
-    departureTime: faker.date.future(),
-    arrivalTime: faker.date.future(),
-    stepsToBus: 44,
-    distanceTraveled: 47,
-  })
-
- 
 export const TicketScreen = () => {
-    
+  const data = ['Ruta Rural', 'Ruta Urbana', 'Rutal Colegio']
+  const [routes, setRoutes] = React.useState(null);
+  const [stops, setStops] = React.useState(null);
+  const [selectedIndex, setSelectedIndex] = React.useState(null);
+  const [selectedStopIndex, setSelectedStopIndex] = React.useState(null);
+  const displayValue = data[selectedIndex];
+  const displayValueStop = data[selectedIndex];
   return (
   <View style={styles.container} >
   
     <Text category='h1' style={styles.title}>Mayaguez Bus Tracker</Text>
-        <Text category='h1' style={styles.subtitle}>Trip ID: </Text>
-        <Text category='h1' style={styles.subtitle}>Route: </Text>
-        <Text style={styles.subtitle}>Departure Time: </Text>
-        <Text style={styles.subtitle}>Arrival Time: </Text>
-        <Text style={styles.subtitle}>Steps to Bus: </Text>
-        <Text style={styles.subtitle}>Distance Traveled: </Text>        
+    <Divider/>
+    <Text>Categoria</Text>
+    <Select style={styles.select}
+      selectedIndex={selectedIndex}
+      value={displayValue}
+      onSelect={index => setSelectedIndex(index)}>
+      <SelectItem title='Ruta Rural'/>
+      <SelectItem title='Ruta Urbana'/>
+      <SelectItem title='Ruta Colegio'/>
+    </Select>
+    <Text>Ruta</Text>
+    <Select style={styles.select}
+      selectedIndex={selectedStopIndex}
+      value={displayValueStop}
+      onSelect={index => setSelectedStopIndex(index)}>
+      {
+        getRoutesCat(displayValue).map((route, index) => {
+          return (
+            <SelectItem key={index} title={route.id}/>
+          )
+        }
+        )
+      }
+      </Select>
+      <Text> Parada</Text>
+      <Select style={styles.select}
+      selectedIndex={selectedStopIndex}
+      value={displayValueStop}
+      onSelect={index => setSelectedStopIndex(index)}>
+      {
+        getRoutesCat(displayValue).map((route, index) => {
+          return (
+            <SelectItem key={index} title={route.id}/>
+          )
+        }
+        )
+      }
+      </Select>
+      
   </View>
   )
 }
 
 const styles = StyleSheet.create({
+  select: {
+    width: '80%',
+    height: '10%',
+    marginTop: 5,
+    marginBottom: 5,
+  },
     ticketScanBtn: {
         marginTop: 5,
         width: '40%',
@@ -45,7 +78,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderColor: 'transparent',
         },
-
   button: {
     marginTop: 5,
     width: '40%',

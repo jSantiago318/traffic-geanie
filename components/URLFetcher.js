@@ -1,6 +1,5 @@
 import { Text, View } from "react-native"
 
-import { FlashList } from "@shopify/flash-list"
 import React from "react"
 import getStopTimes from "../assets/gtfs/stop_times"
 import { useState } from "react"
@@ -61,4 +60,23 @@ export function getPosition(){
 export function getTrip(){
     return gTrip
 }
+export function getPositionByName(name){
+    let position = []
+    for (let i = 0; i < gPosition.length; i++) {
+        if (gPosition[i].deviceId === name) {
+            return gPosition[i]
+        }
+    }
+    return position
+}
 
+
+export function getOnlineLocation(){
+    let online = []
+    for (let i = 0; i < gOnline.length; i++) {
+        if (gOnline[i].status === 'online') {
+            getPositionByName(gOnline[i].id)
+        }
+    }
+    return online
+}

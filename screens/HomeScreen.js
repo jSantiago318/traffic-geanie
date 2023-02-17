@@ -18,10 +18,11 @@ export const HomeScreen = () => {
     <View style={styles.container}>
       {/* <DataFetcher/> */}
       <Text category='h1'>Mayaguez Bus Tracker</Text>
-      <Card style={styles.card} status='primary'>
+      <View style={styles.card} status='primary'>
         <Text style={styles.subtitle} >Online Buses: {getOnlineCount()}</Text>
-      <Text style={styles.subtitle} >Active Routes: {getOnlineActiveTripsCount()}</Text>
-      </Card>
+        <Text style={styles.subtitle} >Active Routes: {getOnlineActiveTripsCount()}
+        </Text>
+      </View>
       <RoutesList/>
     </View>
   )
@@ -55,7 +56,9 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   card: {
-    margin: 2,
+    margin: 10,
+    padding: 10,
+    borderRadius: 10,
     backgroundColor: '#93e1d8',
 
   }

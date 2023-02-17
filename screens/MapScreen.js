@@ -1,53 +1,38 @@
-import 'react-native-reanimated';
-
 import * as Location from 'expo-location'
 
+import { Button, Card, Layout, List, Modal, Select, SelectItem, Tab, TabBar } from '@ui-kitten/components';
 import {
   Dimensions,
+  ScrollView,
+  StatusBar,
   StyleSheet,
   View,
 } from 'react-native'
 import { Divider, Text } from '@ui-kitten/components';
-import { IndexPath, Layout, Select, SelectItem } from '@ui-kitten/components';
-import MapView,{Marker, Overlay, Polyline} from 'react-native-maps'
-import {getRouteColor, getRoutes} from '../assets/gtfs/route'
+import MapView,{Callout, Marker, Overlay, Polyline} from 'react-native-maps'
+import {getRouteByCat, getRouteColor, getRoutes} from '../assets/gtfs/route'
 import { getStops, getStopsByRouteId } from '../assets/gtfs/stops'
 import { useEffect, useState } from 'react'
 
 import React from 'react'
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { getOnlineLocation } from '../components/URLFetcher';
+import { useNavigation } from '@react-navigation/native';
 
-export const SelectRoutes = () => {
-
-  const [selectedIndex, setSelectedIndex] = React.useState([]);
-  const groupDisplayValues = selectedIndex.map(index => getRoutes()[index.row].route  );
-  return (
-    <Layout style={{width:'80%'}} >
-      <Select
-        multiSelect={true}
-        value={groupDisplayValues.join(', ')}
-        selectedIndex={selectedIndex}
-        placeholder='Select Routes'
-        onSelect={index => setSelectedIndex(index)}>
-        
-        { getRoutes().map((stop, index) => {
-          return (
-            <SelectItem title={stop.route}/>
-          )
-        }
-        )
-      }
-      </Select>
-    </Layout>
-  );
-};
-
+const Shapes = require('../assets/gtfs/shapes.json');
 
 
 export const MapScreen = () => {
   const [location, setLocation] = useState(null)
   //[1 == lat], [2 == long], [3 == altitude], [4 == accuracy], [5 == heading], [6 == speed]
+  const navigation = useNavigation();
+  function goToTicket() {
+    navigation.navigate('Ticket')
+  }
   const [errorMsg, setErrorMsg] = useState(null)
-
+  const [currStop, setCurrStop] = React.useState([]);
+  const [currRoute, setCurrRoute] = React.useState([]);
+ 
   useEffect(() => {
     ;(async () => {
       let { status } = await Location.requestForegroundPermissionsAsync()
@@ -68,6 +53,19 @@ export const MapScreen = () => {
     text = JSON.stringify(location)
   }
 
+  function getShapeByRouteId(routeId) {
+    let coord = []
+    Shapes.map((shape) => {
+      if (shape.id.includes(routeId)) {
+        coord.push({
+          latitude: shape.lat,
+          longitude: shape.lon,
+        })
+      }
+    })
+    
+    return coord
+  }
   return (
     <View style={styles.container}>
       <MapView
@@ -80,7 +78,7 @@ export const MapScreen = () => {
         }}
         followsUserLocation={true}
       >     
-      { getStops().map((stop, index) => {
+      { getStops().map((stop, index) => {      
           return (
             <Marker
               key={index}
@@ -93,20 +91,65 @@ export const MapScreen = () => {
               pinColor={getRouteColor(stop.id)}
             />
           )
+        })}
+
+        
+      {
+        getOnlineLocation().map((stop, index) => {
+          return (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: stop.latitude,
+                longitude: stop.longitude,
+              }}
+              title={stop.id}
+              description={stop.name}
+              pinColor={'black'}
+              onSelect={() => {
+                setCurrStop(stop)
+              }}
+            />
+          )
           
+        } )
+      }
+      {
+        getRoutes().map((route, index) => {
+          return (
+            <Polyline
+              key={index}
+              coordinates={getShapeByRouteId(route.id)}
+              strokeColor={getRouteColor(route.id)}
+              strokeWidth={4}
+            />
+          )
         }
         )
-      }  
-      <View style={{ position: 'absolute', bottom: 10, width: '100%' }}>     
+      }
+      
+      <Callout style={styles.cardContainer} >
         
-              <SelectRoutes/>
-      </View>
+        <Button onPress={goToTicket}>Buy Ticket</Button>
+        
+      </Callout>
+ 
+    
+                   
        </MapView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  containerScroll: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+  },
+  scrollView: {
+    backgroundColor: 'pink',
+    marginHorizontal: 20,
+  },
   stopListTitle: {
     fontSize: 15,
     fontWeight: 'bold',
@@ -137,8 +180,10 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    left: Dimensions.get('window').width * 0.1,
-    top: Dimensions.get('window').height - Dimensions.get('window').height * 0.3,
+    bottom: 10,
+    left: 10,
+    width: '90%',
+
   },
   contentContainer: {
     paddingVertical: 20,
@@ -149,10 +194,12 @@ const styles = StyleSheet.create({
     paddingTop: 10,
   },
   cardContainer: {
-    backgroundColor: 'red',
+    backgroundColor: 'white',
     borderRadius: 10,
     padding: 10,
-    height: 100,
     width: 300,
+    top: Dimensions.get('window').height * 0.5,
+    left: Dimensions.get('window').width * 0.1,
   },
+  
 })
