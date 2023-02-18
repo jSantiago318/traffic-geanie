@@ -1,6 +1,18 @@
+import * as BackgroundFetch from 'expo-background-fetch'
 import * as Location from 'expo-location'
+import * as TaskManager from 'expo-task-manager'
 
-import { Button, Card, Layout, List, Modal, Select, SelectItem, Tab, TabBar } from '@ui-kitten/components';
+import {
+  Button,
+  Card,
+  Layout,
+  List,
+  Modal,
+  Select,
+  SelectItem,
+  Tab,
+  TabBar,
+} from '@ui-kitten/components'
 import {
   Dimensions,
   ScrollView,
@@ -8,44 +20,76 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { Divider, Text } from '@ui-kitten/components';
-import MapView,{Callout, Marker, Overlay, Polyline} from 'react-native-maps'
-import {getRouteByCat, getRouteColor, getRoutes} from '../assets/gtfs/route'
+import { Divider, Text } from '@ui-kitten/components'
+import MapView, { Callout, Circle, Marker, Overlay, Polyline } from 'react-native-maps'
+import React, { useEffect, useState } from 'react'
+import {
+  getDeviceCoords,
+  getOnline,
+  getPosition,
+} from '../components/URLFetcher'
+import { getRouteByCat, getRouteColor, getRoutes } from '../assets/gtfs/route'
 import { getStops, getStopsByRouteId } from '../assets/gtfs/stops'
-import { useEffect, useState } from 'react'
 
-import React from 'react'
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { getOnlineLocation } from '../components/URLFetcher';
-import { useNavigation } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { getDeviceAccuracy } from '../components/URLFetcher'
+import { setInter } from 'react'
+import { useNavigation } from '@react-navigation/native'
 
-const Shapes = require('../assets/gtfs/shapes.json');
+const Shapes = require('../assets/gtfs/shapes.json')
+const BACKGROUND_FETCH_TASK = 'background-fetch'
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+  const now = Date.now()
 
+  console.log(
+    `Got background fetch call at date: ${new Date(now).toISOString()}`,
+  )
+
+  // Be sure to return the successful result type!
+  return BackgroundFetch.BackgroundFetchResult.NewData
+})
+async function registerBackgroundFetchAsync() {
+  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+    minimumInterval: 60, // 15 minutes
+    stopOnTerminate: false, // android only,
+    startOnBoot: true, // android only
+  })
+}
+async function unregisterBackgroundFetchAsync() {
+  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK)
+}
 
 export const MapScreen = () => {
+  
+  
   const [location, setLocation] = useState(null)
-  //[1 == lat], [2 == long], [3 == altitude], [4 == accuracy], [5 == heading], [6 == speed]
-  const navigation = useNavigation();
+  const navigation = useNavigation()
   function goToTicket() {
     navigation.navigate('Ticket')
   }
   const [errorMsg, setErrorMsg] = useState(null)
-  const [currStop, setCurrStop] = React.useState([]);
-  const [currRoute, setCurrRoute] = React.useState([]);
- 
+  const [showRural, setShowRural] = useState(false)
+  const [showUrban, setShowUrban] = useState(false)
+  const [showColegio, setShowColegio] = useState(false)
+
   useEffect(() => {
     ;(async () => {
+      
       let { status } = await Location.requestForegroundPermissionsAsync()
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied')
         return
       }
-
       let location = await Location.getCurrentPositionAsync({})
       setLocation(location)
+      
+      const interval = setInterval(async () => {
+        setLocation(await Location.getCurrentPositionAsync({}))
+      }, 5000);
+      return () => clearInterval(interval);
     })()
   }, [])
-
+  
   let text = 'Waiting..'
   if (errorMsg) {
     text = errorMsg
@@ -63,7 +107,7 @@ export const MapScreen = () => {
         })
       }
     })
-    
+
     return coord
   }
   return (
@@ -76,10 +120,25 @@ export const MapScreen = () => {
           latitudeDelta: 0.022,
           longitudeDelta: 0.022,
         }}
-        followsUserLocation={true}
-      >     
-      { getStops().map((stop, index) => {      
+      >
+      {
+        location != null ? (
+          <>
+          <Marker
+          coordinate={{
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+          }}
+          title={'You are here'}
+          description={'Your current location'}
+        />
+          </>
+
+        ) : null
+      }
+        {getStops().map((stop, index) => {
           return (
+            <>
             <Marker
               key={index}
               coordinate={{
@@ -90,32 +149,31 @@ export const MapScreen = () => {
               description={stop.name}
               pinColor={getRouteColor(stop.id)}
             />
+           
+            </>
           )
         })}
 
-        
-      {
-        getOnlineLocation().map((stop, index) => {
-          return (
-            <Marker
-              key={index}
-              coordinate={{
-                latitude: stop.latitude,
-                longitude: stop.longitude,
-              }}
-              title={stop.id}
-              description={stop.name}
-              pinColor={'black'}
-              onSelect={() => {
-                setCurrStop(stop)
-              }}
-            />
-          )
-          
-        } )
-      }
-      {
-        getRoutes().map((route, index) => {
+        {getOnline().map((device, index) => {
+          if (device.status == 'online') {
+            return (
+              <>
+
+              <Marker
+                key={index}
+                coordinate={getDeviceCoords(device.id)}
+                title={device.id}
+                description={device.name}
+                pinColor={'red'}
+              />
+             
+              </>
+            )
+          }
+          })}
+      
+
+        {getRoutes().map((route, index) => {
           return (
             <Polyline
               key={index}
@@ -124,19 +182,9 @@ export const MapScreen = () => {
               strokeWidth={4}
             />
           )
-        }
-        )
-      }
-      
-      <Callout style={styles.cardContainer} >
-        
-        <Button onPress={goToTicket}>Buy Ticket</Button>
-        
-      </Callout>
- 
-    
-                   
-       </MapView>
+        })}
+
+      </MapView>
     </View>
   )
 }
@@ -151,7 +199,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   stopListTitle: {
-    fontSize: 15,
+    fontSize: 15,//hykj8LmMrfnx
     fontWeight: 'bold',
     color: 'black',
   },
@@ -183,7 +231,6 @@ const styles = StyleSheet.create({
     bottom: 10,
     left: 10,
     width: '90%',
-
   },
   contentContainer: {
     paddingVertical: 20,
@@ -201,5 +248,4 @@ const styles = StyleSheet.create({
     top: Dimensions.get('window').height * 0.5,
     left: Dimensions.get('window').width * 0.1,
   },
-  
 })

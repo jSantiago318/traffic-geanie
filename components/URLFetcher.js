@@ -42,6 +42,27 @@ export function getOnlineCount(){
     }
     return count
 }
+export function getDeviceAccuracy(deviceId){
+    for (let i = 0; i < gPosition.length; i++) {
+        if (gPosition[i].deviceId === deviceId) {
+            return gPosition[i].accuracy
+        }
+    }
+    return 0
+}
+
+export function getDeviceCoords(deviceId){
+    let coords = []
+    for (let i = 0; i < gPosition.length; i++) {
+        if (gPosition[i].deviceId === deviceId) {
+            return { 
+                latitude: gPosition[i].latitude,
+                longitude: gPosition[i].longitude
+            }
+        }
+    }
+    return coords
+}
 
 export function getOnlineActiveTripsCount(){
     let count  = 0
@@ -68,15 +89,4 @@ export function getPositionByName(name){
         }
     }
     return position
-}
-
-
-export function getOnlineLocation(){
-    let online = []
-    for (let i = 0; i < gOnline.length; i++) {
-        if (gOnline[i].status === 'online') {
-            getPositionByName(gOnline[i].id)
-        }
-    }
-    return online
 }
