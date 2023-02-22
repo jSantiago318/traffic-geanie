@@ -37,27 +37,6 @@ import { setInter } from 'react'
 import { useNavigation } from '@react-navigation/native'
 
 const Shapes = require('../assets/gtfs/shapes.json')
-const BACKGROUND_FETCH_TASK = 'background-fetch'
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
-  const now = Date.now()
-
-  console.log(
-    `Got background fetch call at date: ${new Date(now).toISOString()}`,
-  )
-
-  // Be sure to return the successful result type!
-  return BackgroundFetch.BackgroundFetchResult.NewData
-})
-async function registerBackgroundFetchAsync() {
-  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-    minimumInterval: 60, // 15 minutes
-    stopOnTerminate: false, // android only,
-    startOnBoot: true, // android only
-  })
-}
-async function unregisterBackgroundFetchAsync() {
-  return BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK)
-}
 
 export const MapScreen = () => {
   
