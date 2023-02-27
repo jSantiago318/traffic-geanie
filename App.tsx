@@ -1,18 +1,21 @@
-import React from "react";
 import {
-  Text,
-  Link,
-  HStack,
-  Center,
-  Heading,
-  Switch,
-  useColorMode,
-  NativeBaseProvider,
-  extendTheme,
-  VStack,
   Box,
+  Center,
+  HStack,
+  Heading,
+  Link,
+  NativeBaseProvider,
+  Switch,
+  Text,
+  VStack,
+  extendTheme,
+  useColorMode,
 } from "native-base";
+
+import { AppNavigator } from "./navigation/AppNavigator";
 import NativeBaseIcon from "./components/NativeBaseIcon";
+import React from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 // Define the config
 const config = {
@@ -29,7 +32,7 @@ declare module "native-base" {
 export default function App() {
   return (
     <NativeBaseProvider>
-      <Center
+      {/* <Center
         _dark={{ bg: "blueGray.900" }}
         _light={{ bg: "blueGray.50" }}
         px={4}
@@ -63,7 +66,10 @@ export default function App() {
           </Link>
           <ToggleDarkMode />
         </VStack>
-      </Center>
+      </Center> */}
+      <SafeAreaProvider>
+        <AppNavigator/>
+      </SafeAreaProvider>
     </NativeBaseProvider>
   );
 }

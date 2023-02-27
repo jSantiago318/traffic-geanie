@@ -1,0 +1,81 @@
+import { Button, FlatList, Text } from 'native-base';
+import { StyleSheet, View } from 'react-native';
+
+import CameraBtn from "../components/CameraBtn";
+import DataFetcher from "../components/DataFetcher";
+import React from 'react';
+import { getRandomStop } from '../assets/gtfs/stops'
+import {useNavigation} from "@react-navigation/native";
+import useStore from "../store/useStore";
+
+const data = new Array(10).fill({
+  title: 'Item',
+  color: '#f577',
+  // departureTime: faker.date.future(),
+  // arrivalTime: faker.date.future(),
+  // stop1: getRandomStop(),
+  // stop2: getRandomStop(),
+  stepsToBus: 44,
+  stepsAtDestination: 47,
+  stepsDestToBus: 588,
+})
+export const DetailsScreen = () => {
+  const logout = useStore(state => state.logout)
+  const navigation = useNavigation();
+
+
+  return (
+    <View style={styles.container}>
+
+    <View style={styles.container}>
+      <Text category='h1'>Details</Text>
+      <Button style={styles.button} >Logout</Button>
+    </View>
+
+     
+      <Text>
+        Tickets
+      </Text>
+      <FlatList
+            data={data}
+            renderItem={({ item }) => (
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: 10,
+                        backgroundColor: item.color,
+                        margin: 5,
+                        borderRadius: 10,
+                    }}
+                >
+                    <View>
+                        <Text category="h6">{item.title}</Text>
+                        <Text category="s1">{item.stop1}</Text>
+                        <Text category="s1">{item.stop2}</Text>
+                    </View>
+                    <View>
+                        <Text category="s1">{item.stepsToBus}</Text>
+                        <Text category="s1">{item.stepsAtDestination}</Text>
+                        <Text category="s1">{item.stepsDestToBus}</Text>
+                    </View>
+                </View>
+                    
+            )}
+          />
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  button: {
+    marginTop: 5
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  
+});
