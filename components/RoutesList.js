@@ -1,39 +1,37 @@
 import { FlatList, HStack, Icon, Text } from 'native-base';
 import { StyleSheet, View } from 'react-native';
+import { getRouteColor, getRoutes } from '../assets/gtfs/route';
 
 import React, { } from 'react';
-import { getRoutes } from '../assets/gtfs/route';
+import { getStopsByRouteId } from '../assets/gtfs/stops';
 import {useNavigation} from "@react-navigation/native";
 
-export const RoutesList = () => {
+export const RoutesList = ({route}) => {
+  // route = route.substring( 4, route.length)
 
   const renderItemAccessory = (props) => (
     <Text category='h6' >12:50</Text>
   );
 
   const renderItem = ({ item, index }) => (
-    // <ListItem
-    //   title={<Text >{item.id}</Text>}
-    //   description={<Text >{item.route}</Text>}
-    //   accessoryLeft={<Text category='h6'  >🚌</Text>}
-    //   accessoryRight={renderItemAccessory}
-    // />
+    
     <View style={styles.card}>
     <HStack space={2} alignItems="center">
-      <Icon name="bus" size="sm" />
-
-      <Text style={styles.route}>{item.id}</Text>
-      <Text style={styles.route}>{item.route}</Text>
-      <Text style={styles.timePred}>12:50</Text>
+      <Text style={styles.route}>🟢 🚌</Text>
+      <Text style={styles.route}>{item.id} -</Text>
+      <Text style={styles.route}>{item.name}</Text>
+      {/* <Text style={styles.timePred}>12:50</Text> */}
     </HStack>
     </View>
   );
-
+  if (route.includes('TIM')) {
+    route = route.substring( 4, route.length)
+  } 
   return (
   <>
     <FlatList
       style={styles.container}
-      data={getRoutes()}
+      data={getStopsByRouteId(route)}
       renderItem={renderItem} />
   </>
   );
@@ -42,11 +40,17 @@ export const RoutesList = () => {
 const styles = StyleSheet.create({
   container: {
     maxHeight: '50%',
-    width: '80%',
+    width: '100%',
     borderRadius: 10,
+    backgroundColor: '#93e1d8',
   }, timePred:{
     fontSize: 20,
     fontWeight: 'bold',
-  }, 
+  }, card: {
+    margin: 5,
+    padding: 5,
+    borderRadius: 10,
+    justifyContent: 'center',
+  }
   
 });

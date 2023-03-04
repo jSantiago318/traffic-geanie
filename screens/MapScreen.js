@@ -1,46 +1,71 @@
 import * as Location from 'expo-location'
 
 import {
+  Box,
+  Button,
+  Center,
+  Container,
+  Divider,
+  HStack,
+  Icon,
+  Select,
+  Stack,
+  Text,
+  VStack,
+} from 'native-base'
+import {
   Dimensions,
+  Image,
+  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
   View,
 } from 'react-native'
-import MapView, { Callout, Circle, Marker, Overlay, Polyline } from 'react-native-maps'
-import React, { useEffect, useState } from 'react'
+import MapView, {
+  Callout,
+  Circle,
+  Marker,
+  Overlay,
+  Polyline,
+} from 'react-native-maps'
+import React, { Component, useEffect, useState } from 'react'
 import {
+  checkOnline,
   getDeviceCoords,
   getOnline,
-  getPosition,
+  getOnlineById,
+  getPosition
 } from '../components/URLFetcher'
-import { getRouteByCat, getRouteColor, getRoutes } from '../assets/gtfs/route'
-import { getStops, getStopsByRouteId } from '../assets/gtfs/stops'
+import {
+  getRouteByCat,
+  getRouteById,
+  getRouteColor,
+  getRoutes
+} from '../assets/gtfs/route'
+import { getRouteByStopId, getStops, getStopsByRouteId } from '../assets/gtfs/stops'
 
-import { Text } from 'native-base'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import { getDeviceAccuracy } from '../components/URLFetcher'
-import { setInter } from 'react'
 import { useNavigation } from '@react-navigation/native'
 
 const Shapes = require('../assets/gtfs/shapes.json')
 
-export const MapScreen = () => {
-  
-  
-  const [location, setLocation] = useState(null)
-  const navigation = useNavigation()
-  function goToTicket() {
-    navigation.navigate('Ticket')
-  }
-  const [errorMsg, setErrorMsg] = useState(null)
-  const [showRural, setShowRural] = useState(false)
-  const [showUrban, setShowUrban] = useState(false)
-  const [showColegio, setShowColegio] = useState(false)
+let ticketStop = null
+export function getTicketStop() {
+  return ticketStop
+}
 
+export const MapScreen = () => {
+  const [location, setLocation] = useState(null)
+  const [errorMsg, setErrorMsg] = useState(null)
+  const navigation = useNavigation()
+
+  const naviagateTicket = ({stop}) => {
+    ticketStop = (stop).id
+  }
+  
+ 
   useEffect(() => {
     ;(async () => {
-      
       let { status } = await Location.requestForegroundPermissionsAsync()
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied')
@@ -48,14 +73,14 @@ export const MapScreen = () => {
       }
       let location = await Location.getCurrentPositionAsync({})
       setLocation(location)
-      
+
       const interval = setInterval(async () => {
         setLocation(await Location.getCurrentPositionAsync({}))
-      }, 5000);
-      return () => clearInterval(interval);
+      }, 5000)
+      return () => clearInterval(interval)
     })()
   }, [])
-  
+ 
   let text = 'Waiting..'
   if (errorMsg) {
     text = errorMsg
@@ -66,87 +91,171 @@ export const MapScreen = () => {
   function getShapeByRouteId(routeId) {
     let coord = []
     Shapes.map((shape) => {
-      if (shape.id.includes(routeId)) {
+      if (shape.shape_id.includes(routeId)) {
         coord.push({
-          latitude: shape.lat,
-          longitude: shape.lon,
+          latitude: shape.shape_pt_lat,
+          longitude: shape.shape_pt_lon,
         })
       }
     })
-
     return coord
   }
+
   return (
+    <View style={styles.container}>
       <MapView
-        key={location != null ? location.coords.latitude : 0}
+        showsUserLocation={true}
         style={styles.map}
-        initialRegion={{
-          latitude: 18.207329,
-          longitude: -67.140823,
-          latitudeDelta: 0.022,
-          longitudeDelta: 0.022,
-        }}
+        initialRegion={
+          location != null
+            ? {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }
+            : {
+                latitude: 18.2009063,
+                longitude: -67.1281423,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }
+        }
       >
-      {
-        location != null ? (
-          <>
-          <Marker
-          key={'location'}
-          coordinate={{
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-          }}
-          title={'You are here'}
-          description={'Your current location'}
-        />
-          </>
 
-        ) : null
-      }
-        {getStops().map((stop, index) => {
-          return (
-            <>
-            <Marker
-              key={stop.id}
-              coordinate={{
-                latitude: stop.lat,
-                longitude: stop.lon,
-              }}
-              title={stop.name}
-              description={stop.id}
-              pinColor={getRouteColor(stop.id)}
-            />
-           
-            </>
-          )
-        })}
-
-        {getOnline().map((device, index) => {
-          if (device.status == 'online') {
+        {
+          getStops().map((stop, index) => {
             return (
-              <>
               <Marker
-                key={device.uniqueId}
-                coordinate={getDeviceCoords(device.id)}
-                title={device.id}
-                description={device.name}
-                pinColor={'red'}
-              />
-              </>
+                key={index}
+                coordinate={{
+                  latitude: stop.lat,
+                  longitude: stop.lon,
+                }}
+                title={stop.id}
+                description={stop.name}
+                pinColor={getRouteColor(stop.id)}
+              >
+                <Callout>
+                <Text>
+                  {stop.id}
+                </Text>
+                <Text>
+                {stop.name}
+                </Text>
+                <Button  onPress={naviagateTicket({stop})} >
+                    Start Ticket
+                </Button>
+                </Callout>
+              </Marker>
+            )
+          })
+        }
+
+        {
+          getPosition().map((device, index) => {
+            const isOnline = getOnlineById(device.deviceId)
+            
+            return (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: device.latitude,
+                  longitude: device.longitude,
+                }}
+                title={device.deviceId}
+                description={device.deviceId}
+                pinColor={'green'}
+              >              
+                  <Image source={require('../assets/car-default.png')} style={{height: 35, width:35 }} />
+                  <Callout style={{
+                    width : 200
+                  }}>
+                  <Text>Bus {device.deviceId} - {isOnline}</Text>
+                    <Text> {device.accuracy}</Text>
+                    
+                  </Callout>
+                  
+                    
+              </Marker>
             )
           }
-          })}
-        {getRoutes().map((route, index) => {
+          )
+        }
+        
+
+       {
+        getRoutes().map((route, index) => {
           return (
             <Polyline
-              key={route.id}
+              key={index}
               coordinates={getShapeByRouteId(route.id)}
               strokeColor={getRouteColor(route.id)}
-              strokeWidth={4}
+              strokeWidth={3}
             />
           )
-        })}
+        })
+       }
+        
       </MapView>
+
+      <View style={styles.carousel}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+
+          {getRoutes().map((route, index) => {
+            return (
+
+              <Box
+                key={index}
+                style={{
+                  backgroundColor: getRouteColor(route.id),
+                  padding: 10,
+                  margin: 5,
+                  borderRadius: 10,
+                  width: Dimensions.get('window').width * 0.9,
+                  height: Dimensions.get('window').height * 0.3,
+                }}
+              >
+
+                <Text fontSize={'xl'} bold>
+                  {route.id}
+                </Text>
+                <Text fontSize={'md'}>{route.name}</Text>
+                <Divider
+                  style={{
+                    backgroundColor: 'black',
+                  }}
+                />
+                 
+                <ScrollView style={{ paddingLeft: 5 }}>
+                  {getStopsByRouteId(route.id).map((stop, index) => {
+                    return (
+                      
+                        <Stack space="2" alignItems="center" width={'100%'} key={index} >
+                          <HStack space="2" alignItems="center" width={'100%'}>
+                            
+                            <Text >
+                              {stop.id}
+                            </Text>
+                            <Text>
+                              {stop.name}
+                            </Text>
+                            <Text >
+                              12:30
+                            </Text>
+                            </HStack>
+                        </Stack>
+                      
+                    )
+                  })}
+                </ScrollView>
+              </Box>
+
+            )
+          })}
+        </ScrollView>
+      </View>
+    </View>
   )
 }
 
@@ -160,7 +269,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   stopListTitle: {
-    fontSize: 15,//hykj8LmMrfnx
+    fontSize: 15, //hykj8LmMrfnx
     fontWeight: 'bold',
     color: 'black',
   },
@@ -180,9 +289,6 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
   map: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
     ...StyleSheet.absoluteFillObject,
   },
   carousel: {
@@ -190,12 +296,9 @@ const styles = StyleSheet.create({
     alignContent: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    bottom: 10,
-    left: 10,
-    width: '90%',
-  },
-  contentContainer: {
-    paddingVertical: 20,
+    bottom: 15,
+    left: 0,
+    width: '100%',
   },
 
   scrollView: {

@@ -2,7 +2,7 @@ import {LoginScreen, RegisterScreen} from "../screens/auth";
 
 import { CreditsScreen } from "../screens/CreditsScreen";
 import {DetailsScreen} from "../screens/DetailsScreen";
-import { HomeScreen } from '../screens/HomeScreen';
+import { HomeScreen } from '../screens/HomeScreen.js';
 import { MapScreen } from '../screens/MapScreen';
 import {NavigationContainer} from '@react-navigation/native';
 // import { TripScreen } from '../screens/TripScreen';
@@ -17,15 +17,15 @@ export const AppNavigator = () => {
   return (
     <NavigationContainer >
       <Drawer.Navigator  options = {{headerShown: false}}
-      
+      // render error requierenativecomponent rnsvgviewandroid
         >
         {isSignedIn ? (
           <>
             
-            <Drawer.Screen name='Details' component={DetailsScreen}/>
             <Drawer.Screen options={{headerBackTitleVisible: true}} name='Home' component={HomeScreen}/>
             <Drawer.Screen options={{headerBackTitleVisible: true}}  name='Map' component={MapScreen}/>
-            <Drawer.Screen name='Ticket'  options={{headerBackTitleVisible: true}} component={TicketScreen}/>
+            <Drawer.Screen name='Profile' component={DetailsScreen}/>
+            <Drawer.Screen name='Ticket' component={TicketScreen}/>
           </>
         ) : (
           <>

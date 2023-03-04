@@ -8,65 +8,23 @@ import { getRandomStop } from '../assets/gtfs/stops'
 import {useNavigation} from "@react-navigation/native";
 import useStore from "../store/useStore";
 
-const data = new Array(10).fill({
-  title: 'Item',
-  color: '#f577',
-  // departureTime: faker.date.future(),
-  // arrivalTime: faker.date.future(),
-  // stop1: getRandomStop(),
-  // stop2: getRandomStop(),
-  stepsToBus: 44,
-  stepsAtDestination: 47,
-  stepsDestToBus: 588,
-})
 export const DetailsScreen = () => {
   const logout = useStore(state => state.logout)
   const navigation = useNavigation();
-
-
+  
   return (
     <View style={styles.container}>
-
-    <View style={styles.container}>
-      <Text category='h1'>Details</Text>
-      <Button style={styles.button} >Logout</Button>
-    </View>
-
-     
       <Text>
-        Tickets
+        name
       </Text>
-      <FlatList
-            data={data}
-            renderItem={({ item }) => (
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: 10,
-                        backgroundColor: item.color,
-                        margin: 5,
-                        borderRadius: 10,
-                    }}
-                >
-                    <View>
-                        <Text category="h6">{item.title}</Text>
-                        <Text category="s1">{item.stop1}</Text>
-                        <Text category="s1">{item.stop2}</Text>
-                    </View>
-                    <View>
-                        <Text category="s1">{item.stepsToBus}</Text>
-                        <Text category="s1">{item.stepsAtDestination}</Text>
-                        <Text category="s1">{item.stepsDestToBus}</Text>
-                    </View>
-                </View>
-                    
-            )}
-          />
+      <Text>
+        email
+      </Text>
+      <Text>
+        Bus Taken
+      </Text>
     </View>
-  );
-};
+  )};
 
 const styles = StyleSheet.create({
   button: {

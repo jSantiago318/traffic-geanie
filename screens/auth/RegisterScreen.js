@@ -1,7 +1,7 @@
 import { Button, Icon, Input, Text } from 'native-base';
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
-import { HomeScreen } from '../HomeScreen';
+import { HomeScreen } from '../HomeScreen.js';
 import React from 'react';
 import {useNavigation} from "@react-navigation/native";
 import useStore from "../../store/useStore";
@@ -14,13 +14,9 @@ export const RegisterScreen = () => {
   const navigation = useNavigation();
   const basicInputState = useInputState();
   const [value, setValue] = React.useState('');
+  const [pNumber, setPNumber] = React.useState('');
   const [secureTextEntry, setSecureTextEntry] = React.useState(true);
   const login = useStore(state => state.login)
-
-  
-
-
-
   
   const toggleSecureEntry = () => {
     setSecureTextEntry(!secureTextEntry);
@@ -30,28 +26,24 @@ export const RegisterScreen = () => {
     <TouchableWithoutFeedback onPress={toggleSecureEntry}>
       <Icon {...props} name={!secureTextEntry ? 'eye' : 'eye-off'}/>
     </TouchableWithoutFeedback>
-  );
-  const navigateHome = () => {
-    navigation.navigate('Home');
-  };
+  ); 
+  
   const StarIcon = (props) => (
     <Icon {...props} name='arrow-circle-right-outline'/>
-  );
+  )
+  
   return (
     
       <View
         style={[
           styles.container,
           {
-            // Try setting `flexDirection` to `"row"`.
             flexDirection: 'column',
           },
         ]}>
-        <View style={{flex: 1, justifyContent:'center' }} >
             <Text style={styles.title}>
             Sign Up
           </Text>
-       </View>
         <View style={{flex: 2, justifyContent:'center', alignItems: 'center' }} >   
         <Text style={styles.subtitle} > 
           Email
@@ -62,8 +54,19 @@ export const RegisterScreen = () => {
         size='large'
         {...basicInputState}
       />
+
+<Text style={styles.subtitle} > 
+          Phone Number
+        </Text>
+        <Input
+        style={styles.input}
+        placeholder='enter phone number'
+        size='large'
+        value={pNumber}
+        onChangeText={setPNumber}
+      />
       <Text style={styles.subtitle} > 
-          Email
+          Password
         </Text>
       <Input
           style={styles.input}
@@ -93,6 +96,7 @@ const styles = StyleSheet.create({
   },
   title:{
     fontSize: 24,
+    padding: 10,
     fontWeight: 'bold',
   },
   container: {
@@ -109,9 +113,8 @@ const styles = StyleSheet.create({
     borderColor: '#046C1C',
   },
   input: {
-    margin: 2,
     borderRadius: 4,
-    fontSize: 48,
+    fontSize: 24,
     padding: 10,
     width: '100%',
     backgroundColor: 'transparent',
@@ -123,7 +126,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   }, subtitle: {
     alignItems: 'flex-start' ,
-    alignItems: 'flex-start', 
-    width: '80%' 
+    width: '100%' ,
+    marginTop: 10,    
   }
 });

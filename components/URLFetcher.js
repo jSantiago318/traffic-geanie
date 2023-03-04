@@ -1,21 +1,24 @@
 import { Text, View } from "react-native"
 
 import React from "react"
-import getStopTimes from "../assets/gtfs/stop_times"
+import getStopTimes from "../assets/gtfs-completo/stop_times"
 import { useState } from "react"
 
 let gOnline = []
 let gPosition = []
 let gTrip = []
+let gCurrentTime = 0
+let gRouteIdforAgency = []
 
 
     
 if (gOnline.length === 0) {
-fetch('http://143.198.119.7:8020/online')
+    fetch('http://143.198.119.7:8020/online')
     .then((response) => response.json())
     .then((data) => {
     gOnline = (data)
     })
+    
     fetch('http://143.198.119.7:8020/trips')
     .then((response) => response.json())
     .then((data) => {
@@ -26,11 +29,37 @@ fetch('http://143.198.119.7:8020/online')
     .then((data) => {
     gPosition = (data)
     })
+    fetch('https://pr-oba.live/api/where/current-time.json?key=TEST').then((response) => response.json()).then((data) => {
+    gCurrentTime = (data).currentTime
+    })
+   
+    
+
 }
- 
+
+
+export function getRouteIdforAgency(){
+     fetch('https://pr-oba.live/api/where/route-ids-for-agency/TIM.json?key=TEST').then((response) => response.json()).then((data) => {
+        gCurrentTime = (data).currentTime
+        return (data).list
+        })
+}
+
+export function getCurrentTime(){
+    return gCurrentTime
+}
 
 export function getOnline(){
         return gOnline
+}
+export function getOnlineById(deviceId){
+    let online = []
+    for (let i = 0; i < gOnline.length; i++) {
+        if (gOnline[i].id === deviceId) {
+            return gOnline[i].status
+        }
+    }
+    return online
 }
 
 export function getOnlineCount(){
@@ -50,6 +79,8 @@ export function getDeviceAccuracy(deviceId){
     }
     return 0
 }
+
+
 
 export function getDeviceCoords(deviceId){
     let coords = []
@@ -89,4 +120,15 @@ export function getPositionByName(name){
         }
     }
     return position
+}
+
+export function checkOnline(deviceId){
+    for (let i = 0; i < gOnline.length; i++) {
+        if (gOnline[i].deviceId === deviceId) {
+            console.log(gOnline[i].status)
+            return gOnline[i].status
+            
+        }
+    }
+    return 'offline'
 }

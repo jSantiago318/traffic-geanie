@@ -1,118 +1,69 @@
-import { Select, SelectItem, Text } from 'native-base';
+import { Button, Select, SelectItem, Text } from 'native-base';
+import React, {useEffect, useState} from 'react';
 import { StyleSheet, View } from 'react-native';
 import { getOnlineActiveTripsCount, getOnlineCount } from '../components/URLFetcher';
 import {useNavigation, useTheme} from "@react-navigation/native";
 
 import CameraBtn from "../components/CameraBtn";
 import DataFetcher from "../components/DataFetcher";
-import React from 'react';
+import { Pedometer } from 'expo-sensors';
 import { getRoutesCat } from '../assets/gtfs/route';
+import {getTicketStop} from '../screens/MapScreen';
 
 export const TicketScreen = () => {
   const data = ['Ruta Rural', 'Ruta Urbana', 'Rutal Colegio']
-  const [routes, setRoutes] = React.useState(null);
-  const [stops, setStops] = React.useState(null);
   const [selectedIndex, setSelectedIndex] = React.useState(null);
-  const [selectedStopIndex, setSelectedStopIndex] = React.useState(null);
-  const displayValue = data[selectedIndex];
-  const displayValueStop = data[selectedIndex];
+
+  const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
+  const [pastStepCount, setPastStepCount] = useState(0);
+  const [currentStepCount, setCurrentStepCount] = useState(0);
+  const subscribe = async () => {
+    const isAvailable = await Pedometer.isAvailableAsync();
+    setIsPedometerAvailable(String(isAvailable));
+
+    if (isAvailable) {
+      const end = new Date();
+      const start = new Date();
+      start.setDate(end.getDate() - 1);
+
+      const pastStepCountResult = await Pedometer.getStepCountAsync(start, end);
+      if (pastStepCountResult) {
+        setPastStepCount(pastStepCountResult.steps);
+      }
+
+      return Pedometer.watchStepCount(result => {
+        setCurrentStepCount(result.steps);
+      });
+    }
+  };
+
+  useEffect(() => {
+    const subscription = subscribe();
+    return () => subscription && subscription.remove();
+  }, []);
+  
   return (
   <View style={styles.container} >
   
-    <Text category='h1' style={styles.title}>Mayaguez Bus Tracker</Text>
-    <Text>Categoria</Text>
-    <Select style={styles.select}
-      selectedIndex={selectedIndex}
-      value={displayValue}
-      onSelect={index => setSelectedIndex(index)}>
-      <SelectItem title='Ruta Rural'/>
-      <SelectItem title='Ruta Urbana'/>
-      <SelectItem title='Ruta Colegio'/>
-    </Select>
-    <Text>Ruta</Text>
-    <Select style={styles.select}
-      selectedIndex={selectedStopIndex}
-      value={displayValueStop}
-      onSelect={index => setSelectedStopIndex(index)}>
-      {
-        getRoutesCat(displayValue).map((route, index) => {
-          return (
-            <SelectItem key={index} title={route.id}/>
-          )
-        }
-        )
-      }
-      </Select>
-      <Text> Parada</Text>
-      <Select style={styles.select}
-      selectedIndex={selectedStopIndex}
-      value={displayValueStop}
-      onSelect={index => setSelectedStopIndex(index)}>
-      {
-        getRoutesCat(displayValue).map((route, index) => {
-          return (
-            <SelectItem key={index} title={route.id}/>
-          )
-        }
-        )
-      }
-      </Select>
-      
+    <Text fontSize='xl' >Mayaguez Bus Tracker</Text>
+    <Text fontSize='xl' >Ticket</Text>
+    <Text fontSize='xl' >Stop: {getTicketStop()}</Text>
+    
+    <Text>Pedometer Active: {isPedometerAvailable}</Text>
+      <Text>Steps in last 24 hours: {pastStepCount}</Text>
+      <Text>Current stesps taken: {currentStepCount}</Text>
+      <Button>
+        <Text>Start Trip</Text>
+      </Button>
   </View>
   )
 }
 
 const styles = StyleSheet.create({
-  select: {
-    width: '80%',
-    height: '10%',
-    marginTop: 5,
-    marginBottom: 5,
-  },
-    ticketScanBtn: {
-        marginTop: 5,
-        width: '40%',
-        height: '10%',
-        borderRadius: 5,
-        borderColor: 'transparent',
-        },
-  button: {
-    marginTop: 5,
-    width: '40%',
-    height: '10%',
-    backgroundColor: '#93e1d8',
-    borderRadius: 5,
-    borderColor: 'transparent',
-  },
   container: {
     flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
-  },
-  layout: {
-    flex: 1,
-    flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
   },
-  subtitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  card: {
-    margin: 2,
-    backgroundColor: '#93e1d8',
-
-  },
-  title:{
-    fontSize: 30,
-    fontWeight: 'bold',
-    marginTop: 30,
-    
-  }
-  
   
 });
