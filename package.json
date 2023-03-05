@@ -17,6 +17,14 @@
     "web": "expo start --web",
     "eject": "expo eject"
   },
+  "android": {
+    "adaptiveIcon": {
+            "foregroundImage": "./assets/icon.png",
+            "backgroundColor": "#FFFFFF"        
+          },
+          "versionCode": 1.2,
+          "package": "com.joshua.MayaBus"
+         },    
   "dependencies": {
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/drawer": "^6.6.2",
