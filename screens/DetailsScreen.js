@@ -14,6 +14,11 @@ export const DetailsScreen = () => {
   
   return (
     <View style={styles.container}>
+    <Button onPress={logout}>
+      <Text>
+        Logout
+      </Text>
+    </Button>
       <Text>
         name
       </Text>

@@ -57,8 +57,15 @@ export const HomeScreen = () => {
       </Row>
     </View>
     <Center>
-      <Box maxW="300">
-        <Select selectedValue={selectedRoute} minWidth="200" accessibilityLabel="Choose a route" placeholder="Choose a route" _selectedItem={{
+      <Box maxW="350" style={styles.selectRoute}>
+      <Text> 
+      Select a Route:</Text>
+        <Select  style={{
+        width: '100%',
+        borderRadius: 10,
+        padding: 10,
+        
+        }} selectedValue={selectedRoute} minWidth="200" accessibilityLabel="Choose a route" placeholder="Choose a route" _selectedItem={{
         bg: "#93e1d8",
         endIcon: <CheckIcon size="5" />
       }} mt={1} onValueChange={itemValue => {
@@ -125,6 +132,11 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
     borderRadius: 10,
+    backgroundColor: '#93e1d8',
+  }, selectRoute :{
+    width: '100%',
+    borderRadius: 10,
+    padding: 10,
     backgroundColor: '#93e1d8',
   }
   

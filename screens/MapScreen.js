@@ -231,16 +231,16 @@ export const MapScreen = () => {
                   {getStopsByRouteId(route.id).map((stop, index) => {
                     return (
                       
-                        <Stack space="2" alignItems="center" width={'100%'} key={index} >
+                        <Stack space="" alignItems="center" width={'100%'} key={index} >
                           <HStack space="2" alignItems="center" width={'100%'}>
                             
-                            <Text >
+                            <Text fontSize="sm" >
                               {stop.id}
                             </Text>
-                            <Text>
+                            <Text fontSize="md">
                               {stop.name}
                             </Text>
-                            <Text >
+                            <Text fontSize="sm">
                               12:30
                             </Text>
                             </HStack>
