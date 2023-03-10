@@ -1,5 +1,6 @@
 import {
  Button,
+ Stack,
  Text
 } from 'native-base';
 import { Image, StyleSheet, View } from 'react-native';
@@ -30,14 +31,15 @@ export const LoginScreen = () => {
         <Text style={styles.title}>
           Mayaguez Bus Tracker
         </Text>
+        
 
         <Button size={'medium'} style={styles.button}
         onPress={navigateRegister}> Sign Up </Button>
 
         <Button size={'medium'} style={styles.button}
         onPress={login} >Login </Button>
-         <Button appearance='ghost' status='basic' onPress={navigateCredits}   style={styles.button2}>Credits </Button>
-          
+         
+        
       </View>
   );
 };

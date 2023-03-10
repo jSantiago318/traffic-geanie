@@ -12,15 +12,21 @@ export const RoutesList = ({route}) => {
   const renderItemAccessory = (props) => (
     <Text category='h6' >12:50</Text>
   );
-
+  //  function getTime(stopId) {
+  //    fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+stopId+'.json?key=TEST').then((response) => response.json()).then((data) => {
+  //     // console.log(data.data.entry.arrivalsAndDepartures[0].predictedArrivalTime)
+  //     return data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
+  //   })
+    
+  // }
   const renderItem = ({ item, index }) => (
     
     <View style={styles.card}>
     <HStack space={2} alignItems="center">
-      <Text style={styles.route}>🟢 🚌</Text>
-      <Text style={styles.route}>{item.id} -</Text>
+      <Text style={styles.route}>🟢</Text>
+      <Text style={styles.route}>Stop #{index}</Text>
       <Text style={styles.route}>{item.name}</Text>
-      {/* <Text style={styles.timePred}>12:50</Text> */}
+      {/* <Text style={styles.route}>{ getTime(item.id)}</Text> */}
     </HStack>
     </View>
   );

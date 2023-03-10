@@ -24,14 +24,23 @@ const Row = ({ children }) => (
 export const HomeScreen = () => {
   const [routes, setRoutes] = React.useState(null);
   const [selectedRoute, setSelectedRoute] = React.useState();
+  const [busCount, setBusCount] = React.useState(0);
+  const [activeTripCount, setActiveTripCount] = React.useState(0);
   useEffect(() => {
       if (routes == null) {
         fetch('https://pr-oba.live/api/where/route-ids-for-agency/TIM.json?key=TEST').then((response) => response.json()).then((data) => {
-      setRoutes(data.data.list);
-      setSelectedRoute(data.data.list[0]);
+        let routeLists = data.data.list
+      setRoutes(routeLists);
+      setSelectedRoute(routeLists[0]);
       })
     }
   }, [routes, selectedRoute]);
+
+  setInterval(() => {
+    setBusCount(getOnlineCount());
+    setActiveTripCount(getOnlineActiveTripsCount());
+    
+  }, 5000);
 
   
 
@@ -44,8 +53,8 @@ export const HomeScreen = () => {
       <Row>
         <Col numRows={2}>
         <View style={styles.card} >
-        <Text fontSize={'md'} bold >Online Buses: {getOnlineCount()}</Text>
-        <Text fontSize={'md'} bold >Active Routes: {getOnlineActiveTripsCount()}
+        <Text fontSize={'md'} bold >Online Buses: {busCount}</Text>
+        <Text fontSize={'md'} bold >Active Routes: {activeTripCount}
         </Text>
       </View>
         </Col>

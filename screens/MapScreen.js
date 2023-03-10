@@ -9,6 +9,7 @@ import {
   HStack,
   Icon,
   Select,
+  Spacer,
   Stack,
   Text,
   VStack,
@@ -23,6 +24,8 @@ import {
   View,
 } from 'react-native'
 import MapView, {
+  Animated,
+  AnimatedRegion,
   Callout,
   Circle,
   Marker,
@@ -37,13 +40,13 @@ import {
   getOnlineById,
   getPosition
 } from '../components/URLFetcher'
+import { getFirstOfRoute, getRouteByStopId, getStops, getStopsByRouteId } from '../assets/gtfs/stops'
 import {
   getRouteByCat,
   getRouteById,
   getRouteColor,
   getRoutes
 } from '../assets/gtfs/route'
-import { getRouteByStopId, getStops, getStopsByRouteId } from '../assets/gtfs/stops'
 
 import { useNavigation } from '@react-navigation/native'
 
@@ -58,12 +61,19 @@ export const MapScreen = () => {
   const [location, setLocation] = useState(null)
   const [errorMsg, setErrorMsg] = useState(null)
   const navigation = useNavigation()
+  const [onlyShowOnline, setOnlyShowOnline] = useState(false)
 
-  const naviagateTicket = ({stop}) => {
-    ticketStop = (stop).id
+  const navigateToTicket = () => {
+    navigation.navigate('Ticket')
   }
-  
  
+  const setOnlyShowOnlineHelper = () => {
+    if(onlyShowOnline){
+      setOnlyShowOnline(false)
+  } else{
+    setOnlyShowOnline(true)
+  }
+}
   useEffect(() => {
     ;(async () => {
       let { status } = await Location.requestForegroundPermissionsAsync()
@@ -106,6 +116,8 @@ export const MapScreen = () => {
       <MapView
         showsUserLocation={true}
         style={styles.map}
+        ref = {(mapView) => { _mapView = mapView; }}
+
         initialRegion={
           location != null
             ? {
@@ -143,9 +155,9 @@ export const MapScreen = () => {
                 <Text>
                 {stop.name}
                 </Text>
-                <Button  onPress={naviagateTicket({stop})} >
+                {/* <Button  onPress={ navigateToTicket  } >
                     Start Ticket
-                </Button>
+                </Button> */}
                 </Callout>
               </Marker>
             )
@@ -155,8 +167,8 @@ export const MapScreen = () => {
         {
           getPosition().map((device, index) => {
             const isOnline = getOnlineById(device.deviceId)
-            
-            return (
+            if(onlyShowOnline && isOnline == 'online'){
+              return (
               <Marker
                 key={index}
                 coordinate={{
@@ -167,7 +179,7 @@ export const MapScreen = () => {
                 description={device.deviceId}
                 pinColor={'green'}
               >              
-                  <Image source={require('../assets/car-default.png')} style={{height: 35, width:35 }} />
+                  <Image source={require('../assets/car-online.png')} style={{height: 35, width:35 }} />
                   <Callout style={{
                     width : 200
                   }}>
@@ -179,6 +191,57 @@ export const MapScreen = () => {
                     
               </Marker>
             )
+            } else if (!onlyShowOnline){
+              if (isOnline == 'online'){
+              return (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: device.latitude,
+                  longitude: device.longitude,
+                }}
+                title={device.deviceId}
+                description={device.deviceId}
+                pinColor={'green'}
+              >              
+                  <Image source={require('../assets/car-online.png')} style={{height: 35, width:35 }} />
+                  <Callout style={{
+                    width : 200
+                  }}>
+                  <Text>Bus {device.deviceId} - {isOnline}</Text>
+                    <Text> {device.accuracy}</Text>
+                    
+                  </Callout>
+                  
+                    
+              </Marker>
+            )
+            } else{
+              return (
+                <Marker
+                  key={index}
+                  coordinate={{
+                    latitude: device.latitude,
+                    longitude: device.longitude,
+                  }}
+                  title={device.deviceId}
+                  description={device.deviceId}
+                  pinColor={'green'}
+                >              
+                    <Image source={require('../assets/car-default.png')} style={{height: 35, width:35 }} />
+                    <Callout style={{
+                      width : 200
+                    }}>
+                    <Text>Bus {device.deviceId} - {isOnline}</Text>
+                      <Text> {device.accuracy}</Text>
+                      
+                    </Callout>
+                    
+                      
+                </Marker>
+              )}
+            }
+            
           }
           )
         }
@@ -196,13 +259,30 @@ export const MapScreen = () => {
           )
         })
        }
+       
         
       </MapView>
+    
 
       <View style={styles.carousel}>
+      <HStack space={4} >
+        
+      <Button onPress={ setOnlyShowOnlineHelper  } >
+        Online Bus
+      </Button>
+      <Button  >
+        🧭
+      </Button>
+      </HStack>
+       
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 
           {getRoutes().map((route, index) => {
+            function getTime(stopId) {
+      fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+stopId+'.json?key=TEST').then((response) => response.json()).then((data) => {
+  console.log(data.data.entry.arrivalsAndDepartures[0].predictedArrivalTime)
+       return data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
+     })}
             return (
 
               <Box
@@ -216,11 +296,16 @@ export const MapScreen = () => {
                   height: Dimensions.get('window').height * 0.3,
                 }}
               >
-
+  <HStack>
+                <Stack>
                 <Text fontSize={'xl'} bold>
                   {route.id}
                 </Text>
                 <Text fontSize={'md'}>{route.name}</Text>
+                </Stack>
+                <Spacer />
+          
+  </HStack>
                 <Divider
                   style={{
                     backgroundColor: 'black',

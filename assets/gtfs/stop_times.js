@@ -2118,6 +2118,39 @@ const stopTime =[
 {id:'RR349T018B',arrival:'18:09:30',departure:'18:09:40',stop:'PC',headsign:233},
 {id:'RR349T018B',arrival:'18:10:49',departure:'18:10:59',stop:'T01',headsign:234}]
 
-export function getStops(){
-    return stopTime
+
+
+export function getNextArrivals(){
+    const currTime = new Date()
+    const getTime = currTime.toLocaleTimeString()
+    const getDate = currTime.toLocaleDateString()
+    let activeRoutes = []
+    let activeRoutesId = []
+    console.log(getTime)
+    for (const stop of stopTime) {
+        let arrivalTime = new Date();
+        arrivalTime.setHours(stop.arrival.substring(0, 2))
+        arrivalTime.setMinutes(stop.arrival.substring(3, 5))
+        arrivalTime.setSeconds(stop.arrival.substring(6, 8))
+        let departureTime = new Date();
+        departureTime.setHours(stop.arrival.substring(0, 2))
+        departureTime.setMinutes(stop.arrival.substring(3, 5))
+        departureTime.setSeconds(stop.arrival.substring(6, 8))
+        arrivalTime = arrivalTime.toLocaleTimeString()
+        departureTime = departureTime.toLocaleTimeString()
+        if (arrivalTime.getHours >= getTime.getHours){
+           activeRoutes.push({
+            stop: stop.stop,
+            arrival: arrivalTime,
+            departure: departureTime,
+            headsign: stop.headsign 
+           })
+           activeRoutesId.push(stop.id.substring(0,4))
+        }
+        
+    
     }
+        console.log(activeRoutes)
+    
+        return activeRoutes
+}

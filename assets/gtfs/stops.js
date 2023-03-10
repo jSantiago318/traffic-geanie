@@ -93,4 +93,11 @@ export function getStops() {
   export function getRouteByStopId(stopId) {
     return stopId.substring(0, 6)
   }
+
+  export function getFirstOfRoute(routeId) {
+    const val = stops.find((s) => s.id.startsWith(routeId))
+    
+    return {latitude: val.lat, longitude: val.lon, latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421 }
+  }
   
