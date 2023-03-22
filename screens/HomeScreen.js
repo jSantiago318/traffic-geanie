@@ -61,6 +61,15 @@ export const HomeScreen = () => {
         <Col numRows={2}>
       <View style={styles.card} >
         <Text fontSize={'md'} bold >Alerts</Text>
+        <HStack>
+
+        <Button style={{borderRadius: 15, marginLeft: 5 }} >
+          <Text>🚨</Text>
+        </Button>
+        <Button style={{borderRadius: 15, marginLeft: 5 }} >
+          <Text>🔔</Text>
+        </Button>
+        </HStack>
       </View>
         </Col>
       </Row>

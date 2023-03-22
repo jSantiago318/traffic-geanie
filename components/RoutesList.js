@@ -24,7 +24,7 @@ export const RoutesList = ({route}) => {
     <View style={styles.card}>
     <HStack space={2} alignItems="center">
       <Text style={styles.route}>🟢</Text>
-      <Text style={styles.route}>Stop #{index}</Text>
+      <Text style={styles.route}>Stop #{index+1}</Text>
       <Text style={styles.route}>{item.name}</Text>
       {/* <Text style={styles.route}>{ getTime(item.id)}</Text> */}
     </HStack>

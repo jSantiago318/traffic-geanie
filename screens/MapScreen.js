@@ -288,7 +288,7 @@ export const MapScreen = () => {
               <Box
                 key={index}
                 style={{
-                  backgroundColor: getRouteColor(route.id),
+                  backgroundColor: 'white',
                   padding: 10,
                   margin: 5,
                   borderRadius: 10,
@@ -304,6 +304,11 @@ export const MapScreen = () => {
                 <Text fontSize={'md'}>{route.name}</Text>
                 </Stack>
                 <Spacer />
+                <Button style={{backgroundColor:getRouteColor(route.id), fontSize:12 }} >
+                  <Text fontSize={'md'} bold>
+                  Start Trip 🚍
+                  </Text>
+                </Button>
           
   </HStack>
                 <Divider
