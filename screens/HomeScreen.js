@@ -74,7 +74,11 @@ export const HomeScreen = () => {
         </Col>
       </Row>
     </View>
-    <Center>
+    <Center style={{
+        width: '100%',
+        borderRadius: 10,
+        padding: 10,
+        }} >
       <Box maxW="350" style={styles.selectRoute}>
       <Text> 
       Select a Route:</Text>
@@ -82,7 +86,6 @@ export const HomeScreen = () => {
         width: '100%',
         borderRadius: 10,
         padding: 10,
-        
         }} selectedValue={selectedRoute} minWidth="200" accessibilityLabel="Choose a route" placeholder="Choose a route" _selectedItem={{
         bg: "#93e1d8",
         endIcon: <CheckIcon size="5" />
@@ -101,7 +104,6 @@ export const HomeScreen = () => {
         </Select>
       </Box>
     </Center>
-      <Text fontSize={'md'} bold >{selectedRoute}</Text>
       {
         selectedRoute != null ? (
           <RoutesList route={selectedRoute} />

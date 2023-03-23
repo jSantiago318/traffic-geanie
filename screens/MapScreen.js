@@ -150,14 +150,12 @@ export const MapScreen = () => {
               >
                 <Callout>
                 <Text>
+                {/* Stop {index + 1} */}
                   {stop.id}
                 </Text>
                 <Text>
                 {stop.name}
                 </Text>
-                {/* <Button  onPress={ navigateToTicket  } >
-                    Start Ticket
-                </Button> */}
                 </Callout>
               </Marker>
             )
@@ -177,18 +175,14 @@ export const MapScreen = () => {
                 }}
                 title={device.deviceId}
                 description={device.deviceId}
-                pinColor={'green'}
-              >              
+                pinColor={'green'}>  
                   <Image source={require('../assets/car-online.png')} style={{height: 35, width:35 }} />
                   <Callout style={{
                     width : 200
                   }}>
                   <Text>Bus {device.deviceId} - {isOnline}</Text>
                     <Text> {device.accuracy}</Text>
-                    
                   </Callout>
-                  
-                    
               </Marker>
             )
             } else if (!onlyShowOnline){
@@ -263,10 +257,8 @@ export const MapScreen = () => {
         
       </MapView>
     
-
       <View style={styles.carousel}>
-      <HStack space={4} >
-        
+      <HStack space={4} >    
       <Button onPress={ setOnlyShowOnlineHelper  } >
         Online Bus
       </Button>
@@ -274,20 +266,19 @@ export const MapScreen = () => {
         🧭
       </Button>
       </HStack>
-       
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-
           {getRoutes().map((route, index) => {
-            function getTime(stopId) {
+            {/* function getTime(stopId) {
       fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+stopId+'.json?key=TEST').then((response) => response.json()).then((data) => {
   console.log(data.data.entry.arrivalsAndDepartures[0].predictedArrivalTime)
        return data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
-     })}
+     })} */}
             return (
 
               <Box
                 key={index}
                 style={{
+                  // backgroundColor: getRouteColor(route.id),
                   backgroundColor: 'white',
                   padding: 10,
                   margin: 5,
@@ -304,11 +295,11 @@ export const MapScreen = () => {
                 <Text fontSize={'md'}>{route.name}</Text>
                 </Stack>
                 <Spacer />
-                <Button style={{backgroundColor:getRouteColor(route.id), fontSize:12 }} >
+                {/* <Button style={{fontSize:12 }} >
                   <Text fontSize={'md'} bold>
                   Start Trip 🚍
                   </Text>
-                </Button>
+                </Button> */}
           
   </HStack>
                 <Divider
@@ -325,7 +316,7 @@ export const MapScreen = () => {
                           <HStack space="2" alignItems="center" width={'100%'}>
                             
                             <Text fontSize="sm" >
-                              {stop.id}
+                             Stop {index + 1}
                             </Text>
                             <Text fontSize="md">
                               {stop.name}
