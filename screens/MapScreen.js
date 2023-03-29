@@ -268,11 +268,14 @@ export const MapScreen = () => {
       </HStack>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {getRoutes().map((route, index) => {
-            {/* function getTime(stopId) {
+           
+            async function getTime(stopId) {
       fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+stopId+'.json?key=TEST').then((response) => response.json()).then((data) => {
   console.log(data.data.entry.arrivalsAndDepartures[0].predictedArrivalTime)
        return data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
-     })} */}
+     })}
+
+
             return (
 
               <Box
@@ -322,7 +325,7 @@ export const MapScreen = () => {
                               {stop.name}
                             </Text>
                             <Text fontSize="sm">
-                              12:30
+                              {getTime(stop.id)}
                             </Text>
                             </HStack>
                         </Stack>

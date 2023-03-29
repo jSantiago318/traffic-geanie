@@ -1,33 +1,59 @@
 import { FlatList, HStack, Icon, Text } from 'native-base';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { getRouteColor, getRoutes } from '../assets/gtfs/route';
 
-import React, { } from 'react';
+import { WithLocalSvg } from 'react-native-svg';
+import {getSchedule} from './URLFetcher';
 import { getStopsByRouteId } from '../assets/gtfs/stops';
 import {useNavigation} from "@react-navigation/native";
 
 export const RoutesList = ({route}) => {
   // route = route.substring( 4, route.length)
 
+// setInterval(() => {
+
+//   const length = getStopsByRouteId(route).length
+//   for(let i = 1; i < length; i++) {
+//     if (i<10) {
+//       fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+route+'S0'+i+'.json?key=TEST').then((response) => response.json()).then((data) => {
+//       const exists =  data.data.entry.arrivalsAndDepartures
+//       if (exists != undefined && exists.length > 0){
+//         updateData(data.data.entry.arrivalsAndDepartures[0])
+//       } else{
+//         updateData({on: 'Off hours'})
+//       }
+//       })
+
+//     }else{
+//       fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+route+'S'+i+'.json?key=TEST').then((response) => response.json()).then((data) => {
+//         const exists =  data.data.entry.arrivalsAndDepartures
+//         if (exists != undefined && exists.length > 0){
+//           updateData(data.data.entry.arrivalsAndDepartures[0])
+//         }  else{
+//           updateData({on: 'Off hours'})
+//         }
+//           })
+//     }
+//   }
+// }, 6000);
+
+
+
   const renderItemAccessory = (props) => (
     <Text category='h6' >12:50</Text>
   );
-  function getTime(stopId, pos) {
-   fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+stopId+'.json?key=TEST').then((response) => response.json()).then((data) => {
-    // console.log(data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime)
-    // val = data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
-
-  })
-  }
+  
    
   const renderItem = ({ item, index }) => (
+    
     
     <View style={styles.card}>
     <HStack space={2} alignItems="center">
       <Text style={styles.route}>🟢</Text>
       <Text style={styles.route}>Stop #{index+1}</Text>
       <Text style={styles.route}>{item.name}</Text>
-      {/* <Text style={styles.route}>{getTime(item.id)}</Text> */}
+      <Text style={styles.route}>{getSchedule(route, index)}</Text>
     </HStack>
     </View>
   );

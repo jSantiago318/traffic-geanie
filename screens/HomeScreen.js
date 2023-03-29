@@ -1,7 +1,7 @@
 import { Box, Button, Center, FlatList, HStack, Select, Text } from 'native-base';
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { getCurrentTime, getOnlineActiveTripsCount, getOnlineCount, getRouteIdforAgency, getScheduleForStop } from '../components/URLFetcher';
+import { getCurrentTime, getOnlineActiveTripsCount, getOnlineCount, getRouteIdforAgency, getRoutesURL, getScheduleForStop } from '../components/URLFetcher';
 import {useNavigation, useTheme} from "@react-navigation/native";
 
 import { CheckIcon } from 'native-base';
@@ -31,7 +31,7 @@ export const HomeScreen = () => {
         fetch('https://pr-oba.live/api/where/route-ids-for-agency/TIM.json?key=TEST').then((response) => response.json()).then((data) => {
         let routeLists = data.data.list
       setRoutes(routeLists);
-      setSelectedRoute(routeLists[0]);
+      setSelectedRoute(routeLists[1]);
       })
     }
   }, [routes, selectedRoute]);
@@ -40,7 +40,7 @@ export const HomeScreen = () => {
     setBusCount(getOnlineCount());
     setActiveTripCount(getOnlineActiveTripsCount());
     
-  }, 5000);
+  }, 6000);
 
   
 

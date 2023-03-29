@@ -8,35 +8,58 @@ let gOnline = []
 let gPosition = []
 let gTrip = []
 let gCurrentTime = 0
-let gRouteIdforAgency = []
+let GTFSroutes = []
 
 
     
 if (gOnline.length === 0) {
-    fetch('http://143.198.119.7:8020/online')
+    fetch('http://178.128.154.222:8020/online')
     .then((response) => response.json())
     .then((data) => {
     gOnline = (data)
     })
     
-    fetch('http://143.198.119.7:8020/trips')
+    fetch('http://178.128.154.222:8020/trips')
     .then((response) => response.json())
     .then((data) => {
     gTrip = (data)
     })
-    fetch('http://143.198.119.7:8020/position')
+    fetch('http://178.128.154.222:8020/position')
     .then((response) => response.json())
     .then((data) => {
     gPosition = (data)
     })
-    fetch('https://pr-oba.live/api/where/current-time.json?key=TEST').then((response) => response.json()).then((data) => {
-    gCurrentTime = (data).currentTime
-    })
-   
-    
 
 }
+export function getStopTime(route, index){
+    fetch('https://pr-oba.live/api/where/schedule-for-stop/TIM_'+route+'S'+index+'.json?key=TEST').then((response) => response.json()).then((data) => {
+        return data
+    })
+}
 
+
+const firstStop = {
+    "RR102": "TIM_RR102T03",
+    "RR105": "TIM_RR105S05",
+    "RR108": "TIM_RR108S05",
+    "RR106": "TIM_RR106S05",
+    "RR348": "TIM_RR348S05",
+    "RR349": "TIM_RR349S05"
+}
+
+
+let currRoute = null
+let currStops = []
+export function getSchedule(route, index){
+    if (currRoute !== route) {
+        currRoute = route
+        const stop = firstStop[route]
+        fetch('https://pr-oba.live/api/where/schedule-for-stop/'+stop+'.json?key=TEST').then((response) => response.json()).then((data) => {
+            console.log(data.code)
+            })
+    }
+    
+}
 
 export function getRouteIdforAgency(){
      fetch('https://pr-oba.live/api/where/route-ids-for-agency/TIM.json?key=TEST').then((response) => response.json()).then((data) => {
