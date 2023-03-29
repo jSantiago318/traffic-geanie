@@ -39,7 +39,7 @@ export function getStopTime(route, index){
 
 
 const firstStop = {
-    "RR102": "TIM_RR102T03",
+    "RR102": "TIM_RR102S03",
     "RR105": "TIM_RR105S05",
     "RR108": "TIM_RR108S05",
     "RR106": "TIM_RR106S05",
@@ -50,14 +50,25 @@ const firstStop = {
 
 let currRoute = null
 let currStops = []
+let currPredictions = []
 export function getSchedule(route, index){
-    if (currRoute !== route) {
-        currRoute = route
-        const stop = firstStop[route]
-        fetch('https://pr-oba.live/api/where/schedule-for-stop/'+stop+'.json?key=TEST').then((response) => response.json()).then((data) => {
-            console.log(data.code)
+    try {
+            if (currRoute !== route) {
+                currRoute = route
+                const stop = firstStop[route]
+                let arrivalTime = 'not active'
+            fetch('https://pr-oba.live/api/where/schedule-for-stop/'+stop+'.json?key=TEST').then((response) => response.json()).then((data) => {
+                currStops = data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes
+                currPredictions.push(new Date (currStops[index].arrivalTime).toLocaleTimeString())
+                arrivalTime = new Date (currStops[index].arrivalTime).toLocaleTimeString()
+                console.log(arrivalTime)
             })
-    }
+            console.log(currPredictions[index])
+            return arrivalTime
+        } 
+        } catch (error) {
+            console.log(error)
+        }
     
 }
 
