@@ -1,7 +1,7 @@
 import { Box, Button, Center, FlatList, HStack, Select, Text } from 'native-base';
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { getCurrentTime, getOnlineActiveTripsCount, getOnlineCount, getRouteIdforAgency, getRoutesURL, getScheduleForStop } from '../components/URLFetcher';
+import { getActiveBus, getCurrentTime, getOnlineActiveTripsCount, getOnlineCount, getRouteIdforAgency, getRoutesURL, getScheduleForStop } from '../components/URLFetcher';
 import {useNavigation, useTheme} from "@react-navigation/native";
 
 import { CheckIcon } from 'native-base';
@@ -23,7 +23,7 @@ const Row = ({ children }) => (
 
 export const HomeScreen = () => {
   const [routes, setRoutes] = React.useState(null);
-  const [selectedRoute, setSelectedRoute] = React.useState();
+  const [selectedRoute, setSelectedRoute] = React.useState([]);
   const [busCount, setBusCount] = React.useState(0);
   const [activeTripCount, setActiveTripCount] = React.useState(0);
   useEffect(() => {
@@ -31,7 +31,7 @@ export const HomeScreen = () => {
         fetch('https://pr-oba.live/api/where/route-ids-for-agency/TIM.json?key=TEST').then((response) => response.json()).then((data) => {
         let routeLists = data.data.list
       setRoutes(routeLists);
-      setSelectedRoute(routeLists[1]);
+      setSelectedRoute(routeLists[0]);
       })
     }
   }, [routes, selectedRoute]);
@@ -81,7 +81,7 @@ export const HomeScreen = () => {
         }} >
       <Box maxW="350" style={styles.selectRoute}>
       <Text> 
-      Select a Route:</Text>
+      Selected Route: </Text>
         <Select  style={{
         width: '100%',
         borderRadius: 10,
@@ -106,7 +106,7 @@ export const HomeScreen = () => {
     </Center>
       {
         selectedRoute != null ? (
-          <RoutesList route={selectedRoute} />
+          <RoutesList route={selectedRoute}/>
         ) : null
       }
     </View>

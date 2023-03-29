@@ -38,9 +38,10 @@ import {
   getDeviceCoords,
   getOnline,
   getOnlineById,
-  getPosition
+  getPosition,
+  getRouteIdforAgency
 } from '../components/URLFetcher'
-import { getFirstOfRoute, getRouteByStopId, getStops, getStopsByRouteId } from '../assets/gtfs/stops'
+import { getFirstOfRoute, getRouteByStopId, getStopsByRouteId } from '../assets/gtfs/stops'
 import {
   getRouteByCat,
   getRouteById,
@@ -48,6 +49,8 @@ import {
   getRoutes
 } from '../assets/gtfs/route'
 
+import { StopRender } from '../components/OBAFetches/StopRender'
+import { getStops } from '../components/URLFetcher'
 import { useNavigation } from '@react-navigation/native'
 
 const Shapes = require('../assets/gtfs/shapes.json')
@@ -62,6 +65,8 @@ export const MapScreen = () => {
   const [errorMsg, setErrorMsg] = useState(null)
   const navigation = useNavigation()
   const [onlyShowOnline, setOnlyShowOnline] = useState(false)
+  const [stops, setStops] = useState([])
+
 
   const navigateToTicket = () => {
     navigation.navigate('Ticket')
@@ -75,7 +80,9 @@ export const MapScreen = () => {
   }
 }
   useEffect(() => {
+   
     ;(async () => {
+      
       let { status } = await Location.requestForegroundPermissionsAsync()
       if (status !== 'granted') {
         setErrorMsg('Permission to access location was denied')
@@ -135,6 +142,74 @@ export const MapScreen = () => {
         }
       >
 
+{
+  getPosition().map((device, index) => {
+    const isOnline = getOnlineById(device.deviceId)
+    if(onlyShowOnline && isOnline == 'online'){
+      return (
+      <Marker
+        key={index}
+        coordinate={{
+          latitude: device.latitude,
+          longitude: device.longitude,
+        }}
+        title={device.deviceId}
+        description={device.deviceId}
+        pinColor={'green'}>  
+          <Image source={require('../assets/car-online.png')} style={{height: 35, width:35 }} />
+          <Callout style={{
+            width : 200
+          }}>
+          <Text>Bus {device.deviceId} - {isOnline}</Text>
+            <Text> {device.accuracy}</Text>
+          </Callout>
+      </Marker>
+    )
+    } else if (!onlyShowOnline){
+      if (isOnline == 'online'){
+      return (
+      <Marker
+        key={index}
+        coordinate={{
+          latitude: device.latitude,
+          longitude: device.longitude,
+        }}
+        title={device.deviceId}
+        description={device.deviceId}
+        pinColor={'green'}>  
+          <Image source={require('../assets/car-online.png')} style={{height: 35, width:35 }} />
+          <Callout style={{
+            width : 200
+          }}>
+          <Text>Bus {device.deviceId} - {isOnline}</Text>
+            <Text> {device.accuracy}</Text>
+          </Callout>
+      </Marker>
+    )
+    } else {
+      return (
+        <Marker
+        key={index}
+        coordinate={{
+          latitude: device.latitude,
+          longitude: device.longitude,
+        }}
+        title={device.deviceId}
+        description={device.deviceId}
+        pinColor={'red'}>  
+          <Image source={require('../assets/car-default.png')} style={{height: 35, width:35 }} />
+          <Callout style={{
+            width : 200
+          }}>
+          <Text>Bus {device.deviceId} - {isOnline}</Text>
+            <Text> {device.accuracy}</Text>
+          </Callout>
+      </Marker>
+      )
+    }
+  }
+  })
+}
         {
           getStops().map((stop, index) => {
             return (
@@ -149,18 +224,19 @@ export const MapScreen = () => {
                 pinColor={getRouteColor(stop.id)}
               >
                 <Callout>
-                <Text>
-                {/* Stop {index + 1} */}
+                {/* <Text>
                   {stop.id}
                 </Text>
                 <Text>
                 {stop.name}
-                </Text>
+                </Text> */}
+                <StopRender stopId={stop.id} />
                 </Callout>
               </Marker>
             )
           })
-        }
+        } 
+        
 
         {
           getPosition().map((device, index) => {
@@ -198,7 +274,7 @@ export const MapScreen = () => {
                 description={device.deviceId}
                 pinColor={'green'}
               >              
-                  <Image source={require('../assets/car-online.png')} style={{height: 35, width:35 }} />
+                  <Image source={require('../assets/car-default.png')} style={{height: 35, width:35 }} />
                   <Callout style={{
                     width : 200
                   }}>
@@ -266,78 +342,6 @@ export const MapScreen = () => {
         🧭
       </Button>
       </HStack>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          {getRoutes().map((route, index) => {
-           
-            async function getTime(stopId) {
-      fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+stopId+'.json?key=TEST').then((response) => response.json()).then((data) => {
-  console.log(data.data.entry.arrivalsAndDepartures[0].predictedArrivalTime)
-       return data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
-     })}
-
-
-            return (
-
-              <Box
-                key={index}
-                style={{
-                  // backgroundColor: getRouteColor(route.id),
-                  backgroundColor: 'white',
-                  padding: 10,
-                  margin: 5,
-                  borderRadius: 10,
-                  width: Dimensions.get('window').width * 0.9,
-                  height: Dimensions.get('window').height * 0.3,
-                }}
-              >
-  <HStack>
-                <Stack>
-                <Text fontSize={'xl'} bold>
-                  {route.id}
-                </Text>
-                <Text fontSize={'md'}>{route.name}</Text>
-                </Stack>
-                <Spacer />
-                {/* <Button style={{fontSize:12 }} >
-                  <Text fontSize={'md'} bold>
-                  Start Trip 🚍
-                  </Text>
-                </Button> */}
-          
-  </HStack>
-                <Divider
-                  style={{
-                    backgroundColor: 'black',
-                  }}
-                />
-                 
-                <ScrollView style={{ paddingLeft: 5 }}>
-                  {getStopsByRouteId(route.id).map((stop, index) => {
-                    return (
-                      
-                        <Stack space="" alignItems="center" width={'100%'} key={index} >
-                          <HStack space="2" alignItems="center" width={'100%'}>
-                            
-                            <Text fontSize="sm" >
-                             Stop {index + 1}
-                            </Text>
-                            <Text fontSize="md">
-                              {stop.name}
-                            </Text>
-                            <Text fontSize="sm">
-                              {getTime(stop.id)}
-                            </Text>
-                            </HStack>
-                        </Stack>
-                      
-                    )
-                  })}
-                </ScrollView>
-              </Box>
-
-            )
-          })}
-        </ScrollView>
       </View>
     </View>
   )

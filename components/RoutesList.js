@@ -1,74 +1,51 @@
 import { FlatList, HStack, Icon, Text } from 'native-base';
-import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { getRouteColor, getRoutes } from '../assets/gtfs/route';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, } from 'react-native';
 
-import { WithLocalSvg } from 'react-native-svg';
-import {getSchedule} from './URLFetcher';
-import { getStopsByRouteId } from '../assets/gtfs/stops';
+import { StopRender } from './OBAFetches/StopRender';
+import {getStopsByRouteId} from "../components/URLFetcher";
 import {useNavigation} from "@react-navigation/native";
 
 export const RoutesList = ({route}) => {
-  // route = route.substring( 4, route.length)
-
-// setInterval(() => {
-
-//   const length = getStopsByRouteId(route).length
-//   for(let i = 1; i < length; i++) {
-//     if (i<10) {
-//       fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+route+'S0'+i+'.json?key=TEST').then((response) => response.json()).then((data) => {
-//       const exists =  data.data.entry.arrivalsAndDepartures
-//       if (exists != undefined && exists.length > 0){
-//         updateData(data.data.entry.arrivalsAndDepartures[0])
-//       } else{
-//         updateData({on: 'Off hours'})
-//       }
-//       })
-
-//     }else{
-//       fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/TIM_'+route+'S'+i+'.json?key=TEST').then((response) => response.json()).then((data) => {
-//         const exists =  data.data.entry.arrivalsAndDepartures
-//         if (exists != undefined && exists.length > 0){
-//           updateData(data.data.entry.arrivalsAndDepartures[0])
-//         }  else{
-//           updateData({on: 'Off hours'})
-//         }
-//           })
-//     }
-//   }
-// }, 6000);
 
 
 
-  const renderItemAccessory = (props) => (
-    <Text category='h6' >12:50</Text>
-  );
-  
-   
+  const [stp, setStp] = useState([]);
+  const [currentTime, setCurrentTime] = useState([]);
+  useEffect(() => {
+  const dataFetch = async () => {
+    await  fetch("https://pr-oba.live/api/where/stops-for-route/TIM_"+route+".json?key=TEST")
+    .then((response) => response.json())
+    .then((data) => {
+
+        setStp(data.data.entry.stopGroupings[0].stopGroups[0].stospIds)
+        setCurrentTime(data.currentTime)
+    })
+      } 
+      if(stp && stp.length === 0 ) {
+        dataFetch();
+      }
+    }, [currentTime, stp]);
+
+
   const renderItem = ({ item, index }) => (
-    
-    
-    <View style={styles.card}>
-    <HStack space={2} alignItems="center">
-      <Text style={styles.route}>🟢</Text>
-      <Text style={styles.route}>Stop #{index+1}</Text>
-      <Text style={styles.route}>{item.name}</Text>
-      <Text style={styles.route}>{getSchedule(route, index)}</Text>
-    </HStack>
-    </View>
-  );
+    <StopRender stop={item} currentTime={currentTime} />
+    )
+
   if (route.includes('TIM')) {
     route = route.substring( 4, route.length)
   } 
+
+  
   return (
   <>
     <FlatList
       style={styles.container}
-      data={getStopsByRouteId(route)}
+      data={setStp}
       renderItem={renderItem} />
   </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
