@@ -50,7 +50,7 @@ import {
 } from '../assets/gtfs/route'
 
 import { StopRender } from '../components/OBAFetches/StopRender'
-import { getStops } from '../components/URLFetcher'
+import { getStops } from '../assets/gtfs/stops'
 import { useNavigation } from '@react-navigation/native'
 
 const Shapes = require('../assets/gtfs/shapes.json')
@@ -224,13 +224,13 @@ export const MapScreen = () => {
                 pinColor={getRouteColor(stop.id)}
               >
                 <Callout>
-                {/* <Text>
+                <Text>
                   {stop.id}
                 </Text>
                 <Text>
                 {stop.name}
-                </Text> */}
-                <StopRender stopId={stop.id} />
+                </Text>
+                {/* <StopRender stopId={stop.id} /> */}
                 </Callout>
               </Marker>
             )

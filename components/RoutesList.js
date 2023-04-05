@@ -1,5 +1,5 @@
 import { FlatList, HStack, Icon, Text } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, } from 'react';
 import { StyleSheet, View, } from 'react-native';
 
 import { StopRender } from './OBAFetches/StopRender';
@@ -7,29 +7,26 @@ import {getStopsByRouteId} from "../components/URLFetcher";
 import {useNavigation} from "@react-navigation/native";
 
 export const RoutesList = ({route}) => {
-
-
-
   const [stp, setStp] = useState([]);
   const [currentTime, setCurrentTime] = useState([]);
-  useEffect(() => {
-  const dataFetch = async () => {
-    await  fetch("https://pr-oba.live/api/where/stops-for-route/TIM_"+route+".json?key=TEST")
+
+
+   useEffect(() => {
+   const dataFetch = async () => {
+    const url = "https://pr-oba.live/api/where/stops-for-route/TIM_"+route+".json?key=TEST"
+    await  fetch(url)
     .then((response) => response.json())
     .then((data) => {
-
-        setStp(data.data.entry.stopGroupings[0].stopGroups[0].stospIds)
-        setCurrentTime(data.currentTime)
-    })
-      } 
-      if(stp && stp.length === 0 ) {
-        dataFetch();
-      }
-    }, [currentTime, stp]);
-
+      // console.log(data.data.entry.stopGroupings[0].stopGroups[0].stopIds)
+      const stops = data.data.entry.stopGroupings[0].stopGroups[0].stopIds
+      setStp(stops)
+        // setStp(data.data.entry.stopGroupings[0].stopGroups[0].stopIds)
+    })} 
+    dataFetch();
+   }, [stp]);
 
   const renderItem = ({ item, index }) => (
-    <StopRender stop={item} currentTime={currentTime} />
+    <StopRender stop={item} />
     )
 
   if (route.includes('TIM')) {
@@ -41,9 +38,10 @@ export const RoutesList = ({route}) => {
   <>
     <FlatList
       style={styles.container}
-      data={setStp}
+      data={stp}
       renderItem={renderItem} />
   </>
+  
   );
 }
 

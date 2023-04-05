@@ -1,19 +1,19 @@
-import { FlatList, HStack, Icon, Text } from 'native-base';
+import { HStack, Icon, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, } from 'react-native';
 
-import { setActiveBus } from '../URLFetcher';
-import {useNavigation} from "@react-navigation/native";
+import axios from 'axios';
 
-export const StopRender = ({stop, currentTime}) => {
+export const StopRender = ({stop}) => {
 
 
   
   const [allStops, setAllStops] = useState([]);
   const [stopName, setStopName] = useState([]);
   const [predStop, setPredStop] = useState([]);
+  const [currentTime, setCurrentTime] = useState([]);
   useEffect(() => {
-  const dataFetch = async () => {
+  async function dataFetch(){
       await fetch(
         "https://pr-oba.live/api/where/schedule-for-stop/" +
     stop +
@@ -25,8 +25,10 @@ export const StopRender = ({stop, currentTime}) => {
           temp.push(data.data.references.stops[0].name)
 
         setStopName(data.data.references.stops[0].name)
+        setCurrentTime(data.currentTime);
+        console.log(data.data.references.stops[0].name)
         });
-
+   
 
         await fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/'+stop+'.json?key=TEST').then((response) => response.json())
         .then((data) => {
@@ -42,7 +44,6 @@ export const StopRender = ({stop, currentTime}) => {
               data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
             ]
             setPredStop(temp)
-
                       } 
           // console.log(data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime)
         } );
@@ -56,43 +57,33 @@ export const StopRender = ({stop, currentTime}) => {
 
 
 
-
-    // setInterval(() => {
-    //     if (predStop[0]) {
-    //          fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/'+stop+'.json?key=TEST').then((response) => response.json())
-    //     .then((data) => {
-    //       console.log(data.data.entry.arrivalsAndDepartures[0].predicted)
-    //       console.log(data.data.entry.arrivalsAndDepartures[0].predictedArrivalTime)
-    //       console.log(data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime)
-    //       const temp = [
-    //         data.data.entry.arrivalsAndDepartures[0].predicted,
-    //         data.data.entry.arrivalsAndDepartures[0].predictedArrivalTime,
-    //         data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
-    //       ]
-    //     //   console.log(data.data.entry.arrivalsAndDepartures[0].lastKnownLocation)
-    //     //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.nextStop)
-    //     //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.position)
-    //     //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.vehicleId)
-    //     //   setActiveBus(data.data.entry.arrivalsAndDepartures[0].tripStatus.vehicleId)
-    //       if (data.data.entry.arrivalsAndDepartures.length > 0) {
-    //         setPredStop(temp)
-
-    //                   } 
-    //       // console.log(data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime)
-    //     } );
-
-    //     }
-    // }, 30000);
-
   
 function getNextStop(){
-
-  allStops.forEach((stop) => {
-    if (stop.predictedArrivalTime > currentTime) {
-      return stop.predictedArrivalTime
+  let found = false
+  
+  for (let index = 0; index < allStops.length; index++) {
+    const element = allStops[index];
+    // console.log(element)
+    //  TYPE OF DOC RECIEVED 
+    // Object {
+    //   "arrivalEnabled": true,
+    //   "arrivalTime": 1680721628000,
+    //   "departureEnabled": false,
+    //   "departureTime": 1680721638000,
+    //   "serviceId": "TIM_WD",
+    //   "stopHeadsign": "",
+    //   "tripId": "TIM_RR105T09A",
+    // }
+    if (element.predictedArrivalTime > currentTime && found === false) {
+      found = true
+      return new Date(element.arrivalTime).toLocaleTimeString()
     }
+    if(found === false && index === allStops.length-1){
+      // console.log( )
+      return new Date(allStops[0].arrivalTime).toLocaleTimeString()
+    }
+    
   }
-  )
 }
 
 
@@ -105,9 +96,13 @@ const TimePred = () => {
             ""+Math.floor((predStop[1] - currentTime)/60000)+" min"
     }   </Text>)
   } else if( predStop[0] === false) {
-    return (<Text style={styles.timeSch}> {new Date(predStop[2]).toLocaleTimeString() } </Text>)
+    const val = new Date(predStop[2]).toLocaleTimeString()
+    // return (<Text style={styles.timeSch}> {new Date(predStop[2]).toLocaleTimeString() } </Text>)
+    return (<Text style={styles.timeSch}> {val } </Text>)
   } else{
-    return (<Text> {new Date(getNextStop())} </Text>)
+    // return (<Text> {new Date(getNextStop())} </Text>)
+    const val = getNextStop()
+    return (<Text> {val} </Text>)
   }
 }
 
@@ -115,7 +110,7 @@ const TimePred = () => {
   <>
     <View style={styles.card}>
     <HStack space={2} alignItems="center">
-      <Text style={styles.route}>🟢</Text>
+      <Text >🟢</Text>
       {
         stopName.length > 0 ? <Text> {stopName} </Text> :<Text> loading... </Text>
       }

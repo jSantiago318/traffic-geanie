@@ -22,18 +22,26 @@ const Row = ({ children }) => (
 
 
 export const HomeScreen = () => {
-  const [routes, setRoutes] = React.useState(null);
+  const [routes, setRoutes] = React.useState([]);
   const [selectedRoute, setSelectedRoute] = React.useState([]);
   const [busCount, setBusCount] = React.useState(0);
   const [activeTripCount, setActiveTripCount] = React.useState(0);
   useEffect(() => {
-      if (routes == null) {
-        fetch('https://pr-oba.live/api/where/route-ids-for-agency/TIM.json?key=TEST').then((response) => response.json()).then((data) => {
+      // if (routes == []) {
+        let temp = 0
+       async function getData(){
+       await fetch('https://pr-oba.live/api/where/route-ids-for-agency/TIM.json?key=TEST').then((response) => response.json()).then((data) => {
         let routeLists = data.data.list
+        temp = data.data.list[0]
       setRoutes(routeLists);
-      setSelectedRoute(routeLists[0]);
+      setSelectedRoute( data.data.list[0]);
       })
+        
     }
+    if(routes.length == 0){
+      getData();
+    }
+    // }
   }, [routes, selectedRoute]);
 
   setInterval(() => {
@@ -105,9 +113,9 @@ export const HomeScreen = () => {
       </Box>
     </Center>
       {
-        selectedRoute != null ? (
-          <RoutesList route={selectedRoute}/>
-        ) : null
+        selectedRoute.length > 0 ? (
+          <RoutesList route={selectedRoute}  />
+        ) : (null)
       }
     </View>
   )

@@ -129,23 +129,22 @@ export function getPositionByName(name) {
 }
 
 let activeBus = 'No Bus';
+let currentRoute = ''
 export function getActiveBus() {
     return activeBus;
 
+}
+export function setActiveRoute(rt){
+    currentRoute = rt;
+}
+export function getActiveRoute(){
+    return currentRoute;
 }
 export function setActiveBus(bus) {
     activeBus = bus;
 }
 
-export function getStopsByRouteId(routeId) {
-    fetch("https://pr-oba.live/api/where/stops-for-route/TIM_" + routeId + ".json?key=TEST")
-        .then((response) => response.json())
-        .then((data) => {
-            // console.log(data.data.entry.stopGroupings[0].stopGroups[0].stopIds) ==> stops [] arr
-            // console.log(data.data.entry.stopGroupings[0].stopGroups.length)    ==> 2
-            return data.data.entry.stopGroupings[0].stopGroups[0].stopIds;
-        });
-}
+
 
 export function checkOnline(deviceId) {
   for (let i = 0; i < gOnline.length; i++) {
