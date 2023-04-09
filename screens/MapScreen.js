@@ -55,23 +55,15 @@ import { useNavigation } from '@react-navigation/native'
 
 const Shapes = require('../assets/gtfs/shapes.json')
 
-let ticketStop = null
-export function getTicketStop() {
-  return ticketStop
-}
+
 
 export const MapScreen = () => {
   const [location, setLocation] = useState(null)
   const [errorMsg, setErrorMsg] = useState(null)
   const navigation = useNavigation()
   const [onlyShowOnline, setOnlyShowOnline] = useState(false)
-  const [stops, setStops] = useState([])
+ const [selectedStop, setSelectedStop] = useState([])
 
-
-  const navigateToTicket = () => {
-    navigation.navigate('Ticket')
-  }
- 
   const setOnlyShowOnlineHelper = () => {
     if(onlyShowOnline){
       setOnlyShowOnline(false)
@@ -210,6 +202,7 @@ export const MapScreen = () => {
   }
   })
 }
+
         {
           getStops().map((stop, index) => {
             return (
@@ -224,18 +217,22 @@ export const MapScreen = () => {
                 pinColor={getRouteColor(stop.id)}
               >
                 <Callout>
-                <Text>
+               
+               <Text>
                   {stop.id}
                 </Text>
                 <Text>
                 {stop.name}
                 </Text>
-                {/* <StopRender stopId={stop.id} /> */}
+               <Button onClick={() => setSelectedStop([stop.id, stop.name])} >
+               <Text>Buy Ticket</Text>
+               </Button>
                 </Callout>
               </Marker>
             )
           })
         } 
+        
         
 
         {
@@ -335,13 +332,18 @@ export const MapScreen = () => {
     
       <View style={styles.carousel}>
       <HStack space={4} >    
-      <Button onPress={ setOnlyShowOnlineHelper  } >
+      <Button onClick={ setOnlyShowOnlineHelper  } >
         Online Bus
       </Button>
       <Button  >
         🧭
       </Button>
       </HStack>
+     <View style={styles.stopListContainer}>
+       
+        <Text style={styles.stopListTitle}>Stop List</Text>
+        <Text style={styles.stopListDescription}>Click on a stop to see the bus routes</Text>
+        </View>
       </View>
     </View>
   )

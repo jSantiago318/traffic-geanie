@@ -12,49 +12,62 @@ export const StopRender = ({stop}) => {
   const [stopName, setStopName] = useState([]);
   const [predStop, setPredStop] = useState([]);
   const [currentTime, setCurrentTime] = useState([]);
+  let counter = 0;
+  setInterval(() => {
+    counter++;
+  }, 5000);
+
   useEffect(() => {
-  async function dataFetch(){
-      await fetch(
-        "https://pr-oba.live/api/where/schedule-for-stop/" +
-    stop +
-    ".json?key=TEST"
-        ).then((response) => response.json())
-        .then((data) => {
-          setAllStops(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes)
-          const temp = stopName
-          temp.push(data.data.references.stops[0].name)
-
-        setStopName(data.data.references.stops[0].name)
-        setCurrentTime(data.currentTime);
-        console.log(data.data.references.stops[0].name)
-        });
-   
-
-        await fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/'+stop+'.json?key=TEST').then((response) => response.json())
-        .then((data) => {
-          //   console.log(data.data.entry.arrivalsAndDepartures[0].lastKnownLocation)
-          //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.nextStop)
-          //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.position)
-          //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.vehicleId)
-          //   setActiveBus(data.data.entry.arrivalsAndDepartures[0].tripStatus.vehicleId)
-          if (data.data.entry.arrivalsAndDepartures.length > 0) {
-            const temp = [
-              data.data.entry.arrivalsAndDepartures[0].predicted,
-              data.data.entry.arrivalsAndDepartures[0].predictedArrivalTime,
-              data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
-            ]
-            setPredStop(temp)
-                      } 
-          // console.log(data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime)
-        } );
-
-
-      } 
-      if(stopName.length === 0) {
+      
+      async function dataFetch(){
+        await fetch(
+          "https://pr-oba.live/api/where/schedule-for-stop/" +
+          stop +
+          ".json?key=TEST"
+          ).then((response) => response.json())
+          .then((data) => {
+            setAllStops(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes)
+            const temp = stopName
+            temp.push(data.data.references.stops[0].name)
+            
+            setStopName(data.data.references.stops[0].name)
+            setCurrentTime(data.currentTime);
+            // console.log(data.data.references.stops[0].name)
+          });
+          
+          
+          await fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/'+stop+'.json?key=TEST').then((response) => response.json())
+          .then((data) => {
+            //   console.log(data.data.entry.arrivalsAndDepartures[0].lastKnownLocation)
+            //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.nextStop)
+            //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.position)
+            //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.vehicleId)
+            //   setActiveBus(data.data.entry.arrivalsAndDepartures[0].tripStatus.vehicleId)
+            if (data.data.entry.arrivalsAndDepartures.length > 0) {
+              const temp = [
+                data.data.entry.arrivalsAndDepartures[0].predicted,
+                data.data.entry.arrivalsAndDepartures[0].predictedArrivalTime,
+                data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime
+              ]
+              setPredStop(temp)
+            } 
+            // console.log(data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime)
+          } );
+          
+          
+        } 
+      if(stopName.length === 0 || counter === 2) {
         dataFetch();
+        console.log('refreshed')
+        counter = 0;
       }
     }, [allStops, predStop, stopName]);
-
+    
+      // setInterval(() => {
+      //   dataFetch();
+      //   console.log('refreshed')
+      // }, 6000);
+    
 
 
   
