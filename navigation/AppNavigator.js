@@ -22,8 +22,8 @@ export const AppNavigator = () => {
         {isSignedIn ? (
           <>
             
-            <Drawer.Screen options={{headerBackTitleVisible: true}}  name='Map' component={MapScreen}/>
             <Drawer.Screen options={{headerBackTitleVisible: true}} name='Home' component={HomeScreen}/>
+            <Drawer.Screen options={{headerBackTitleVisible: true}}  name='Map' component={MapScreen}/>
             <Drawer.Screen name='Profile' component={DetailsScreen}/>
             <Drawer.Screen name='Ticket' component={TicketScreen}/>
           </>

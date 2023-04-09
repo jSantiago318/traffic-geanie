@@ -1,4 +1,4 @@
-import { Button, Icon, Input, Text } from 'native-base';
+import { Box, Button, Center, FormControl, Heading, Icon, Input, Text, VStack, } from 'native-base';
 import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
 import { HomeScreen } from '../HomeScreen.js';
@@ -12,9 +12,11 @@ const useInputState = (initialValue = '') => {
 };
 export const RegisterScreen = () => {
   const navigation = useNavigation();
-  const basicInputState = useInputState();
-  const [value, setValue] = React.useState('');
-  const [pNumber, setPNumber] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [phone, setPhone] = React.useState('');
+
   const [secureTextEntry, setSecureTextEntry] = React.useState(true);
   const login = useStore(state => state.login)
   
@@ -41,47 +43,47 @@ export const RegisterScreen = () => {
             flexDirection: 'column',
           },
         ]}>
-            <Text style={styles.title}>
-            Sign Up
-          </Text>
-        <View style={{flex: 2, justifyContent:'center', alignItems: 'center' }} >   
-        <Text style={styles.subtitle} > 
-          Email
-        </Text>
-        <Input
-        style={styles.input}
-        placeholder='enter email'
-        size='large'
-        {...basicInputState}
-      />
-
-<Text style={styles.subtitle} > 
-          Phone Number
-        </Text>
-        <Input
-        style={styles.input}
-        placeholder='enter phone number'
-        size='large'
-        value={pNumber}
-        onChangeText={setPNumber}
-      />
-      <Text style={styles.subtitle} > 
-          Password
-        </Text>
-      <Input
-          style={styles.input}
-          placeholder='enter password'
-          value={value}
-          secureTextEntry={secureTextEntry}
-          onChangeText={setValue}
-          accessoryRight={renderInputIcon}
-        />
-        </View>
-        <View style={{flex: 3, justifyContent:'center', alignItems: 'center' }} >
-        <Button style={styles.buttonBack} accessoryRight={StarIcon} onPress={login} >
-        Sign Up
-      </Button>
-      </View>
+     <Center w="100%">
+      <Box safeArea p="2" w="90%" maxW="290" py="8">
+        <Heading size="lg" color="coolGray.800" _dark={{
+        color: "warmGray.50"
+      }} fontWeight="semibold">
+          Welcome
+        </Heading>
+        <Heading mt="1" color="coolGray.600" _dark={{
+        color: "warmGray.200"
+      }} fontWeight="medium" size="xs">
+          Sign up to continue!
+        </Heading>
+        <VStack space={3} mt="5">
+          <FormControl>
+            <FormControl.Label>Email</FormControl.Label>
+            <Input />
+          </FormControl>
+          <FormControl>
+            <FormControl.Label>Phone number</FormControl.Label>
+            <Input />
+          </FormControl>
+          <FormControl>
+            <FormControl.Label>Password</FormControl.Label>
+            <Input type="password" />
+          </FormControl>
+          <FormControl 
+            passwordRules="required: lower; required: upper; required: digit; required: [-]; minlength: 8;"
+            password
+           >
+            <FormControl.Label>Confirm Password</FormControl.Label>
+            <Input type="password" />
+          </FormControl>
+          <Button mt="2" colorScheme="indigo"   onPress={() => {
+            login(email, password, phone)
+          }}
+           >
+            Sign up
+          </Button>
+        </VStack>
+      </Box>
+    </Center>
       </View>
     
     

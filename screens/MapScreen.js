@@ -1,56 +1,34 @@
 import * as Location from 'expo-location'
 
 import {
-  Box,
   Button,
-  Center,
-  Container,
-  Divider,
   HStack,
-  Icon,
-  Select,
-  Spacer,
-  Stack,
   Text,
-  VStack,
 } from 'native-base'
 import {
   Dimensions,
   Image,
-  Pressable,
-  ScrollView,
   StatusBar,
   StyleSheet,
   View,
 } from 'react-native'
 import MapView, {
-  Animated,
-  AnimatedRegion,
   Callout,
-  Circle,
   Marker,
-  Overlay,
   Polyline,
 } from 'react-native-maps'
-import React, { Component, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  checkOnline,
-  getDeviceCoords,
-  getOnline,
   getOnlineById,
-  getPosition,
-  getRouteIdforAgency
+  getPosition
 } from '../components/URLFetcher'
-import { getFirstOfRoute, getRouteByStopId, getStopsByRouteId } from '../assets/gtfs/stops'
 import {
-  getRouteByCat,
-  getRouteById,
   getRouteColor,
   getRoutes
 } from '../assets/gtfs/route'
 
-import { StopRender } from '../components/OBAFetches/StopRender'
 import { getStops } from '../assets/gtfs/stops'
+import {startRoute} from '../components/CRUD/Ticket'
 import { useNavigation } from '@react-navigation/native'
 
 const Shapes = require('../assets/gtfs/shapes.json')
@@ -224,7 +202,7 @@ export const MapScreen = () => {
                 <Text>
                 {stop.name}
                 </Text>
-               <Button onClick={() => setSelectedStop([stop.id, stop.name])} >
+               <Button onClick={() => startRoute(stop.id, stop.name)} >
                <Text>Buy Ticket</Text>
                </Button>
                 </Callout>
@@ -340,7 +318,6 @@ export const MapScreen = () => {
       </Button>
       </HStack>
      <View style={styles.stopListContainer}>
-       
         <Text style={styles.stopListTitle}>Stop List</Text>
         <Text style={styles.stopListDescription}>Click on a stop to see the bus routes</Text>
         </View>

@@ -4,12 +4,20 @@ import { StyleSheet, View } from 'react-native';
 import { getActiveBus, getCurrentTime, getOnlineActiveTripsCount, getOnlineCount, getRouteIdforAgency, getRoutesURL, getScheduleForStop } from '../components/URLFetcher';
 import {useNavigation, useTheme} from "@react-navigation/native";
 
+import BouncingPreloader from 'react-native-bouncing-preloader';
 import { CheckIcon } from 'native-base';
 import DataFetcher from "../components/DataFetcher";
 import {RoutesList} from "../components/RoutesList.js";
 import useStore from "../store/useStore";
 
 // RN Code
+
+let loader = true
+let counter = 2
+
+// setInterval(() => {
+
+
 const Col = ({ numRows, children }) => {
   return  (
     <View style={stylesLayout[`${numRows}col`]}>{children}</View>
@@ -115,7 +123,16 @@ export const HomeScreen = () => {
       {
         selectedRoute.length > 0 ? (
           <RoutesList route={selectedRoute}  />
-        ) : (null)
+        ) : (
+          {/* <BouncingPreloader
+          icons={[
+            require('../../traffic-geanie/assets/images/oba.png'),
+          ]}
+          leftRotation="-680deg"
+          rightRotation="360deg"
+          speed={1000}
+        /> */}
+        )
       }
     </View>
   )
