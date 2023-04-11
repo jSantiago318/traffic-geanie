@@ -3,6 +3,7 @@ import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 
 import { HomeScreen } from '../HomeScreen.js';
 import React from 'react';
+import axios from 'axios';
 import {useNavigation} from "@react-navigation/native";
 import useStore from "../../store/useStore";
 
@@ -16,6 +17,7 @@ export const RegisterScreen = () => {
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
   const [phone, setPhone] = React.useState('');
+
 
   const [secureTextEntry, setSecureTextEntry] = React.useState(true);
   const login = useStore(state => state.login)
@@ -57,27 +59,45 @@ export const RegisterScreen = () => {
         </Heading>
         <VStack space={3} mt="5">
           <FormControl>
-            <FormControl.Label>Email</FormControl.Label>
-            <Input />
+            <FormControl.Label>Phone</FormControl.Label>
+            <Input 
+              onChangeText={text => setPhone(text)}
+               variant={ "filled" }
+              
+             />
           </FormControl>
           <FormControl>
-            <FormControl.Label>Phone number</FormControl.Label>
-            <Input />
+            <FormControl.Label>Email</FormControl.Label>
+            <Input autoCapitalize='none' onChangeText={text => setEmail(text)}
+                />
           </FormControl>
           <FormControl>
             <FormControl.Label>Password</FormControl.Label>
-            <Input type="password" />
+            <Input type="password" onChangeText={text => setPassword(text)} />
           </FormControl>
           <FormControl 
             passwordRules="required: lower; required: upper; required: digit; required: [-]; minlength: 8;"
             password
            >
             <FormControl.Label>Confirm Password</FormControl.Label>
-            <Input type="password" />
+            <Input onChangeText={text => setPassword(text)}
+               type="password" />
           </FormControl>
-          <Button mt="2" colorScheme="indigo"   onPress={() => {
-            login(email, password, phone)
-          }}
+          <Button mt="2" colorScheme="indigo"     onPress={async () => {
+              try {
+                const url = 'https://www.api.pr-oba.live/createUser?email='+email + '&password='+password + '&phone='+phone
+                // console.log(url)
+                const response = await fetch(url);
+                const json = await response.json();
+                // if(json.length > 0){
+                  console.log(json)
+                  navigation.navigate('Home')
+
+                // }
+              } catch (error) {
+                console.error(error);
+              }
+                 }}
            >
             Sign up
           </Button>

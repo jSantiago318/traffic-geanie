@@ -28,7 +28,6 @@ import {
 } from '../assets/gtfs/route'
 
 import { getStops } from '../assets/gtfs/stops'
-import {startRoute} from '../components/CRUD/Ticket'
 import { useNavigation } from '@react-navigation/native'
 
 const Shapes = require('../assets/gtfs/shapes.json')
@@ -202,7 +201,7 @@ export const MapScreen = () => {
                 <Text>
                 {stop.name}
                 </Text>
-               <Button onClick={() => startRoute(stop.id, stop.name)} >
+               <Button >
                <Text>Buy Ticket</Text>
                </Button>
                 </Callout>
