@@ -2126,7 +2126,7 @@ export function getNextArrivals(){
     const getDate = currTime.toLocaleDateString()
     let activeRoutes = []
     let activeRoutesId = []
-    console.log(getTime)
+    // console.log(getTime)
     for (const stop of stopTime) {
         let arrivalTime = new Date();
         arrivalTime.setHours(stop.arrival.substring(0, 2))
@@ -2150,7 +2150,7 @@ export function getNextArrivals(){
         
     
     }
-        console.log(activeRoutes)
+        // console.log(activeRoutes)
     
         return activeRoutes
 }

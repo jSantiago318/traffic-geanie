@@ -57,7 +57,7 @@ export const StopRender = ({stop}) => {
         } 
       if(stopName.length === 0 || counter === 2) {
         dataFetch();
-        console.log('refreshed')
+        // console.log('refreshed')
         counter = 0;
       }
     }, [allStops, predStop, stopName]);

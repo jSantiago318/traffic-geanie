@@ -31,15 +31,6 @@ export const LoginScreen = ({ navigation }) => {
           <View style={styles.logoContainer}>
           <Image style={styles.logo} alt='' source={logo} resizeMode={"contain"} />
 
-          <Text
-            fontWeight="600"
-            color="coolGray.800"
-            _dark={{
-              color: "warmGray.50",
-            }}
-          >
-            Mayaguez Bus Tracker
-          </Text>
                     </View>
           
           <Formik
@@ -137,7 +128,7 @@ export const LoginScreen = ({ navigation }) => {
       {/* App info footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>
-          Expo Firebase Starter App (based on managed workflow)
+          This application if used for reasearch purposes
         </Text>
       </View>
     </>

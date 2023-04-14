@@ -18,7 +18,7 @@ export const StopRenderMinimal = ({stop}) => {
   useEffect(() => {
       
       async function dataFetch(){
-        console.log(stop)
+        // console.log(stop)
         await fetch(
           "https://pr-oba.live/api/where/schedule-for-stop/" +
           stop +

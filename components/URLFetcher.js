@@ -149,7 +149,7 @@ export function setActiveBus(bus) {
 export function checkOnline(deviceId) {
   for (let i = 0; i < gOnline.length; i++) {
     if (gOnline[i].deviceId === deviceId) {
-      console.log(gOnline[i].status);
+      // console.log(gOnline[i].status);
       return gOnline[i].status;
     }
   }
