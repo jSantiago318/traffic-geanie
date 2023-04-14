@@ -5,9 +5,9 @@ export default {
     name: 'MayaBus',
     slug: 'MayaBus',
     platforms: ['ios', 'android'],
-    version: '0.15.0',
+    version: '1.15.0',
     orientation: 'portrait',
-    icon: './assets/flame.png',
+    icon: './assets/car-blue.png',
     
     updates:{
       "url": "https://u.expo.dev/c73948ff-e76e-488d-8d47-48a9097fcd54"
@@ -28,10 +28,10 @@ export default {
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/car-blue.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 3,
+      "versionCode": 4,
       "package": "com.joshua.MayaBus"
     },
     extra: {
