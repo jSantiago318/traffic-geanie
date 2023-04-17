@@ -19,6 +19,7 @@ import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import { getStops, getStopsByRouteId } from "../assets/gtfs/stops";
 
+import { Colors } from "../config";
 import { Pedometer } from 'expo-sensors';
 import {StopRenderMinimal} from "../components/OBAFetches/StopRenderMinimal";
 import {database} from "../config/firebase";
@@ -47,6 +48,8 @@ export const MapScreen = () => {
   const [showAll, setShowAll] = useState(true);
   const [count, setCount] = useState(0);
   const [showTrip, setShowTrip] = useState(true);
+  const [showBus, setShowBus] = useState(false);
+  const [stopsel, setStopSel] = useState(false);
   const [userLocHistory, setUserLocHistory] = useState([]);
 
   const [startTime, setStartTime] = useState(0);
@@ -170,6 +173,16 @@ tracksViewChanges={true}
                     Bus {device.deviceId} - {isOnline}
                   </Text>
                   <Text> {device.accuracy}</Text>
+                 
+                      <Button
+                        onPress={() => {
+                          setShowTrip(false);
+                          setShowBus(true)
+                        }}
+                      >
+                        <Text>Follow Bus</Text>
+                      </Button>
+                 
                 </Callout>
               </Marker>
             );
@@ -201,6 +214,15 @@ tracksViewChanges={true}
                       Bus {device.deviceId} - {isOnline}
                     </Text>
                     <Text> {device.accuracy}</Text>
+                    <Button
+                        onPress={() => {
+                          setShowTrip(false);
+                          setShowBus(true)
+                        }}
+                      >
+                        <Text>Follow Bus</Text>
+                      </Button>
+                 
                   </Callout>
                 </Marker>
               );
@@ -253,6 +275,12 @@ tracksViewChanges={true}
                 pinColor={getRouteColor(stop.id)}
                 onPress={() => {
                   setSelectedStop(stop.id);
+                  
+                }}
+                onLongPress={() => {
+                  const substring = stop.id.substring(4, 6);
+                  console.log(substring);
+                  // setSelectedRoute(substring);
                 }}
               >
                 <Callout  >
@@ -397,22 +425,23 @@ tracksViewChanges={true}
         <HStack space={4}>
           {onlyShowOnline ? (
             <Button onPress={() => setOnlyShowOnline(false)}
-              style={{ backgroundColor: "grey"}}
+              style={styles.settingBtn}
             >
               Show offline
             </Button>
           ) : (
-            <Button onPress={() => setOnlyShowOnline(true)}>Show online</Button>
+            <Button               style={styles.settingBtn}
+ onPress={() => setOnlyShowOnline(true)}>Show online</Button>
           )}
           <Button
-            style={{ backgroundColor: "grey" }}
+              style={styles.settingBtn}
             onPress={() => {
               return _mapView.animateToRegion(
                 {
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
-                  latitudeDelta: 0.0122,
-                  longitudeDelta: 0.0121,
+                  latitudeDelta: 0.0322,
+                  longitudeDelta: 0.0321,
                 },
                 1000
               );
@@ -423,10 +452,55 @@ tracksViewChanges={true}
         </HStack>
 
         {/*  TICKET */}
+        <View style={styles.tripContainer}>
 
         {
+          stopsel ? (     
+        <>
+        <Text style={styles.stopListTitle}>Ticket</Text>
+        <Text>Route: {selectedRoute}</Text>
+        <MyTimer  />
+       
+        <HStack
+        >
+
+        <Text>First Stop: <StopRenderMinimal stop={"TIM_"+startStop} /></Text>
+        </HStack>
+        <HStack>
+        <Text>Final Stop: <StopRenderMinimal stop={"TIM_"+finalStop} /></Text>
+        </HStack>
+        <HStack>
+        <Button
+        
+        onPress={async () => {
+          setShowTrip(true);
+               try {
+    const id = getAuth().currentUser.uid;
+    const docRef = doc(database, "users", id);
+    await addDoc(collection(docRef, "trips"), {
+        route: selectedRoute,
+              startStop: startStop,
+              finalStop: finalStop,
+              startTime: startTime,
+              stopTime: new Date().getTime(),
+              location: {lat: location.coords.latitude, lon: location.coords.longitude}
+              });
+  } catch (e) {
+    console.error("Error adding document: ", e);
+  }
+          
+        }}
+        
+        >
+          End Trip
+        </Button>
+        </HStack>
+        </>
+      ) : null
+        }
+        {
           showTrip? (
-            <View style={styles.tripContainer}>
+            <>
           <Text style={styles.stopListTitle}>Trip Ticket</Text>
           <Center>
             <FormControl isRequired>
@@ -581,51 +655,16 @@ tracksViewChanges={true}
               ):null
            }
           </Center>
-        </View>
-          ):(
-        
-            <View style={styles.tripContainer}>
-            <Text style={styles.stopListTitle}>Ticket</Text>
-            <Text>Route: {selectedRoute}</Text>
-            <MyTimer  />
-           
-            <HStack
-            >
-
-            <Text>First Stop: <StopRenderMinimal stop={"TIM_"+startStop} /></Text>
-            </HStack>
-            <HStack>
-            <Text>Final Stop: <StopRenderMinimal stop={"TIM_"+finalStop} /></Text>
-            </HStack>
-            <HStack>
-            <Button
-            
-            onPress={async () => {
-              setShowTrip(true);
-                   try {
-        const id = getAuth().currentUser.uid;
-        const docRef = doc(database, "users", id);
-        await addDoc(collection(docRef, "trips"), {
-            route: selectedRoute,
-                  startStop: startStop,
-                  finalStop: finalStop,
-                  startTime: startTime,
-                  stopTime: new Date().getTime(),
-                  location: {lat: location.coords.latitude, lon: location.coords.longitude}
-                  });
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
-              
-            }}
-            
-            >
-              End Trip
-            </Button>
-            </HStack>
-            </View>
-          )
+        </>
+          ):null
         }
+        {
+          showBus ? (
+            <Text>Bus</Text>
+          ) : null
+        }
+        
+      </View>
       </View>
     </View>
   );
@@ -691,5 +730,7 @@ const styles = StyleSheet.create({
     width: 300,
     top: Dimensions.get("window").height * 0.5,
     left: Dimensions.get("window").width * 0.1,
-  },
+  }, settingBtn:{
+    backgroundColor: Colors.highlihgted
+  }
 });

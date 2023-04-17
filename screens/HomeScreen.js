@@ -1,4 +1,4 @@
-import { Box, Button, Center, FlatList, FormControl, HStack, Input, Modal, Select, Text } from 'native-base';
+import { Box, Button, Center, FlatList, FormControl, HStack, Input, Modal, Select, Stack, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { addDoc, collection, doc, getDoc, setDoc, where } from 'firebase/firestore';
@@ -6,6 +6,7 @@ import { getActiveBus, getCurrentTime, getOnlineActiveTripsCount, getOnlineCount
 
 // import BouncingPreloader from 'react-native-bouncing-preloader';
 import { CheckIcon } from 'native-base';
+import { Colors } from '../config';
 import {RoutesList} from "../components/RoutesList.js";
 import {database} from '../config/firebase';
 import { getAuth } from 'firebase/auth';
@@ -69,58 +70,32 @@ useEffect(() => {
   return (
     <View style={styles.container}>
       {/* <DataFetcher/> */}
-      <Text fontSize="2xl" bold>Mayaguez Bus Tracker</Text>
-
-      <View style={stylesLayout.app}>
-      <Row>
-        <Col numRows={2}>
-        <View style={styles.card} >
-        <Text fontSize={'md'} bold >Online Buses: {busCount}</Text>
-        <Text fontSize={'md'} bold >Active Routes: {activeTripCount}
-        </Text>
-      </View>
-        </Col>
-        <Col numRows={2}>
-      <View style={styles.card} >
-        <Text fontSize={'md'} bold >Alerts</Text>
-        <HStack>
-
-        <Button style={{borderRadius: 15, marginLeft: 5 }} onPress={() => setAlarmModalVisible(!alarmModalVisible)} >
-          <Text>🚨</Text>
-        </Button>
-        <Button style={{borderRadius: 15, marginLeft: 5 }}  >
-          <Text>🔔</Text>
-        </Button>
-        </HStack>
-      </View>
-        </Col>
-      </Row>
-    </View>
-    <Center style={{
+      <Center style={{
         width: '100%',
         borderRadius: 10,
-        padding: 10,
+        padding: 5,
         }} >
 
      {
       alarmModalVisible ? (
-        <Modal isOpen={alarmModalVisible} onClose={() => setAlarmModalVisible(false)}>
-        <Modal.Content maxWidth="400px">
+        <SafeAreaView style={{flex: 1}}>
+        <Modal     isOpen={alarmModalVisible} onClose={() => setAlarmModalVisible(false)}>
+        <Modal.Content maxWidth="80%">
           <Modal.CloseButton />
-          <Modal.Header>Whats the problem?</Modal.Header>
+          <Modal.Header>Is there a problem?</Modal.Header>
           <Modal.Body>
-          <FormControl.Label>Choose alarm</FormControl.Label>
-        <Select minWidth="200" accessibilityLabel="Choose alarm" onValueChange={(value) => setAlarmSelect(value)} placeholder="Choose alarm" _selectedItem={{
-        bg: "teal.600",
+          <FormControl.Label>Choose report</FormControl.Label>
+        <Select minWidth="200" accessibilityLabel="Choose report" onValueChange={(value) => setAlarmSelect(value)} placeholder="Choose report" _selectedItem={{
+        bg: Colors.highlihgted,
         endIcon: <CheckIcon size={5} />
       }} mt="1">
-          <Select.Item label="Autobus Desconectado" value="p1" />
-          <Select.Item label="Autobus Tarde" value="p2" />
-          <Select.Item label="Problema con Conexion" value="p3" />
-          <Select.Item label="Problema con aplicacion" value="p4" />
+          <Select.Item label="Problem with route" value="p1" />
+          <Select.Item label="Problem with Bus" value="p2" />
+          <Select.Item label="Feedback/Recomendation/Comments" value="p3" />
+          <Select.Item label="Problem with app" value="p4" />
         </Select>
             <FormControl mt="3">
-              <FormControl.Label>Comentarios</FormControl.Label>
+              <FormControl.Label>Comment</FormControl.Label>
               <Input onChangeText={(value) => setAlarmCommentary(value)} />
             </FormControl>
           </Modal.Body>
@@ -152,75 +127,48 @@ useEffect(() => {
           </Modal.Footer>
         </Modal.Content>
       </Modal>
-      ) : null
-     }
-     {
-      alertModalVisible ? (
-        <Modal isOpen={alertModalVisible} onClose={() => setAlertModalVisible(false)}>
-        <Modal.Content maxWidth="400px">
-          <Modal.CloseButton />
-          <Modal.Header>What is the alert? 🚨</Modal.Header>
-          <Modal.Body>
-          <FormControl.Label>Choose alert</FormControl.Label>
-        <Select minWidth="200" accessibilityLabel="Choose alert" onValueChange={(value) => setAlertModalVisible(value)} placeholder="Choose alert" _selectedItem={{
-        bg: "teal.600",
-        endIcon: <CheckIcon size={5} />
-      }} mt="1">
-          <Select.Item label="Autobus Desconectado" value="p1" />
-          <Select.Item label="Autobus Tarde" value="p2" />
-          <Select.Item label="Problema con Conexion" value="p3" />
-          <Select.Item label="Problema con aplicacion" value="p4" />
-        </Select>
-            <FormControl mt="3">
-              <FormControl.Label>Comentarios</FormControl.Label>
-              <Input onChangeText={(value) => setAlarmCommentary(value)} />
-            </FormControl>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-              setAlertModalVisible(false);
-            }}>
-                Cancel
-              </Button>
-              <Button onPress={() => {
-                
-                // add to database
-                push(
-                  ref(
-                    database, 'users/' + getAuth().currentUser.uid  + '/alets'
-                  ),{
-                    alert: alarmSelect,
-                    commentary: alarmCommentary,
-                    route: selectedRoute,
-                  }
-                )
-                
-
-              setAlertModalVisible(false);
-            }}>
-                Save
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
+      </SafeAreaView>
       ) : null
      }
 
+    </Center>
+      <View style={stylesLayout.app}>
+      <Center>
 
-      <Box  style={styles.selectRoute}>
+      <Text fontSize="xl" bold>Mayaguez Bus Tracker</Text>
+      </Center>
+
+        <View style={styles.card} >
+        <HStack>
+        <Stack>
+
+        <Text fontSize={'md'} bold >Online Buses: {busCount}</Text>
+        <Text fontSize={'md'} bold >Connected Routes: {activeTripCount}
+        </Text>
+        </Stack>
+
+<Button style={styles.alertBtn} onPress={() => setAlarmModalVisible(!alarmModalVisible)} >
+  <Text>🚨</Text>
+</Button>
+<Button style={styles.alertBtn}  >
+  <Text>🔔</Text>
+</Button>
+</HStack>
+ <Box  style={styles.selectRoute}>
       <Text> 
-      Selected Route: </Text>
+      Select Route: </Text>
         <Select  style={{
         width: '100%',
         borderRadius: 10,
         padding: 10,
         }} selectedValue={selectedRoute}  accessibilityLabel="Choose a route" placeholder="Choose a route" _selectedItem={{
-        bg: "#93e1d8",
+        bg: "teal.600",
         endIcon: <CheckIcon size="5" />
       }} mt={1} onValueChange={itemValue => {
         setSelectedRoute(itemValue) }}>
+        <>
+
+        
       {
         routes != null ? (
             routes.map((item, index) => {
@@ -230,10 +178,13 @@ useEffect(() => {
             }
           )) : null
       }
-         
+      </>
         </Select>
       </Box>
-    </Center>
+      </View>
+        
+    </View>
+   
       {
         selectedRoute.length > 0 ? (
           <RoutesList route={selectedRoute}  />
@@ -251,14 +202,13 @@ const styles = StyleSheet.create({
     width: '90%',
     borderRadius: 10,
     padding: 10,
-    backgroundColor: '#93e1d8',
+    backgroundColor: Colors.secondary,
   },
   
   button: {
     marginTop: 5,
     width: '40%',
-    backgroundColor: '#93e1d8',
-    tintColor: '#93e1d8',
+    backgroundColor: Colors.secondary,
     borderRadius: 5,
     borderColor: 'transparent',
   },
@@ -266,8 +216,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    backgroundColor: '#ddfff7',
-    padding: 20,
+    backgroundColor: Colors.backgroundColor,
+    padding: 15
   },
   layout: {
     flex: 1,
@@ -284,13 +234,23 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
     borderRadius: 10,
-    backgroundColor: '#93e1d8',
+    backgroundColor: Colors.secondary,
   }, selectRoute :{
     width: '100%',
     borderRadius: 10,
     padding: 10,
-    backgroundColor: '#93e1d8',
+    backgroundColor: Colors.secondary,
+  },
+  alertBtn: {
+    backgroundColor:'transparent',
+    marginLeft: 10,
+    padding: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 50,
+
   }
+  
   
   
 });

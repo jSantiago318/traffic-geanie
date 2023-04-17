@@ -2,6 +2,8 @@ import { HStack, Icon, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, } from 'react-native';
 
+import {Colors} from '../../config/';
+
 export const StopRender = ({stop}) => {
 
 
@@ -121,10 +123,9 @@ const TimePred = () => {
   return (
   <>
     <View style={styles.card}>
-    <HStack space={2} alignItems="center">
-      <Text >🟢</Text>
+    <HStack space={2} justifyContent={'space-between'}>
       {
-        stopName.length > 0 ? <Text> {stopName} </Text> :<Text> loading... </Text>
+        stopName.length > 0 ? <Text> {stopName} </Text> :<Text> loading.. </Text>
       }
       {/* {
         allStops.length > 0 ? <Text> {new Date(getNextStop(allStops)).toLocaleTimeString()} </Text> :<Text> loading... </Text>
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
   }, timeSch: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'grey',
+    color: Colors.schText,
     }, 
   
 });

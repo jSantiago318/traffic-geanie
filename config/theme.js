@@ -4,5 +4,12 @@ export const Colors = {
   black: '#222222',
   white: '#ffffff',
   mediumGray: '#6e6869',
-  red: '#fc5c65'
+  red: '#fc5c65',
+  highlihgted: '#039be5',
+  highlihgtedText: '#ffffff',
+  textMain: '#222222',
+  lightGray: '#f8f4f4',
+  secondary: '#8CCCF4',
+  schText: '#9C9C9C',
+  predictionText: '#94EC94',
 };

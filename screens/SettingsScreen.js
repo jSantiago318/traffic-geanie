@@ -35,7 +35,6 @@ const SettingsBtn = ({secc, icon}) => {
       justifyContent: 'space-between',
       alignItems: 'center',
     }}
-    // rightIcon={}
     >
       <HStack
       space={10}
@@ -56,7 +55,7 @@ const SettingsEnable = ({secc, icon}) => {
     variant={'ghost'} 
     style={{
       marginVertical: 5,
-      width: "70%",
+      width: "100%",
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -64,6 +63,7 @@ const SettingsEnable = ({secc, icon}) => {
     >
       <HStack
       space={10}
+      justifyContent={ 'space-between'}
       alignItems="center"
     >
     <Text>
@@ -106,19 +106,21 @@ export const SettingsScreen = () => {
         </Button>
       </HStack>
            <Text>
-                Preferences
+                Account
               </Text>
          <Stack>
-              <SettingsBtn secc={'Language'} icon={'book'} />
-              <SettingsBtn secc={'Theme'} icon={'theme-light-dark'} />
-              <SettingsEnable secc={'Admin Access'} icon={'accessibility'} />
-            <SettingsBtn secc={'Account'} icon={'account'} />
-            <SettingsBtn secc={'Notifications'} icon={'bell'} />
-            <SettingsBtn secc={'Privacy'} icon={'shield'} />
-            <SettingsBtn secc={'Help'} icon={'help-circle'} />
-            <SettingsBtn secc={'About'} icon={'information'} />
-            
+              <SettingsEnable style={styles.btn} secc={'Dark mode'} icon={'theme-light-dark'} />
+              <SettingsEnable style={styles.btn} secc={'Admin Access'} icon={'accessibility'} />
+            <SettingsBtn style={styles.btn} secc={'Notifications'} icon={'bell'} />
          </Stack>
+         <Text>
+                Settings
+              </Text>
+          <Stack>
+            <SettingsBtn style={styles.btn} secc={'Privacy'} icon={'shield'} />
+            <SettingsBtn style={styles.btn} secc={'Help'} icon={'help-circle'} />
+            <SettingsBtn style={styles.btn} secc={'About'} icon={'information'} />
+            </Stack>
         </Container>
       </Center>
 

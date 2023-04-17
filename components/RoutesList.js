@@ -2,6 +2,7 @@ import { FlatList, HStack, Icon, Text, VStack } from 'native-base';
 import React, { useEffect, useState, } from 'react';
 import { StyleSheet, View, } from 'react-native';
 
+import { Colors } from '../config';
 import { StopRender } from './OBAFetches/StopRender';
 import {getStopsByRouteId} from "../components/URLFetcher";
 import {useNavigation} from "@react-navigation/native";
@@ -50,18 +51,14 @@ export const RoutesList = ({route}) => {
 
 const styles = StyleSheet.create({
   container: {
-    maxHeight: '50%',
+    maxHeight: '55%',
     width: '100%',
     borderRadius: 10,
-    backgroundColor: '#93e1d8',
+    backgroundColor: Colors.secondary,
+    padding: 10,
   }, timePred:{
     fontSize: 20,
     fontWeight: 'bold',
-  }, card: {
-    margin: 5,
-    padding: 5,
-    borderRadius: 10,
-    justifyContent: 'center',
-  }
+  }, 
   
 });

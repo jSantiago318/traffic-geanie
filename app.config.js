@@ -2,8 +2,8 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: 'MayaBus',
-    slug: 'mayabus',
+    name: 'Bus Transit Tracker',
+    slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
     version: '1.15.0',
@@ -25,19 +25,19 @@ export default {
     assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
-      bundleIdentifier: 'com.josiba.MayaBus',
+      bundleIdentifier: 'com.josiba.mayatransit',
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/car-blue.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 4,
-      "package": "com.josiba.MayaBus"
+      "versionCode": 2,
+      "package": "com.josiba.mayatransit"
     },
     extra: {
       "eas": {
-        "projectId": "5b970694-53a2-40c3-8c93-dff502ffa57f"      },
+        "projectId": "2dd6aac0-107b-4e54-87b6-d632e1083aec"      },
       apiKey: process.env.API_KEY,
       authDomain: process.env.AUTH_DOMAIN,
       projectId: process.env.PROJECT_ID,
