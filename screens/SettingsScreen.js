@@ -9,11 +9,11 @@ import {
   Switch,
   Text,
 } from "native-base";
+import { Colors, auth } from "../config";
 import { StyleSheet, View } from "react-native";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { auth } from "../config";
 import {
   collection,
 } from "firebase/firestore";
@@ -28,13 +28,7 @@ const SettingsBtn = ({secc, icon}) => {
   return (
     <Button
     variant={'ghost'} 
-    style={{
-      marginVertical: 5,
-      width: "70%",
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    }}
+    style={styles.subText}
     >
       <HStack
       space={10}
@@ -89,37 +83,23 @@ export const SettingsScreen = () => {
       
       <Center>
         <Container>
-        <HStack>
-        <Text
-          style={{
-            fontSize: 14,
-            fontWeight: "bold",
-            textAlign: "center",
-            marginVertical: 20,
-          }}
+        <Text style={styles.text}
         >
           {" "}
           Email: {getAuth().currentUser?.email}{" "}
         </Text>
-        <Button title="Log Out" variant={"ghost"} onPress={handleLogout}>
-          Log Out
-        </Button>
-      </HStack>
-           <Text>
-                Account
-              </Text>
-         <Stack>
-              <SettingsEnable style={styles.btn} secc={'Dark mode'} icon={'theme-light-dark'} />
-              <SettingsEnable style={styles.btn} secc={'Admin Access'} icon={'accessibility'} />
-            <SettingsBtn style={styles.btn} secc={'Notifications'} icon={'bell'} />
-         </Stack>
-         <Text>
+        
+         <Text style={styles.text} >
                 Settings
               </Text>
           <Stack>
+              <SettingsEnable style={styles.btn} secc={'Dark mode'} icon={'theme-light-dark'} />
             <SettingsBtn style={styles.btn} secc={'Privacy'} icon={'shield'} />
             <SettingsBtn style={styles.btn} secc={'Help'} icon={'help-circle'} />
             <SettingsBtn style={styles.btn} secc={'About'} icon={'information'} />
+            <Button style={styles.logout} title="Log Out" variant={"ghost"} onPress={handleLogout}>
+          Log Out
+        </Button>
             </Stack>
         </Container>
       </Center>
@@ -131,5 +111,29 @@ export const SettingsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.backgroundColor,
+  }, 
+  btn: {
+    marginVertical: 5,
+    width: "100%",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
+  text: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+  logout: {
+    margin: 5
+  },
+  subText: {
+    fontSize: 14,
+    fontWeight: "normal",
+    marginTop: 10,
+  }
+
+
+
 });

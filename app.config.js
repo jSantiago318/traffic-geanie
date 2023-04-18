@@ -6,7 +6,7 @@ export default {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '1.15.0',
+    version: '1.17.0',
     orientation: 'portrait',
     icon: './assets/car-blue.png',
     
@@ -17,7 +17,7 @@ export default {
     splash: {
       image: './assets/splash.png',
       resizeMode: 'cover',
-      backgroundColor: '#F57C00'
+      backgroundColor: '#ffffff'
     },
     updates: {
       fallbackToCacheTimeout: 0
@@ -29,7 +29,7 @@ export default {
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/car-blue.png",
+        "foregroundImage": "./assets/car-online.png",
         "backgroundColor": "#FFFFFF"
       },
       "versionCode": 2,

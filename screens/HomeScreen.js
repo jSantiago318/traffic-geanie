@@ -1,4 +1,4 @@
-import { Box, Button, Center, FlatList, FormControl, HStack, Input, Modal, Select, Stack, Text } from 'native-base';
+import { Box, Button, Center, FlatList, FormControl, HStack, Input, Modal, SafeAreaView, Select, Stack, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { addDoc, collection, doc, getDoc, setDoc, where } from 'firebase/firestore';
@@ -10,25 +10,6 @@ import { Colors } from '../config';
 import {RoutesList} from "../components/RoutesList.js";
 import {database} from '../config/firebase';
 import { getAuth } from 'firebase/auth';
-
-// RN Code
-
-let loader = true
-let counter = 2
-
-// setInterval(() => {
-
-
-const Col = ({ numRows, children }) => {
-  return  (
-    <View style={stylesLayout[`${numRows}col`]}>{children}</View>
-  )
-}
-
-const Row = ({ children }) => (
-  <View style={stylesLayout.row}>{children}</View>
-)
-
 
 export const HomeScreen = () => {
   const [routes, setRoutes] = React.useState([]);
@@ -91,8 +72,8 @@ useEffect(() => {
       }} mt="1">
           <Select.Item label="Problem with route" value="p1" />
           <Select.Item label="Problem with Bus" value="p2" />
-          <Select.Item label="Feedback/Recomendation/Comments" value="p3" />
-          <Select.Item label="Problem with app" value="p4" />
+          <Select.Item label="Problem with app" value="p3" />
+          <Select.Item label="Feedback or Comment" value="p4" />
         </Select>
             <FormControl mt="3">
               <FormControl.Label>Comment</FormControl.Label>

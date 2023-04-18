@@ -13,7 +13,7 @@ import {
 } from "native-base";
 import { Dimensions, Image, StatusBar, StyleSheet, View } from "react-native";
 import MapView, { Callout, Marker, Polyline } from "react-native-maps";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { setTimeout, useEffect, useState } from "react";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
@@ -39,48 +39,16 @@ export const MapScreen = () => {
   const [errorMsg, setErrorMsg] = useState(null);
   const navigation = useNavigation();
   const [onlyShowOnline, setOnlyShowOnline] = useState(true);
-  const [showTripModal, setShowTripModal] = useState(false);
   const [startStop, setStartStop] = useState(null);
   const [finalStop, setFinalStop] = useState(null);
   const [selectedStop, setSelectedStop] = useState([]);
-   let endStop = 0
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [showAll, setShowAll] = useState(true);
-  const [count, setCount] = useState(0);
   const [showTrip, setShowTrip] = useState(true);
-  const [showBus, setShowBus] = useState(false);
-  const [stopsel, setStopSel] = useState(false);
   const [userLocHistory, setUserLocHistory] = useState([]);
-
-  const [startTime, setStartTime] = useState(0);
-  const [timeT, setTimeT] = useState(0);
-  const [endTime, setEndTime] = useState(0);
- 
-
-  function MyTimer() {
-    const {
-      seconds,
-      minutes,
-      hours,
-      days,
-      isRunning,
-      start,
-      pause,
-      reset,
-    } = useStopwatch({ autoStart: true });
-  
-     return (
-      <View style={{textAlign: 'center'}}>
-        <View style={{fontSize: '100px'}}>
-        <Text>
-       {days}:{hours}:{minutes}:{seconds}
-        </Text>
-        </View>
-      </View>
-    );
-  }
-
-  
+const[startTime , setStartTime] = useState(null);
+  const [runTime, setRunTime] = useState(false);
+  const { seconds, minutes, hours, days, isRunning, start, pause, reset } = useStopwatch( { autoStart: true } );
 
   
   useEffect(() => {
@@ -100,13 +68,36 @@ export const MapScreen = () => {
             setUserLocHistory([...userLocHistory, loc]);
         }
        }, 5000);
-      return () => clearInterval(interval);
-      
+      return () => clearInterval(interval);  
     })();
- 
   }, []);
 
+  
 
+
+  const Timer = () =>  {
+  
+    if (runTime == true ){
+      if ( isRunning == false) {
+        start();
+      }
+      return (
+        <View>
+        <Text>
+          {hours}:{minutes}:{seconds}
+        </Text>
+      </View>
+    )
+  } else {
+    return (
+      <View>
+      <Text>
+        {hours}:{minutes}:{seconds}
+      </Text>
+    </View>
+  )
+  }
+  }
   
   let text = "Waiting..";
   if (errorMsg) {
@@ -174,17 +165,10 @@ tracksViewChanges={true}
                   </Text>
                   <Text> {device.accuracy}</Text>
                  
-                      <Button
-                        onPress={() => {
-                          setShowTrip(false);
-                          setShowBus(true)
-                        }}
-                      >
-                        <Text>Follow Bus</Text>
-                      </Button>
                  
                 </Callout>
               </Marker>
+              
             );
           } else if (!onlyShowOnline) {
             if (isOnline == "online") {
@@ -214,14 +198,7 @@ tracksViewChanges={true}
                       Bus {device.deviceId} - {isOnline}
                     </Text>
                     <Text> {device.accuracy}</Text>
-                    <Button
-                        onPress={() => {
-                          setShowTrip(false);
-                          setShowBus(true)
-                        }}
-                      >
-                        <Text>Follow Bus</Text>
-                      </Button>
+                  
                  
                   </Callout>
                 </Marker>
@@ -276,11 +253,6 @@ tracksViewChanges={true}
                 onPress={() => {
                   setSelectedStop(stop.id);
                   
-                }}
-                onLongPress={() => {
-                  const substring = stop.id.substring(4, 6);
-                  console.log(substring);
-                  // setSelectedRoute(substring);
                 }}
               >
                 <Callout  >
@@ -421,7 +393,7 @@ tracksViewChanges={true}
         })}
       </MapView>
 
-      <View style={styles.carousel}>
+        <View style={styles.carousel}>
         <HStack space={4}>
           {onlyShowOnline ? (
             <Button onPress={() => setOnlyShowOnline(false)}
@@ -452,14 +424,13 @@ tracksViewChanges={true}
         </HStack>
 
         {/*  TICKET */}
-        <View style={styles.tripContainer}>
 
         {
-          stopsel ? (     
-        <>
+          showTrip ==false ? (     
+        <View style={styles.tripContainer}>
         <Text style={styles.stopListTitle}>Ticket</Text>
         <Text>Route: {selectedRoute}</Text>
-        <MyTimer  />
+        <Timer isStart={true}/>
        
         <HStack
         >
@@ -473,8 +444,14 @@ tracksViewChanges={true}
         <Button
         
         onPress={async () => {
-          setShowTrip(true);
+         if(selectedRoute == null || startStop == null || finalStop == null){
+
+setShowTrip(true);
+         pause()
+         setRunTime(false)
+         }else{
                try {
+
     const id = getAuth().currentUser.uid;
     const docRef = doc(database, "users", id);
     await addDoc(collection(docRef, "trips"), {
@@ -483,24 +460,30 @@ tracksViewChanges={true}
               finalStop: finalStop,
               startTime: startTime,
               stopTime: new Date().getTime(),
+              timeframe: hours + ":" + minutes + ":" + seconds,
               location: {lat: location.coords.latitude, lon: location.coords.longitude}
               });
+
+
+              setShowTrip(true);
+         pause()
+         setRunTime(false)
   } catch (e) {
     console.error("Error adding document: ", e);
   }
-          
+         }
         }}
         
         >
           End Trip
         </Button>
         </HStack>
-        </>
+        </View>
       ) : null
         }
         {
           showTrip? (
-            <>
+            <View style={styles.tripContainer}>
           <Text style={styles.stopListTitle}>Trip Ticket</Text>
           <Center>
             <FormControl isRequired>
@@ -644,7 +627,9 @@ tracksViewChanges={true}
                     onPress={() => {
                       setShowTrip(false);
                       setShowAll(true);
-                      setStartTime(new Date().getTime());
+                      setRunTime(true);
+                      const item = new Date().getTime()
+                      setStartTime(item) 
                     }}
 
                     
@@ -655,16 +640,10 @@ tracksViewChanges={true}
               ):null
            }
           </Center>
-        </>
+        </View>
           ):null
         }
-        {
-          showBus ? (
-            <Text>Bus</Text>
-          ) : null
-        }
-        
-      </View>
+  
       </View>
     </View>
   );
