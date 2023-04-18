@@ -6,7 +6,7 @@ export default {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '1.17.0',
+    version: '1.19.0',
     orientation: 'portrait',
     icon: './assets/car-blue.png',
     
@@ -32,7 +32,7 @@ export default {
         "foregroundImage": "./assets/car-online.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 2,
+      "versionCode": 4,
       "package": "com.josiba.mayatransit"
     },
     extra: {

@@ -1,5 +1,3 @@
-# Rename this file to ".env" before use
-# Replace XXXX's with your own Firebase config keys 
 API_KEY=AIzaSyC0NVMl0gnEjAz_lvtNGI8zNsy5aeiT6mM
 AUTH_DOMAIN=mayabus-91ed4.firebaseapp.com
 PROJECT_ID=mayabus-91ed4
