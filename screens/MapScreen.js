@@ -6,6 +6,7 @@ import {
   CheckIcon,
   FormControl,
   HStack,
+  Icon,
   Select,
   Text,
   WarningIcon,
@@ -48,7 +49,7 @@ export const MapScreen = () => {
   const [userLocHistory, setUserLocHistory] = useState([]);
 const[startTime , setStartTime] = useState(null);
   const [runTime, setRunTime] = useState(false);
-  const { seconds, minutes, hours, days, isRunning, start, pause, reset } = useStopwatch( { autoStart: true } );
+  const { seconds, minutes, hours, days, isRunning, start, pause, reset } = useStopwatch( { autoStart: false } );
 
   
   useEffect(() => {
@@ -448,6 +449,7 @@ tracksViewChanges={true}
 
 setShowTrip(true);
          pause()
+         reset()
          setRunTime(false)
          }else{
                try {
@@ -467,6 +469,7 @@ setShowTrip(true);
 
               setShowTrip(true);
          pause()
+         reset()
          setRunTime(false)
   } catch (e) {
     console.error("Error adding document: ", e);
@@ -484,7 +487,12 @@ setShowTrip(true);
         {
           showTrip? (
             <View style={styles.tripContainer}>
-          <Text style={styles.stopListTitle}>Trip Ticket</Text>
+         <HStack>
+         <Text style={styles.stopListTitle}>Trip Ticket</Text>
+         <Button>
+          <Icon name="print" size={30} color="#900" />
+         </Button>
+         </HStack>
           <Center>
             <FormControl isRequired>
               <FormControl.Label>Choose a route</FormControl.Label>
