@@ -1,7 +1,6 @@
 import { Text, View } from "react-native";
 
 import React from "react";
-import getStopTimes from "../assets/gtfs-completo/stop_times";
 import { useState } from "react";
 
 let gOnline = [];

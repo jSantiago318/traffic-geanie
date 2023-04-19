@@ -1,5 +1,5 @@
 import { FlatList, HStack, Icon, Text, VStack } from 'native-base';
-import React, { useEffect, useState, } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, } from 'react-native';
 
 import { Colors } from '../config';
@@ -13,7 +13,8 @@ export const RoutesList = ({route}) => {
 
 
    useEffect(() => {
-   const dataFetch = async () => {
+    const interval = setInterval(() => {
+         const dataFetch = async () => {
     const url = "https://pr-oba.live/api/where/stops-for-route/TIM_"+route+".json?key=TEST"
     await  fetch(url)
     .then((response) => response.json())
@@ -24,6 +25,9 @@ export const RoutesList = ({route}) => {
         // setStp(data.data.entry.stopGroupings[0].stopGroups[0].stopIds)
     })} 
     dataFetch();
+  }, 3000);
+
+  return () => clearInterval(interval);
    }, [stp]);
 
   const renderItem = ({ item, index }) => (

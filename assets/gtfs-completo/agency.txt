@@ -1,2 +1,0 @@
-agency_id,agency_name,agency_url,agency_timezone
-TIM,Transporte Integrado de Mayaguez,https://www.naturalista.mx/places/wikipedia/Mayaguez,America/Puerto_Rico

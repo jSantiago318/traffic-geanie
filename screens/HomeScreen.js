@@ -12,34 +12,16 @@ import {database} from '../config/firebase';
 import { getAuth } from 'firebase/auth';
 
 export const HomeScreen = () => {
-  const [routes, setRoutes] = React.useState([]);
-  const [selectedRoute, setSelectedRoute] = React.useState([]);
+  const [selectedRoute, setSelectedRoute] = React.useState('TIM_RR102');
   const [busCount, setBusCount] = React.useState(0);
   const [activeTripCount, setActiveTripCount] = React.useState(0);
 const [alarmSelect, setAlarmSelect] = React.useState(0);
 const [alarmCommentary, setAlarmCommentary] = React.useState(0);
 
 // show modal 
-const [alertModalVisible, setAlertModalVisible] = useState(false);
 const [alarmModalVisible, setAlarmModalVisible] = useState(false);
-useEffect(() => {
-      // if (routes == []) {
-        let temp = 0
-       async function getData(){
-       await fetch('https://pr-oba.live/api/where/route-ids-for-agency/TIM.json?key=TEST').then((response) => response.json()).then((data) => {
-        let routeLists = data.data.list
-        temp = data.data.list[0]
-      setRoutes(routeLists);
-      setSelectedRoute( data.data.list[0]);
-      })
-        
-    }
-    if(routes.length == 0){
-      getData();
-    }
-    // }
-  }, [routes, selectedRoute]);
 
+  
   setInterval(() => {
     setBusCount(getOnlineCount());
     setActiveTripCount(getOnlineActiveTripsCount());
@@ -131,9 +113,7 @@ useEffect(() => {
 <Button style={styles.alertBtn} onPress={() => setAlarmModalVisible(!alarmModalVisible)} >
   <Text>🚨</Text>
 </Button>
-<Button style={styles.alertBtn}  >
-  <Text>🔔</Text>
-</Button>
+
 </HStack>
  <Box  style={styles.selectRoute}>
       <Text> 
@@ -141,25 +121,21 @@ useEffect(() => {
         <Select  style={{
         width: '100%',
         borderRadius: 10,
-        padding: 10,
+        borderColor: 'transparent',
         }} selectedValue={selectedRoute}  accessibilityLabel="Choose a route" placeholder="Choose a route" _selectedItem={{
         bg: "teal.600",
         endIcon: <CheckIcon size="5" />
       }} mt={1} onValueChange={itemValue => {
-        setSelectedRoute(itemValue) }}>
-        <>
-
+        setSelectedRoute(itemValue) 
         
-      {
-        routes != null ? (
-            routes.map((item, index) => {
-              return (
-                <Select.Item label={item} value={item} key={index}   />
-              )
-            }
-          )) : null
-      }
-      </>
+        }}>
+      <Select.Item label="Route 105" value="TIM_RR105" />
+      <Select.Item label="Route 102" value="TIM_RR102" />
+      <Select.Item label="Route 108" value="TIM_RR108" />
+      <Select.Item label="Route 106" value="TIM_RR106" />
+      <Select.Item label="Route 348" value="TIM_RR348" />
+      <Select.Item label="Route 349" value="TIM_RR349" />
+      
         </Select>
       </Box>
       </View>
@@ -184,7 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     backgroundColor: Colors.secondary,
-  },
+  }, 
   
   button: {
     marginTop: 5,

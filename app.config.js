@@ -23,14 +23,14 @@ export default {
       fallbackToCacheTimeout: 0
     },
     assetBundlePatterns: ['**/*'],
-    ios: {
+    "ios": {
       supportsTablet: true,
       bundleIdentifier: 'com.josiba.mayatransit',
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/car-online.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#FFFFFF",
       },
       "versionCode": 4,
       "package": "com.josiba.mayatransit"
