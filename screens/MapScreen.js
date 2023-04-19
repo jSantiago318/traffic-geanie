@@ -13,7 +13,7 @@ import {
   WarningOutlineIcon,
 } from "native-base";
 import { Dimensions, Image, StatusBar, StyleSheet, View } from "react-native";
-import MapView, { Callout, Marker, Polyline } from "react-native-maps";
+import MapView, { Callout, Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import React, { setTimeout, useEffect, useState } from "react";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
@@ -123,6 +123,7 @@ const[startTime , setStartTime] = useState(null);
   return (
     <View style={styles.container}>
       <MapView
+      provider={PROVIDER_GOOGLE}
         showsUserLocation={true}
         style={styles.map}
         ref={(mapView) => {
@@ -148,7 +149,7 @@ tracksViewChanges={true}
                   latitude: device.latitude,
                   longitude: device.longitude,
                 }}
-                title={device.deviceId}
+                title={device.deviceId || 'device id'}
                 description={device.deviceId}
                 pinColor={"green"}
               >
@@ -182,7 +183,7 @@ tracksViewChanges={true}
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId}
+                  title={device.deviceId || 'device id'}
                   description={device.deviceId}
                   pinColor={"green"}
                 >
@@ -212,7 +213,7 @@ tracksViewChanges={true}
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId}
+                  title={device.deviceId || 'device id'}
                   description={device.deviceId}
                   pinColor={"red"}
                 >
@@ -248,7 +249,7 @@ tracksViewChanges={true}
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-                title={stop.id}
+                title={stop.id || 'stop id'}
                 description={stop.name}
                 pinColor={getRouteColor(stop.id)}
                 onPress={() => {
@@ -273,7 +274,7 @@ tracksViewChanges={true}
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-                title={stop.id}
+                title={stop.id || 'Stop Id'}
                 description={stop.name}
                 pinColor={getRouteColor(stop.id)}
                 onPress={() => {
@@ -301,7 +302,7 @@ tracksViewChanges={true}
                   latitude: device.latitude,
                   longitude: device.longitude,
                 }}
-                title={device.deviceId}
+                title={device.deviceId || 'device id'}
                 description={device.deviceId}
                 pinColor={"green"}
               >
@@ -330,7 +331,7 @@ tracksViewChanges={true}
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId}
+                  title={device.deviceId || 'stop id'}
                   description={device.deviceId}
                   pinColor={"green"}
                 >
@@ -358,7 +359,7 @@ tracksViewChanges={true}
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId}
+                  title={device.deviceId || 'stop id'}
                   description={device.deviceId}
                   pinColor={"green"}
                 >
@@ -489,9 +490,9 @@ setShowTrip(true);
             <View style={styles.tripContainer}>
          <HStack>
          <Text style={styles.stopListTitle}>Trip Ticket</Text>
-         <Button>
+         {/* <Button>
           <Icon name="print" size={30} color="#900" />
-         </Button>
+         </Button> */}
          </HStack>
           <Center>
             <FormControl isRequired>

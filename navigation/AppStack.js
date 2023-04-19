@@ -12,23 +12,13 @@ const Drawer = createDrawerNavigator();
 
 export const AppStack = () => {
   return (
-    <NavigationContainer>
 
     <Drawer.Navigator >
       <Drawer.Screen name='Home' component={HomeScreen} />
       <Drawer.Screen name='Map' component={MapScreen} />
       <Drawer.Screen name='Ticket' component={TicketScreen} />
       <Drawer.Screen name='Settings' component={SettingsScreen} />
-      {
-        getAuth().currentUser ? (
-          <Drawer.Screen name='Logout' component={HomeScreen} />
-        ) : (
-          <Drawer.Screen name='Login' component={HomeScreen} />
-            
-        )
-      }
     </Drawer.Navigator>
-    </NavigationContainer>
     
   );
 };

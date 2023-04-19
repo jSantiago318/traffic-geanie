@@ -2,14 +2,20 @@ import { Box, Button, Center, FlatList, FormControl, HStack, Input, Modal, SafeA
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { addDoc, collection, doc, getDoc, setDoc, where } from 'firebase/firestore';
-import { getActiveBus, getCurrentTime, getOnlineActiveTripsCount, getOnlineCount, getRouteIdforAgency, getRoutesURL, getScheduleForStop } from '../components/URLFetcher';
+import { getOnlineActiveTripsCount, getOnlineCount } from '../components/URLFetcher';
 
-// import BouncingPreloader from 'react-native-bouncing-preloader';
 import { CheckIcon } from 'native-base';
 import { Colors } from '../config';
 import {RoutesList} from "../components/RoutesList.js";
 import {database} from '../config/firebase';
 import { getAuth } from 'firebase/auth';
+
+// import BouncingPreloader from 'react-native-bouncing-preloader';
+
+
+
+
+
 
 export const HomeScreen = () => {
   const [selectedRoute, setSelectedRoute] = React.useState('TIM_RR102');
@@ -26,7 +32,7 @@ const [alarmModalVisible, setAlarmModalVisible] = useState(false);
     setBusCount(getOnlineCount());
     setActiveTripCount(getOnlineActiveTripsCount());
     
-  }, 6000);
+  }, 4000);
 
   
 
