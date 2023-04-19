@@ -12,4 +12,5 @@ export const Colors = {
   secondary: '#8CCCF4',
   schText: '#9C9C9C',
   predictionText: '#94EC94',
+  ticketBackground: '#ffff',
 };

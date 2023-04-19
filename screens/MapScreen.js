@@ -490,9 +490,6 @@ setShowTrip(true);
             <View style={styles.tripContainer}>
          <HStack>
          <Text style={styles.stopListTitle}>Trip Ticket</Text>
-         {/* <Button>
-          <Icon name="print" size={30} color="#900" />
-         </Button> */}
          </HStack>
           <Center>
             <FormControl isRequired>
@@ -664,11 +661,12 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   tripContainer: {
-    backgroundColor: "white",
+    backgroundColor: Colors.ticketBackground,
     borderRadius: 10,
     width: Dimensions.get("window").width * 0.9,
     padding: 10,
     margin: 10,
+
   },
   scrollView: {
     backgroundColor: "pink",

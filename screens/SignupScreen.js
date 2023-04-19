@@ -169,7 +169,7 @@ export const SignupScreen = ({ navigation }) => {
       </View>
       <View style={styles.footer}>
         <Text style={styles.footerText}>
-          This application if used for reasearch purposes
+          This application is used for research purposes
         </Text>
       </View>
     </View>

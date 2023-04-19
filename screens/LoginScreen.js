@@ -125,7 +125,7 @@ export const LoginScreen = ({ navigation }) => {
       {/* App info footer */}
       <View style={styles.footer}>
         <Text style={styles.footerText}>
-          This application if used for reasearch purposes
+          This application is used for reasearch purposes
         </Text>
       </View>
     </View>
