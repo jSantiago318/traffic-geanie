@@ -7,22 +7,26 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m1-medium"
+        "distribution": "internal"
       }
     },
     "preview": {
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m1-medium"
+        "distribution": "internal"
       }
     },
     "production": {
-      "ios": {
-        "resourceClass": "m1-medium"
-      }
+      
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId" : "josant01@icloud.com",
+        "ascAppId": "6448003556",
+        "appleTeamId": "4J5UC7PM43"
+      }
+    }
   }
 }

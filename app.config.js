@@ -26,6 +26,8 @@ export default {
     "ios": {
       supportsTablet: true,
       bundleIdentifier: 'com.josiba.mayatransit',
+      'googleMapsApiKey': process.env.MAPS_API_IOS
+
     },
     "android": {
       "adaptiveIcon": {
@@ -33,7 +35,9 @@ export default {
         "backgroundColor": "#FFFFFF",
       },
       "versionCode": 5,
-      "package": "com.josiba.mayatransit"
+      "package": "com.josiba.mayatransit",
+      'googleMapsApiKey': process.env.MAPS_API
+
     },
     extra: {
       "eas": {
@@ -43,10 +47,7 @@ export default {
       projectId: process.env.PROJECT_ID,
       storageBucket: process.env.STORAGE_BUCKET,
       messagingSenderId: process.env.MESSAGING_SENDER_ID,
-      appId: process.env.APP_ID
+      appId: process.env.APP_ID,
     },
-    'config':{
-      'googleMapsApiKey': process.env.MAPS_API
-    }
   }
 };
