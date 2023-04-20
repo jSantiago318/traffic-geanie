@@ -1,4 +1,5 @@
 import * as Location from "expo-location";
+import * as MapVal from '../assets/map.json'
 
 import {
   Button,
@@ -123,7 +124,9 @@ const[startTime , setStartTime] = useState(null);
   return (
     <View style={styles.container}>
       <MapView
-      provider={PROVIDER_GOOGLE}
+
+        provider={PROVIDER_GOOGLE}
+        customMapStyle={MapVal}
         showsUserLocation={true}
         style={styles.map}
         ref={(mapView) => {
