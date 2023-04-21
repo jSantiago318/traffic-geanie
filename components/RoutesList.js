@@ -25,7 +25,7 @@ export const RoutesList = ({route}) => {
         // setStp(data.data.entry.stopGroupings[0].stopGroups[0].stopIds)
     })} 
     dataFetch();
-  }, 3000);
+  }, 2000);
 
   return () => clearInterval(interval);
    }, [stp]);

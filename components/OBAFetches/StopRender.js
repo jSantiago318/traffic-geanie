@@ -5,9 +5,6 @@ import { StyleSheet, View, } from 'react-native';
 import {Colors} from '../../config/';
 
 export const StopRender = ({stop}) => {
-
-
-  
   const [allStops, setAllStops] = useState([]);
   const [stopName, setStopName] = useState([]);
   const [predStop, setPredStop] = useState([]);
@@ -15,7 +12,7 @@ export const StopRender = ({stop}) => {
   let counter = 0;
   setInterval(() => {
     counter++;
-  }, 5000);
+  }, 2000);
 
   useEffect(() => {
       
@@ -64,30 +61,11 @@ export const StopRender = ({stop}) => {
       }
     }, [allStops, predStop, stopName]);
     
-      // setInterval(() => {
-      //   dataFetch();
-      //   console.log('refreshed')
-      // }, 6000);
-    
-
-
-  
 function getNextStop(){
   let found = false
   
   for (let index = 0; index < allStops.length; index++) {
     const element = allStops[index];
-    // console.log(element)
-    //  TYPE OF DOC RECIEVED 
-    // Object {
-    //   "arrivalEnabled": true,
-    //   "arrivalTime": 1680721628000,
-    //   "departureEnabled": false,
-    //   "departureTime": 1680721638000,
-    //   "serviceId": "TIM_WD",
-    //   "stopHeadsign": "",
-    //   "tripId": "TIM_RR105T09A",
-    // }
     if (element.predictedArrivalTime > currentTime && found === false) {
       found = true
       return new Date(element.arrivalTime).toLocaleTimeString()
@@ -140,7 +118,7 @@ const TimePred = () => {
 
 const styles = StyleSheet.create({
   container: {
-    maxHeight: '50%',
+    // maxHeight: '50%'s,
     width: '100%',
     borderRadius: 10,
     backgroundColor: '#93e1d8',

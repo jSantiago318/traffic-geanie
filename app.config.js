@@ -36,6 +36,7 @@ export default {
         "foregroundImage": "./assets/car-online.png",
         "backgroundColor": "#FFFFFF",
       },
+      
       "config":{
         "googleMaps":{
           "apiKey": process.env.MAPS_API
@@ -53,9 +54,7 @@ export default {
       projectId: process.env.PROJECT_ID,
       storageBucket: process.env.STORAGE_BUCKET,
       messagingSenderId: process.env.MESSAGING_SENDER_ID,
-      appId: process.env.APP_ID,
-      'googleMapsApiKey': process.env.MAPS_API
-
+      appId: process.env.APP_ID
     },
   }
 };

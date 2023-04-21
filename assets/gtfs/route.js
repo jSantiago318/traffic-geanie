@@ -30,5 +30,5 @@ export function getRouteColor(id) {
             return route[index].color
         }
     }
-    return '#000000'
+    return '#B6B6B6'
     }

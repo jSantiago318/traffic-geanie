@@ -94,9 +94,6 @@ export const SettingsScreen = () => {
               </Text>
           <Stack>
               <SettingsEnable style={styles.btn} secc={'Dark mode'} icon={'theme-light-dark'} />
-            <SettingsBtn style={styles.btn} secc={'Privacy'} icon={'shield'} />
-            <SettingsBtn style={styles.btn} secc={'Help'} icon={'help-circle'} />
-            <SettingsBtn style={styles.btn} secc={'About'} icon={'information'} />
             <Button style={styles.logout} title="Log Out" variant={"ghost"} onPress={handleLogout}>
           Log Out
         </Button>

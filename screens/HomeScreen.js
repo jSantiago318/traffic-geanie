@@ -32,7 +32,7 @@ const [alarmModalVisible, setAlarmModalVisible] = useState(false);
     setBusCount(getOnlineCount());
     setActiveTripCount(getOnlineActiveTripsCount());
     
-  }, 4000);
+  }, 3000);
 
   
 
@@ -42,63 +42,7 @@ const [alarmModalVisible, setAlarmModalVisible] = useState(false);
       <Center style={{
         width: '100%',
         borderRadius: 10,
-        padding: 5,
         }} >
-
-     {
-      alarmModalVisible ? (
-        <SafeAreaView style={{flex: 1}}>
-        <Modal     isOpen={alarmModalVisible} onClose={() => setAlarmModalVisible(false)}>
-        <Modal.Content maxWidth="80%">
-          <Modal.CloseButton />
-          <Modal.Header>Is there a problem?</Modal.Header>
-          <Modal.Body>
-          <FormControl.Label>Choose report</FormControl.Label>
-        <Select minWidth="200" accessibilityLabel="Choose report" onValueChange={(value) => setAlarmSelect(value)} placeholder="Choose report" _selectedItem={{
-        bg: Colors.highlihgted,
-        endIcon: <CheckIcon size={5} />
-      }} mt="1">
-          <Select.Item label="Problem with route" value="p1" />
-          <Select.Item label="Problem with Bus" value="p2" />
-          <Select.Item label="Problem with app" value="p3" />
-          <Select.Item label="Feedback or Comment" value="p4" />
-        </Select>
-            <FormControl mt="3">
-              <FormControl.Label>Comment</FormControl.Label>
-              <Input onChangeText={(value) => setAlarmCommentary(value)} />
-            </FormControl>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-              setAlarmModalVisible(false);
-            }}>
-                Cancel
-              </Button>
-              <Button onPress={async () => {
-                try {
-        const id = getAuth().currentUser.uid;
-        const docRef = doc(database, "users", id);
-        await addDoc(collection(docRef, "alerts"), {
-          alert: alarmSelect,
-          commentary: alarmCommentary,
-          route: selectedRoute,
-        });
-        
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
-              setAlarmModalVisible(false);
-            }}>
-                Save
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
-      </SafeAreaView>
-      ) : null
-     }
 
     </Center>
       <View style={stylesLayout.app}>
@@ -116,9 +60,6 @@ const [alarmModalVisible, setAlarmModalVisible] = useState(false);
         </Text>
         </Stack>
 
-<Button style={styles.alertBtn} onPress={() => setAlarmModalVisible(!alarmModalVisible)} >
-  <Text>🚨</Text>
-</Button>
 
 </HStack>
  <Box  style={styles.selectRoute}>
@@ -180,7 +121,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: Colors.backgroundColor,
-    padding: 15
+    padding: 10
   },
   layout: {
     flex: 1,
@@ -194,7 +135,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   card: {
-    margin: 10,
+    marginTop: 10,
+    marginBottom: 10,
     padding: 10,
     borderRadius: 10,
     backgroundColor: Colors.secondary,

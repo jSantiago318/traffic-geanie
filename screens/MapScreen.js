@@ -14,7 +14,7 @@ import {
   WarningOutlineIcon,
 } from "native-base";
 import { Dimensions, Image, StatusBar, StyleSheet, View } from "react-native";
-import MapView, { Callout, Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
+import MapView, { Callout, Marker, OverlayComponent, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import React, { setTimeout, useEffect, useState } from "react";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
@@ -22,6 +22,7 @@ import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import { getStops, getStopsByRouteId } from "../assets/gtfs/stops";
 
 import { Colors } from "../config";
+import { FaLocationArrow } from 'react-icons/fa';
 import { Pedometer } from 'expo-sensors';
 import {StopRenderMinimal} from "../components/OBAFetches/StopRenderMinimal";
 import {database} from "../config/firebase";
@@ -124,7 +125,8 @@ const[startTime , setStartTime] = useState(null);
   return (
     <View style={styles.container}>
       <MapView
-
+        userLocationUpdateInterval={3000}
+        minZoomLevel={15}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
         showsUserLocation={true}
@@ -260,6 +262,10 @@ tracksViewChanges={true}
                   
                 }}
               >
+              <Image
+                    source={require("../assets/BusStop.png")}
+                    style={{ height: 35, width: 35, backgroundColor: getRouteColor(stop.id), borderRadius: 50 }}
+                  />
                 <Callout  >
                   <Text>{stop.name}</Text>
                   <Text>{stop.id}</Text>
@@ -322,6 +328,8 @@ tracksViewChanges={true}
                     Bus {device.deviceId} - {isOnline}
                   </Text>
                   <Text> {device.accuracy}</Text>
+                  <Text> {device.speed}</Text>
+                  <Text> {device.attributes.battery}</Text>
                 </Callout>
               </Marker>
             );
@@ -397,8 +405,7 @@ tracksViewChanges={true}
           );
         })}
       </MapView>
-
-        <View style={styles.carousel}>
+      <View style={styles.carousel}>
         <HStack space={4}>
           {onlyShowOnline ? (
             <Button onPress={() => setOnlyShowOnline(false)}
@@ -424,7 +431,7 @@ tracksViewChanges={true}
               );
             }}
           >
-            🧭
+            My location
           </Button>
         </HStack>
 
@@ -654,6 +661,8 @@ setShowTrip(true);
         }
   
       </View>
+
+     
     </View>
   );
 };
@@ -703,7 +712,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     justifyContent: "center",
-    bottom: 15,
+    bottom: '10%',
     left: 0,
     width: "100%",
   },
