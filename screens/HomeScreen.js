@@ -1,11 +1,11 @@
 import { Box, Button, Center, FlatList, FormControl, HStack, Input, Modal, SafeAreaView, Select, Stack, Text } from 'native-base';
+import { CheckIcon, useColorModes } from 'native-base';
+import { Colors, darkMode } from '../config';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { addDoc, collection, doc, getDoc, setDoc, where } from 'firebase/firestore';
 import { getOnlineActiveTripsCount, getOnlineCount } from '../components/URLFetcher';
 
-import { CheckIcon } from 'native-base';
-import { Colors } from '../config';
 import {RoutesList} from "../components/RoutesList.js";
 import {database} from '../config/firebase';
 import { getAuth } from 'firebase/auth';
@@ -21,12 +21,9 @@ export const HomeScreen = () => {
   const [selectedRoute, setSelectedRoute] = React.useState('TIM_RR102');
   const [busCount, setBusCount] = React.useState(0);
   const [activeTripCount, setActiveTripCount] = React.useState(0);
-const [alarmSelect, setAlarmSelect] = React.useState(0);
-const [alarmCommentary, setAlarmCommentary] = React.useState(0);
 
 // show modal 
 const [alarmModalVisible, setAlarmModalVisible] = useState(false);
-
   
   setInterval(() => {
     setBusCount(getOnlineCount());
@@ -106,7 +103,7 @@ const styles = StyleSheet.create({
     width: '90%',
     borderRadius: 10,
     padding: 10,
-    backgroundColor: Colors.secondary,
+    backgroundColor: Colors.backgroundColor,
   }, 
   
   button: {

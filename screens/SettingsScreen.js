@@ -3,104 +3,141 @@ import {
   Center,
   Container,
   FlatList,
+  FormControl,
   HStack,
+  Heading,
   Icon,
+  Input,
+  Modal,
   Stack,
   Switch,
   Text,
+  useColorMode,
+  useTheme,
 } from "native-base";
 import { Colors, auth } from "../config";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, useColorScheme } from "react-native";
+import { darkMode, lightMode } from "../config/theme";
+import { deleteUser, getAuth } from "firebase/auth";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import {
-  collection,
-} from "firebase/firestore";
+import { collection } from "firebase/firestore";
 import { database } from "../config/firebase";
-import { getAuth } from "firebase/auth";
 import { signOut } from "firebase/auth";
-import {
-  useCollectionDataOnce,
-} from "react-firebase-hooks/firestore";
-
-const SettingsBtn = ({secc, icon}) => {
-  return (
-    <Button
-    variant={'ghost'} 
-    style={styles.subText}
-    >
-      <HStack
-      space={10}
-      alignItems="center"
-    >
-    <Text>
-        {secc}
-    </Text>
-        <Icon as={MaterialCommunityIcons} name={icon} size={5} />
-    </HStack>
-    </Button>
-  )
-}
-
-const SettingsEnable = ({secc, icon}) => {
-  return (
-    <Button
-    variant={'ghost'} 
-    style={{
-      marginVertical: 5,
-      width: "100%",
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    }}
-    >
-      <HStack
-      space={10}
-      justifyContent={ 'space-between'}
-      alignItems="center"
-    >
-    <Text>
-        {secc}
-    </Text>
-    <Switch offTrackColor="indigo.100" onTrackColor="indigo.200" onThumbColor="indigo.500" offThumbColor="indigo.50" />
-        </HStack>
-    </Button>
-  )
-}
 
 export const SettingsScreen = () => {
-  const [trips, setTrips] = React.useState(0);
-  const [showTripHistory, setShowTripHistory] = React.useState(false);
+  const colorScheme = useColorScheme();
+  const [showModal, setShowModal] = React.useState(false);
   const handleLogout = () => {
     signOut(auth).catch((error) => console.log("Error logging out: ", error));
   };
   const id = getAuth().currentUser.uid;
-  const query = collection(database, "users/" + id + "/trips");
-  const [docs, loading, error] = useCollectionDataOnce(query);
+  const cUser = getAuth().currentUser;
+
   return (
-    <View style={styles.container}>
-      
+    <View style={colorScheme === "dark" ? darkMode.View : lightMode.View}>
       <Center>
         <Container>
-        <Text style={styles.text}
-        >
-          {" "}
-          Email: {getAuth().currentUser?.email}{" "}
-        </Text>
-        
-         <Text style={styles.text} >
-                Settings
-              </Text>
-          <Stack>
-              <SettingsEnable style={styles.btn} secc={'Dark mode'} icon={'theme-light-dark'} />
-            <Button style={styles.logout} title="Log Out" variant={"ghost"} onPress={handleLogout}>
-          Log Out
-        </Button>
-            </Stack>
+          <Heading
+            style={
+              colorScheme === "dark"
+                ? darkMode.TextHeading
+                : lightMode.TextHeading
+            }
+          >
+            Account
+          </Heading>
+
+          <Text style={colorScheme === "dark" ? darkMode.Text : lightMode.Text}>
+            Email: {getAuth().currentUser?.email}
+          </Text>
+          <Heading
+            style={
+              colorScheme === "dark"
+                ? darkMode.TextHeading
+                : lightMode.TextHeading
+            }
+          >
+            Settings
+          </Heading>
+
+          <Button
+            style={
+              colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
+            }
+            title="Delete Account"
+            variant={"ghost"}
+            onPress={() => setShowModal(true)}
+          >
+            Delete Account
+          </Button>
+          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+            <Modal.Content maxWidth="70%">
+              <Modal.CloseButton />
+              <Modal.Header>Delete Account</Modal.Header>
+              <Modal.Body>
+                <FormControl>
+                  <FormControl.Label>
+                    Data is non recoverable. Are you sure you want to delete
+                    your account?
+                  </FormControl.Label>
+                </FormControl>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button.Group space={2}>
+                  <Button
+                    variant="ghost"
+                    colorScheme="blueGray"
+                    onPress={() => {
+                      setShowModal(false);
+                    }}
+                  >
+                    No
+                  </Button>
+                  <Button
+                    onPress={() => {
+                      deleteUser(cUser).then(() => {
+                        setShowModal  (false);
+                      })
+                    }}
+                  >
+                    Yes
+                  </Button>
+                </Button.Group>
+              </Modal.Footer>
+            </Modal.Content>
+          </Modal>
+
+          <Button
+            style={
+              colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
+            }
+            title="Privacy"
+            variant={"ghost"}
+            onPress={() =>
+              console.log(
+                "https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7"
+              )
+            }
+          >
+            Privacy Privacy
+          </Button>
+
+          <Button
+            style={
+              colorScheme === "dark"
+                ? darkMode.outlineBtn
+                : lightMode.outlineBtn
+            }
+            title="Log Out"
+            variant={"ghost"}
+            onPress={handleLogout}
+          >
+            Log Out
+          </Button>
         </Container>
       </Center>
-
     </View>
   );
 };
@@ -109,13 +146,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.backgroundColor,
-  }, 
+  },
   btn: {
     marginVertical: 5,
     width: "100%",
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   text: {
     fontSize: 16,
@@ -123,14 +160,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   logout: {
-    margin: 5
+    margin: 5,
   },
   subText: {
     fontSize: 14,
     fontWeight: "normal",
     marginTop: 10,
-  }
-
-
-
+  },
 });

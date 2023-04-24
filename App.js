@@ -1,3 +1,5 @@
+import {Text, View, useColorScheme} from 'react-native';
+
 import { AuthenticatedUserProvider } from './providers';
 import { NativeBaseProvider } from 'native-base';
 import React from 'react';
@@ -5,6 +7,7 @@ import { RootNavigator } from './navigation/RootNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const App = () => {
+
   return (
     <AuthenticatedUserProvider>
       <SafeAreaProvider>

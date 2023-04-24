@@ -10,8 +10,6 @@ import {useNavigation} from "@react-navigation/native";
 export const RoutesList = ({route}) => {
   const [stp, setStp] = useState([]);
   const [currentTime, setCurrentTime] = useState([]);
-
-
    useEffect(() => {
     const interval = setInterval(() => {
          const dataFetch = async () => {

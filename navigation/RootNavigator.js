@@ -1,19 +1,23 @@
+import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import React, { useContext, useEffect, useState } from 'react';
 
 import { AppStack } from './AppStack';
 import { AuthStack } from './AuthStack';
 import { AuthenticatedUserContext } from '../providers';
 import { LoadingIndicator } from '../components';
-import { NavigationContainer } from '@react-navigation/native';
 import { auth } from '../config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { useColorScheme } from 'react-native';
 
 export const RootNavigator = () => {
   const { user, setUser } = useContext(AuthenticatedUserContext);
   const [isLoading, setIsLoading] = useState(true);
+  const theme = useColorScheme();
+  const appearance = useColorScheme();
 
   useEffect(() => {
     // onAuthStateChanged returns an unsubscriber
+
     const unsubscribeAuthStateChanged = onAuthStateChanged(
       auth,
       authenticatedUser => {
@@ -31,7 +35,7 @@ export const RootNavigator = () => {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer  theme={theme === 'dark' ? DarkTheme : DefaultTheme } >
       {user ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   );

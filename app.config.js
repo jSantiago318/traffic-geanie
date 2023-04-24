@@ -9,7 +9,7 @@ export default {
     version: '1.4.2',
     orientation: 'portrait',
     icon: './assets/car-online.png',
-    
+    "userInterfaceStyle": "automatic",
     updates:{
       "url": "https://u.expo.dev/c73948ff-e76e-488d-8d47-48a9097fcd54"
     },

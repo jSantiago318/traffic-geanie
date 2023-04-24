@@ -1,0 +1,7 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color
+RR102,TIM,,Ruta Rural 102,Ruta Rural,3,,fe3004,
+RR105,TIM,,Ruta Rural 105,Ruta Rural,3,,007cff,
+RR106,TIM,,Ruta Rural 106,Ruta Rural,3,,39a706,
+RR108,TIM,,Ruta Rural 108,Ruta Rural,3,,a9a2f5,
+RR348,TIM,,Ruta Rural 348,Ruta Rural,3,,ff7800,
+RR349,TIM,,Ruta Rural 349,Ruta Rural,3,,fc06da,

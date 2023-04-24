@@ -1,5 +1,5 @@
 import * as Location from "expo-location";
-import * as MapVal from '../assets/map.json'
+import * as MapVal from "../assets/map.json";
 
 import {
   Button,
@@ -13,31 +13,34 @@ import {
   WarningIcon,
   WarningOutlineIcon,
 } from "native-base";
-import { Dimensions, Image, StatusBar, StyleSheet, View } from "react-native";
-import MapView, { Callout, Marker, OverlayComponent, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
+import { Colors, darkMode, lightMode } from "../config";
+import { Dimensions, Image, StatusBar, StyleSheet, View, useColorScheme } from "react-native";
+import MapView, {
+  Callout,
+  Marker,
+  OverlayComponent,
+  PROVIDER_GOOGLE,
+  Polyline,
+} from "react-native-maps";
 import React, { setTimeout, useEffect, useState } from "react";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import { getStops, getStopsByRouteId } from "../assets/gtfs/stops";
 
-import { Colors } from "../config";
-import { FaLocationArrow } from 'react-icons/fa';
-import { Pedometer } from 'expo-sensors';
-import {StopRenderMinimal} from "../components/OBAFetches/StopRenderMinimal";
-import {database} from "../config/firebase";
+import { FaLocationArrow } from "react-icons/fa";
+import { Pedometer } from "expo-sensors";
+import { StopRenderMinimal } from "../components/OBAFetches/StopRenderMinimal";
+import { database } from "../config/firebase";
 import { getAuth } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
-import { useStopwatch } from 'react-timer-hook';
+import { useStopwatch } from "react-timer-hook";
 
 const Shapes = require("../assets/gtfs/shapes.json");
 
- 
-
-
 export const MapScreen = () => {
+    const colorScheme = useColorScheme();
 
-  
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const navigation = useNavigation();
@@ -49,11 +52,11 @@ export const MapScreen = () => {
   const [showAll, setShowAll] = useState(true);
   const [showTrip, setShowTrip] = useState(true);
   const [userLocHistory, setUserLocHistory] = useState([]);
-const[startTime , setStartTime] = useState(null);
+  const [startTime, setStartTime] = useState(null);
   const [runTime, setRunTime] = useState(false);
-  const { seconds, minutes, hours, days, isRunning, start, pause, reset } = useStopwatch( { autoStart: false } );
+  const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
+    useStopwatch({ autoStart: false });
 
-  
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -68,40 +71,36 @@ const[startTime , setStartTime] = useState(null);
         const loc = await Location.getCurrentPositionAsync({});
         setLocation(loc);
         if (setShowTrip == false) {
-            setUserLocHistory([...userLocHistory, loc]);
+          setUserLocHistory([...userLocHistory, loc]);
         }
-       }, 5000);
-      return () => clearInterval(interval);  
+      }, 5000);
+      return () => clearInterval(interval);
     })();
-  }, []);
+  }, [location]);
 
-  
-
-
-  const Timer = () =>  {
-  
-    if (runTime == true ){
-      if ( isRunning == false) {
+  const Timer = () => {
+    if (runTime == true) {
+      if (isRunning == false) {
         start();
       }
       return (
         <View>
-        <Text>
-          {hours}:{minutes}:{seconds}
-        </Text>
-      </View>
-    )
-  } else {
-    return (
-      <View>
-      <Text>
-        {hours}:{minutes}:{seconds}
-      </Text>
-    </View>
-  )
-  }
-  }
-  
+          <Text>
+            {hours}:{minutes}:{seconds}
+          </Text>
+        </View>
+      );
+    } else {
+      return (
+        <View>
+          <Text>
+            {hours}:{minutes}:{seconds}
+          </Text>
+        </View>
+      );
+    }
+  };
+
   let text = "Waiting..";
   if (errorMsg) {
     text = errorMsg;
@@ -126,7 +125,7 @@ const[startTime , setStartTime] = useState(null);
     <View style={styles.container}>
       <MapView
         userLocationUpdateInterval={3000}
-        minZoomLevel={15}
+        // minZoomLevel={25}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
         showsUserLocation={true}
@@ -146,15 +145,13 @@ const[startTime , setStartTime] = useState(null);
           if (onlyShowOnline && isOnline == "online") {
             return (
               <Marker
-
-
-tracksViewChanges={true}
+                tracksViewChanges={true}
                 key={index}
                 coordinate={{
                   latitude: device.latitude,
                   longitude: device.longitude,
                 }}
-                title={device.deviceId || 'device id'}
+                title={device.deviceId || "device id"}
                 description={device.deviceId}
                 pinColor={"green"}
               >
@@ -171,24 +168,20 @@ tracksViewChanges={true}
                     Bus {device.deviceId} - {isOnline}
                   </Text>
                   <Text> {device.accuracy}</Text>
-                 
-                 
                 </Callout>
               </Marker>
-              
             );
           } else if (!onlyShowOnline) {
             if (isOnline == "online") {
               return (
                 <Marker
-tracksViewChanges={true}
-
+                  tracksViewChanges={true}
                   key={index}
                   coordinate={{
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId || 'device id'}
+                  title={device.deviceId || "device id"}
                   description={device.deviceId}
                   pinColor={"green"}
                 >
@@ -205,8 +198,6 @@ tracksViewChanges={true}
                       Bus {device.deviceId} - {isOnline}
                     </Text>
                     <Text> {device.accuracy}</Text>
-                  
-                 
                   </Callout>
                 </Marker>
               );
@@ -218,7 +209,7 @@ tracksViewChanges={true}
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId || 'device id'}
+                  title={device.deviceId || "device id"}
                   description={device.deviceId}
                   pinColor={"red"}
                 >
@@ -250,51 +241,47 @@ tracksViewChanges={true}
                 tracksViewChanges={true}
                 // TODO find an identifier for fist and final stops
                 // image={require("../assets/firstStop.png")}
+
                 coordinate={{
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-                title={stop.id || 'stop id'}
+                title={stop.id || "stop id"}
                 description={stop.name}
                 pinColor={getRouteColor(stop.id)}
                 onPress={() => {
                   setSelectedStop(stop.id);
-                  
                 }}
               >
-              <Image
-                    source={require("../assets/BusStop.png")}
-                    style={{ height: 35, width: 35, backgroundColor: getRouteColor(stop.id), borderRadius: 50 }}
-                  />
-                <Callout  >
+                <Image
+                  source={require("../assets/BusStop.png")}
+                  style={{ height: 35, width: 35 }}
+                />
+                <Callout>
                   <Text>{stop.name}</Text>
                   <Text>{stop.id}</Text>
-              
                 </Callout>
               </Marker>
             );
-          } else if ( showAll!= true &&  stop.id.includes(selectedRoute)) {
+          } else if (showAll != true && stop.id.includes(selectedRoute)) {
             return (
               <Marker
-tracksViewChanges={true}
-
+                tracksViewChanges={true}
                 key={index}
                 coordinate={{
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-                title={stop.id || 'Stop Id'}
+                title={stop.id || "Stop Id"}
                 description={stop.name}
                 pinColor={getRouteColor(stop.id)}
                 onPress={() => {
                   setSelectedStop(stop);
-                 
                 }}
               >
                 <Callout>
                   <Text>{stop.name}</Text>
                   <Text>{stop.id}</Text>
-                  
                 </Callout>
               </Marker>
             );
@@ -311,7 +298,7 @@ tracksViewChanges={true}
                   latitude: device.latitude,
                   longitude: device.longitude,
                 }}
-                title={device.deviceId || 'device id'}
+                title={device.deviceId || "device id"}
                 description={device.deviceId}
                 pinColor={"green"}
               >
@@ -342,7 +329,7 @@ tracksViewChanges={true}
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId || 'stop id'}
+                  title={device.deviceId || "stop id"}
                   description={device.deviceId}
                   pinColor={"green"}
                 >
@@ -370,7 +357,7 @@ tracksViewChanges={true}
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId || 'stop id'}
+                  title={device.deviceId || "stop id"}
                   description={device.deviceId}
                   pinColor={"green"}
                 >
@@ -405,30 +392,41 @@ tracksViewChanges={true}
           );
         })}
       </MapView>
-      <View style={styles.carousel}>
+      <View style={
+
+   styles.carousel
+              
+            }>
         <HStack space={4}>
           {onlyShowOnline ? (
-            <Button onPress={() => setOnlyShowOnline(false)}
+            <Button
+              onPress={() => setOnlyShowOnline(false)}
               style={styles.settingBtn}
             >
               Show offline
             </Button>
           ) : (
-            <Button               style={styles.settingBtn}
- onPress={() => setOnlyShowOnline(true)}>Show online</Button>
+            <Button
+              style={styles.settingBtn}
+              onPress={() => setOnlyShowOnline(true)}
+            >
+              Show online
+            </Button>
           )}
           <Button
-              style={styles.settingBtn}
+            style={styles.settingBtn}
             onPress={() => {
+             if(location.coords != null){
               return _mapView.animateToRegion(
                 {
                   latitude: location.coords.latitude,
                   longitude: location.coords.longitude,
-                  latitudeDelta: 0.0322,
-                  longitudeDelta: 0.0321,
+                  latitudeDelta: 0.0122,
+                  longitudeDelta: 0.0121,
                 },
                 1000
               );
+             }
             }}
           >
             My location
@@ -437,232 +435,233 @@ tracksViewChanges={true}
 
         {/*  TICKET */}
 
-        {
-          showTrip ==false ? (     
-        <View style={styles.tripContainer}>
-        <Text style={styles.stopListTitle}>Ticket</Text>
-        <Text>Route: {selectedRoute}</Text>
-        <Timer isStart={true}/>
-       
-        <HStack
-        >
+        {showTrip == false ? (
+          <View style={styles.tripContainer}>
+            <Text style={styles.stopListTitle}>Ticket</Text>
+            <Text>Route: {selectedRoute}</Text>
+            <Timer isStart={true} />
 
-        <Text>First Stop: <StopRenderMinimal stop={"TIM_"+startStop} /></Text>
-        </HStack>
-        <HStack>
-        <Text>Final Stop: <StopRenderMinimal stop={"TIM_"+finalStop} /></Text>
-        </HStack>
-        <HStack>
-        <Button
-        
-        onPress={async () => {
-         if(selectedRoute == null || startStop == null || finalStop == null){
+            <HStack>
+              <Text>
+                First Stop: <StopRenderMinimal stop={"TIM_" + startStop} />
+              </Text>
+            </HStack>
+            <HStack>
+              <Text>
+                Final Stop: <StopRenderMinimal stop={"TIM_" + finalStop} />
+              </Text>
+            </HStack>
+            <HStack>
+              <Button
+                onPress={async () => {
+                  if (
+                    selectedRoute == null ||
+                    startStop == null ||
+                    finalStop == null
+                  ) {
+                    setShowTrip(true);
+                    pause();
+                    reset();
+                    setRunTime(false);
+                  } else {
+                    try {
+                      const id = getAuth().currentUser.uid;
+                      const docRef = doc(database, "users", id);
+                      await addDoc(collection(docRef, "trips"), {
+                        route: selectedRoute,
+                        startStop: startStop,
+                        finalStop: finalStop,
+                        startTime: startTime,
+                        stopTime: new Date().getTime(),
+                        timeframe: hours + ":" + minutes + ":" + seconds,
+                        location: {
+                          lat: location.coords.latitude,
+                          lon: location.coords.longitude,
+                        },
+                      });
 
-setShowTrip(true);
-         pause()
-         reset()
-         setRunTime(false)
-         }else{
-               try {
-
-    const id = getAuth().currentUser.uid;
-    const docRef = doc(database, "users", id);
-    await addDoc(collection(docRef, "trips"), {
-        route: selectedRoute,
-              startStop: startStop,
-              finalStop: finalStop,
-              startTime: startTime,
-              stopTime: new Date().getTime(),
-              timeframe: hours + ":" + minutes + ":" + seconds,
-              location: {lat: location.coords.latitude, lon: location.coords.longitude}
-              });
-
-
-              setShowTrip(true);
-         pause()
-         reset()
-         setRunTime(false)
-  } catch (e) {
-    console.error("Error adding document: ", e);
-  }
-         }
-        }}
-        
-        >
-          End Trip
-        </Button>
-        </HStack>
-        </View>
-      ) : null
-        }
-        {
-          showTrip? (
-            <View style={styles.tripContainer}>
-         <HStack>
-         <Text style={styles.stopListTitle}>Trip Ticket</Text>
-         </HStack>
-          <Center>
-            <FormControl isRequired>
-              <FormControl.Label>Choose a route</FormControl.Label>
-
-              <Select
-                placeholder="Select a route"
-                selectedValue={selectedRoute}
-                minWidth={200}
-                accessibilityLabel="Select a route"
-                _selectedItem={{
-                  bg: "teal.600",
-                  endIcon: <CheckIcon size={5} />,
-                }}
-                mt="1"
-                onValueChange={(itemValue) => {
-                  setSelectedRoute(itemValue);
-                  setStartStop(null);
-                  setSelectedStop(null);
-                  setShowAll(false);
+                      setShowTrip(true);
+                      pause();
+                      reset();
+                      setRunTime(false);
+                    } catch (e) {
+                      console.error("Error adding document: ", e);
+                    }
+                  }
                 }}
               >
-                {getRoutes().map((route, index) => {
-                  return (
-                    <Select.Item
-                      key={index}
-                      label={route.id}
-                      value={route.id}
-                      onPress={() => {
-                        setSelectedRoute(route.id);
-                        setShowAll(false);
-
-                        _mapView.animateToRegion(
-                          {
-                            latitude: route.lat,
-                            longitude: route.lon,
-                            latitudeDelta: route.latD,
-                            longitudeDelta: route.lonD,
-                          },
-                          1000
-                        );
-                      }}
-                    />
-                  );
-                })}
-              </Select>
-            </FormControl>
-
-            {selectedRoute != null ? (
+                End Trip
+              </Button>
+            </HStack>
+          </View>
+        ) : null}
+        {showTrip ? (
+          <View style={{
+            backgroundColor: colorScheme === "dark"
+                ? '#1A202C'
+                : '#F7FAFC',
+            padding: 10,
+            borderRadius: 10,
+            marginTop: 10,
+            marginBottom: 10,
+            width: '100%',
+          }}>
+            <HStack>
+              <Text style={styles.stopListTitle}>Trip</Text>
+            </HStack>
+            <Center>
               <FormControl isRequired>
-                <FormControl.Label>Choose first stop</FormControl.Label>
+                <FormControl.Label>Choose a route</FormControl.Label>
 
                 <Select
-                  placeholder="Select first stop"
-                  selectedValue={startStop}
+                  placeholder="Select a route"
+                  selectedValue={selectedRoute}
                   minWidth={200}
-                  accessibilityLabel="Select first stop"
+                  accessibilityLabel="Select a route"
                   _selectedItem={{
                     bg: "teal.600",
                     endIcon: <CheckIcon size={5} />,
                   }}
                   mt="1"
                   onValueChange={(itemValue) => {
-                    setStartStop(itemValue);
-                    setSelectedStop(itemValue);
+                    setSelectedRoute(itemValue);
+                    setStartStop(null);
+                    setSelectedStop(null);
+                    setShowAll(false);
                   }}
                 >
-                  {getStopsByRouteId(selectedRoute).map((stop, index) => {
+                  {getRoutes().map((route, index) => {
                     return (
                       <Select.Item
                         key={index}
-                        label={stop.id}
-                        value={stop.id}
+                        label={route.id}
+                        value={route.id}
                         onPress={() => {
-                          setStartStop(stop.id);
-                          setSelectedStop(stop.id);
+                          setSelectedRoute(route.id);
+                          setShowAll(false);
+
                           _mapView.animateToRegion(
                             {
-                              latitude: stop.lat,
-                              longitude: stop.lon,
-                              latitudeDelta: "0.0202",
-                              longitudeDelta: "0.0202",
+                              latitude: route.lat,
+                              longitude: route.lon,
+                              latitudeDelta: route.latD,
+                              longitudeDelta: route.lonD,
                             },
                             1000
                           );
                         }}
                       />
-
                     );
                   })}
                 </Select>
               </FormControl>
-            ) : null}
 
-           {
-              startStop != null ? (
-              <FormControl isRequired>
-                <FormControl.Label>Choose final stop</FormControl.Label>
+              {selectedRoute != null ? (
+                <FormControl isRequired>
+                  <FormControl.Label>Choose first stop</FormControl.Label>
 
-                <Select
-                  placeholder="Select final stop"
-                  selectedValue={finalStop}
-                  minWidth={200}
-                  accessibilityLabel="Select final stop"
-                  _selectedItem={{
-                    bg: "teal.600",
-                    endIcon: <CheckIcon size={5} />,
-                  }}
-                  mt="1"
-                  onValueChange={(itemValue) => {
-                    setFinalStop(itemValue);
-                    setSelectedStop(itemValue);
-                  }}
-                >
-                  {getStopsByRouteId(selectedRoute).map((stop, index) => {
-                    return (
-                      <Select.Item
-                        key={index}
-                        label={stop.id}
-                        value={stop.id}
-                        onPress={() => {
-                          setFinalStop(stop.id);
-                          setSelectedStop(stop.id);
-                          setShowAll(true);
-                          _mapView.animateToRegion(
-                            {
-                              latitude: stop.lat,
-                              longitude: stop.lon,
-                              latitudeDelta: "0.0202",
-                              longitudeDelta: "0.0202",
-                            },
-                            1000
-                          );
-                        }}
-                      />
-                    );
-                  })}
-                </Select>
-                <Button 
-                  style={{marginTop: 10}}
+                  <Select
+                    placeholder="Select first stop"
+                    selectedValue={startStop}
+                    minWidth={200}
+                    accessibilityLabel="Select first stop"
+                    _selectedItem={{
+                      bg: "teal.600",
+                      endIcon: <CheckIcon size={5} />,
+                    }}
+                    mt="1"
+                    onValueChange={(itemValue) => {
+                      setStartStop(itemValue);
+                      setSelectedStop(itemValue);
+                    }}
+                  >
+                    {getStopsByRouteId(selectedRoute).map((stop, index) => {
+                      return (
+                        <Select.Item
+                          key={index}
+                          label={stop.id}
+                          value={stop.id}
+                          onPress={() => {
+                            setStartStop(stop.id);
+                            setSelectedStop(stop.id);
+                            _mapView.animateToRegion(
+                              {
+                                latitude: stop.lat,
+                                longitude: stop.lon,
+                                latitudeDelta: "0.0202",
+                                longitudeDelta: "0.0202",
+                              },
+                              1000
+                            );
+                          }}
+                        />
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              ) : null}
+
+              {startStop != null ? (
+                <FormControl isRequired>
+                  <FormControl.Label>Choose final stop</FormControl.Label>
+
+                  <Select
+                    placeholder="Select final stop"
+                    selectedValue={finalStop}
+                    minWidth={200}
+                    accessibilityLabel="Select final stop"
+                    _selectedItem={{
+                      bg: "teal.600",
+                      endIcon: <CheckIcon size={5} />,
+                    }}
+                    mt="1"
+                    onValueChange={(itemValue) => {
+                      setFinalStop(itemValue);
+                      setSelectedStop(itemValue);
+                    }}
+                  >
+                    {getStopsByRouteId(selectedRoute).map((stop, index) => {
+                      return (
+                        <Select.Item
+                          key={index}
+                          label={stop.id}
+                          value={stop.id}
+                          onPress={() => {
+                            setFinalStop(stop.id);
+                            setSelectedStop(stop.id);
+                            setShowAll(true);
+                            _mapView.animateToRegion(
+                              {
+                                latitude: stop.lat,
+                                longitude: stop.lon,
+                                latitudeDelta: "0.0202",
+                                longitudeDelta: "0.0202",
+                              },
+                              1000
+                            );
+                          }}
+                        />
+                      );
+                    })}
+                  </Select>
+                  <Button
+                    style={{ marginTop: 10 }}
                     onPress={() => {
                       setShowTrip(false);
                       setShowAll(true);
                       setRunTime(true);
-                      const item = new Date().getTime()
-                      setStartTime(item) 
+                      const item = new Date().getTime();
+                      setStartTime(item);
                     }}
-
-                    
-                >
-                  Start Trip
-                </Button>
-              </FormControl>
-              ):null
-           }
-          </Center>
-        </View>
-          ):null
-        }
-  
+                  >
+                    Start Trip
+                  </Button>
+                </FormControl>
+              ) : null}
+            </Center>
+          </View>
+        ) : null}
       </View>
-
-     
     </View>
   );
 };
@@ -678,7 +677,6 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width * 0.9,
     padding: 10,
     margin: 10,
-
   },
   scrollView: {
     backgroundColor: "pink",
@@ -687,7 +685,8 @@ const styles = StyleSheet.create({
   stopListTitle: {
     fontSize: 15, //hykj8LmMrfnx
     fontWeight: "bold",
-    color: "black",
+    color: 'white',
+    
   },
   stopListDescription: {
     fontSize: 10,
@@ -712,7 +711,7 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     justifyContent: "center",
-    bottom: '10%',
+    bottom: "10%",
     left: 0,
     width: "100%",
   },
@@ -728,7 +727,8 @@ const styles = StyleSheet.create({
     width: 300,
     top: Dimensions.get("window").height * 0.5,
     left: Dimensions.get("window").width * 0.1,
-  }, settingBtn:{
-    backgroundColor: Colors.highlihgted
-  }
+  },
+  settingBtn: {
+    backgroundColor: Colors.highlihgted,
+  },
 });
