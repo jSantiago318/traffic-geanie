@@ -39,6 +39,15 @@ const darkMode = {
   textDisabled: '#ee6c4d',
   text: '#98c1d9',
   subText: '#e0fbfc', 
+  CarouselView:{
+    flex: 1,
+    width:'90%',
+    justifyContent: 'center',
+    backgroundColor: '#293241',
+    margin: 10,                                             
+    borderRadius: 10,
+    padding: 10,
+  },
   card:{
     backgroundColor: '#3d5a80',
     borderRadius: 10,

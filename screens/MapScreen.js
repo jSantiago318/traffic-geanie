@@ -123,7 +123,7 @@ export const MapScreen = () => {
   return (
     <View style={styles.container}>
       <MapView
-        userLocationUpdateInterval={3000}
+        userLocationUpdateInterval={2000}
         // minZoomLevel={25}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
@@ -144,15 +144,11 @@ export const MapScreen = () => {
           if (onlyShowOnline && isOnline == "online") {
             return (
               <Marker
-                tracksViewChanges={true}
                 key={index}
                 coordinate={{
                   latitude: device.latitude,
                   longitude: device.longitude,
                 }}
-                title={device.deviceId || "device id"}
-                description={device.deviceId}
-                pinColor={"green"}
               >
                 <Image
                   source={require("../assets/car-online.png")}
@@ -174,15 +170,11 @@ export const MapScreen = () => {
             if (isOnline == "online") {
               return (
                 <Marker
-                  tracksViewChanges={true}
                   key={index}
                   coordinate={{
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId || "device id"}
-                  description={device.deviceId}
-                  pinColor={"green"}
                 >
                   <Image
                     source={require("../assets/car-online.png")}
@@ -208,9 +200,6 @@ export const MapScreen = () => {
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId || "device id"}
-                  description={device.deviceId}
-                  pinColor={"red"}
                 >
                   <Image
                     source={require("../assets/car-default.png")}
@@ -237,16 +226,11 @@ export const MapScreen = () => {
             return (
               <Marker
                 key={index}
-                tracksViewChanges={true}
-                // TODO find an identifier for fist and final stops
-                // image={require("../assets/firstStop.png")}
-
                 coordinate={{
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-                title={stop.id || "stop id"}
-                description={stop.name}
+              
                 pinColor={getRouteColor(stop.id)}
                 onPress={() => {
                   setSelectedStop(stop.id);
@@ -267,19 +251,20 @@ export const MapScreen = () => {
           } else if (showAll != true && stop.id.includes(selectedRoute)) {
             return (
               <Marker
-                tracksViewChanges={true}
                 key={index}
                 coordinate={{
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-                title={stop.id || "Stop Id"}
-                description={stop.name}
-                pinColor={getRouteColor(stop.id)}
+                 pinColor={getRouteColor(stop.id)}
                 onPress={() => {
                   setSelectedStop(stop);
                 }}
               >
+              <Image
+                  source={require("../assets/BusStop.png")}
+                  style={{ height: 35, width: 35 }}
+                />
                 <Callout style={{
                     width: 200,
                   }}>
@@ -301,10 +286,7 @@ export const MapScreen = () => {
                   latitude: device.latitude,
                   longitude: device.longitude,
                 }}
-                title={device.deviceId || "device id"}
-                description={device.deviceId}
-                pinColor={"green"}
-              >
+           >
                 <Image
                   source={require("../assets/car-online.png")}
                   style={{ height: 35, width: 35 }}
@@ -332,9 +314,6 @@ export const MapScreen = () => {
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId || "stop id"}
-                  description={device.deviceId}
-                  pinColor={"green"}
                 >
                   <Image
                     source={require("../assets/car-default.png")}
@@ -360,9 +339,7 @@ export const MapScreen = () => {
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                  title={device.deviceId || "stop id"}
-                  description={device.deviceId}
-                  pinColor={"green"}
+                
                 >
                   <Image
                     source={require("../assets/car-default.png")}
@@ -396,12 +373,12 @@ export const MapScreen = () => {
         })}
       </MapView>
       <View style={styles.carousel}>
-        <HStack space={4}>
+        {/* <HStack space={4}>
           {onlyShowOnline ? (
             <Button
               onPress={() => setOnlyShowOnline(false)}
               style={styles.settingBtn}>
-               'item'
+               item
             </Button>
           ) : (
             <Button
@@ -429,7 +406,7 @@ export const MapScreen = () => {
           >
             My location
           </Button>
-        </HStack>
+        </HStack> */}
 
         {/*  TICKET */}
 
@@ -494,18 +471,9 @@ export const MapScreen = () => {
           </View>
         ) : null}
         {showTrip ? (
-          <View style={{
-            backgroundColor: colorScheme === "dark"
-                ? '#1A202C'
-                : '#F7FAFC',
-            padding: 10,
-            borderRadius: 10,
-            marginTop: 10,
-            marginBottom: 10,
-            width: '100%',
-          }}>
+          <View style={colorScheme? darkMode.CarouselView : lightMode.CarouselView}>
             <HStack>
-              <Text style={styles.stopListTitle}>Trip</Text>
+              <Text style={colorScheme? darkMode.Text : lightMode.Text  }>Trip</Text>
             </HStack>
             <Center>
               <FormControl isRequired>
