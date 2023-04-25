@@ -39,6 +39,24 @@ const darkMode = {
   textDisabled: '#ee6c4d',
   text: '#98c1d9',
   subText: '#e0fbfc', 
+  Card:{
+    backgroundColor: '#3d5a80',
+    width: '90%',
+    justifyContent: 'center',
+    borderRadius: 10,
+    padding: 10,
+    margin: 10,
+  },
+  CardView:{
+    // flex: 1,
+    width:'90%',
+    height: 'auto',
+    justifyContent: 'center',
+    backgroundColor: '#3d5a80',
+    margin: 10,
+    borderRadius: 10,
+    padding: 10,
+  },
   CarouselView:{
     flex: 1,
     width:'90%',
@@ -48,20 +66,7 @@ const darkMode = {
     borderRadius: 10,
     padding: 10,
   },
-  card:{
-    backgroundColor: '#3d5a80',
-    borderRadius: 10,
-    padding: 10,
-    margin: 10,
-    width: '90%',
-    height: 'auto',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
-    
-  },
+  
   TextHeading: {
     fontSize: 16,
     fontWeight: "bold",
@@ -112,6 +117,20 @@ const darkMode = {
     width: "100%",
     backgroundColor: "#293241",
   },
+Title:{
+    fontSize: 16,
+    fontWeight: "bold",
+    color: '#98c1d9',
+    
+} , 
+routeList:{
+  width: '90%',
+  borderRadius: 10,
+  padding: 10,
+  margin: 10,
+  backgroundColor: '#3d5a80',
+  
+}
 
   
 };
@@ -123,6 +142,36 @@ const lightMode = {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#e0fbfc'
+  },
+  routeList:{
+  width: '90%',
+  height: 'auto',
+  borderRadius: 10,
+  padding: 10,
+  margin: 10,
+  backgroundColor: '#3d5a80',
+  
+},
+  Title:{
+    fontSize: 16,
+    fontWeight: "bold",
+    color: '#293241',
+    
+  },
+  CarouselView:{
+    flex: 1,
+    width:'90%',
+    justifyContent: 'center',
+    backgroundColor: '#e0fbfc',
+    margin: 10,                                             
+    borderRadius: 10,
+    padding: 10,
+  },
+  Text:{
+    fontSize: 14,
+    fontWeight: "normal",
+    color: '#293241',
+
   },
   orange: '#f57c00',
   blue: '#039be5',

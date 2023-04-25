@@ -39,7 +39,6 @@ const Shapes = require("../assets/gtfs/shapes.json");
 
 export const MapScreen = () => {
     const colorScheme = useColorScheme();
-
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const navigation = useNavigation();
@@ -471,9 +470,9 @@ export const MapScreen = () => {
           </View>
         ) : null}
         {showTrip ? (
-          <View style={colorScheme? darkMode.CarouselView : lightMode.CarouselView}>
+          <View style={colorScheme =='dark' ? darkMode.CarouselView : lightMode.CarouselView}>
             <HStack>
-              <Text style={colorScheme? darkMode.Text : lightMode.Text  }>Trip</Text>
+              <Text style={colorScheme =='dark'? darkMode.Text : lightMode.Text  }>Trip</Text>
             </HStack>
             <Center>
               <FormControl isRequired>

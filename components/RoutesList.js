@@ -1,15 +1,15 @@
+import { Colors, darkMode, lightMode } from '../config';
 import { FlatList, HStack, Icon, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, } from 'react-native';
+import { StyleSheet, View, useColorScheme } from 'react-native';
 
-import { Colors } from '../config';
 import { StopRender } from './OBAFetches/StopRender';
 import {getStopsByRouteId} from "../components/URLFetcher";
 import {useNavigation} from "@react-navigation/native";
 
 export const RoutesList = ({route}) => {
   const [stp, setStp] = useState([]);
-  const [currentTime, setCurrentTime] = useState([]);
+  const colorScheme = useColorScheme();
    useEffect(() => {
     const interval = setInterval(() => {
          const dataFetch = async () => {
@@ -23,7 +23,7 @@ export const RoutesList = ({route}) => {
         // setStp(data.data.entry.stopGroupings[0].stopGroups[0].stopIds)
     })} 
     dataFetch();
-  }, 2000);
+  }, 1000);
 
   return () => clearInterval(interval);
    }, [stp]);
@@ -40,7 +40,7 @@ export const RoutesList = ({route}) => {
   return (
   < >
 <FlatList
-      style={styles.container}
+      style={colorScheme == 'dark' ? darkMode.routeList : lightMode.routeList}
       data={stp}
       renderItem={renderItem} />
 

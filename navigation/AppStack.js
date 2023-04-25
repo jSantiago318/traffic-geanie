@@ -13,10 +13,10 @@ export const AppStack = () => {
   return (
 
     <Drawer.Navigator >
-      <Drawer.Screen name='Map' component={MapScreen} />
-      <Drawer.Screen name='Settings' component={SettingsScreen} />
       <Drawer.Screen name='Home' component={HomeScreen} />
+      <Drawer.Screen name='Map' component={MapScreen} />
       <Drawer.Screen name='Ticket' component={TicketScreen} />
+      <Drawer.Screen name='Settings' component={SettingsScreen} />
     </Drawer.Navigator>
     
   );

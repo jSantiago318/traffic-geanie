@@ -1,11 +1,12 @@
 import { Box, Button, Center, FlatList, FormControl, HStack, Input, Modal, SafeAreaView, Select, Stack, Text } from 'native-base';
-import { CheckIcon, useColorModes } from 'native-base';
-import { Colors, darkMode } from '../config';
+import { Colors, darkMode, lightMode } from '../config';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useColorScheme } from 'react-native';
 import { addDoc, collection, doc, getDoc, setDoc, where } from 'firebase/firestore';
 import { getOnlineActiveTripsCount, getOnlineCount } from '../components/URLFetcher';
 
+import { CheckIcon } from 'native-base';
+import { DarkTheme } from '@react-navigation/native';
 import {RoutesList} from "../components/RoutesList.js";
 import {database} from '../config/firebase';
 import { getAuth } from 'firebase/auth';
@@ -21,7 +22,7 @@ export const HomeScreen = () => {
   const [selectedRoute, setSelectedRoute] = React.useState('TIM_RR102');
   const [busCount, setBusCount] = React.useState(0);
   const [activeTripCount, setActiveTripCount] = React.useState(0);
-
+  const colorScheme = useColorScheme();
 // show modal 
 const [alarmModalVisible, setAlarmModalVisible] = useState(false);
   
@@ -29,12 +30,12 @@ const [alarmModalVisible, setAlarmModalVisible] = useState(false);
     setBusCount(getOnlineCount());
     setActiveTripCount(getOnlineActiveTripsCount());
     
-  }, 3000);
+  }, 2000);
 
   
 
   return (
-    <View style={styles.container}>
+    <View style={ colorScheme == 'dark' ? darkMode.View : lightMode.View }>
       {/* <DataFetcher/> */}
       <Center style={{
         width: '100%',
@@ -45,10 +46,10 @@ const [alarmModalVisible, setAlarmModalVisible] = useState(false);
       <View style={stylesLayout.app}>
       <Center>
 
-      <Text fontSize="xl" bold>Mayaguez Bus Tracker</Text>
+      <Text fontSize="xl" bold style={ colorScheme == 'dark' ? darkMode.Title : lightMode.Title }  >Mayaguez Bus Tracker</Text>
       </Center>
 
-        <View style={styles.card} >
+        <View style={ colorScheme == 'dark' ? darkMode.CardView : lightMode.CardView } >
         <HStack>
         <Stack>
 
@@ -59,7 +60,7 @@ const [alarmModalVisible, setAlarmModalVisible] = useState(false);
 
 
 </HStack>
- <Box  style={styles.selectRoute}>
+ <Box  style={colorScheme == 'dark' ? darkMode.Card : lightMode.Card}>
       <Text> 
       Select Route: </Text>
         <Select  style={{
