@@ -56,5 +56,22 @@ export default {
       messagingSenderId: process.env.MESSAGING_SENDER_ID,
       appId: process.env.APP_ID
     },
-  }
+  }, 
+  'plugins':[
+    [
+      'expo-camera', 
+      {
+        'cameraPermission': 'Allow $(PRODUCT_NAME) to access camera to register onboard bus',
+      }
+    ],
+    [
+      'expo-location',
+      {
+        'locationAlwaysAndWhenInUsePermission': 'Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location',
+        'locationAlwayPermission': 'Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location',
+        'isIosBackgroundLocationEnabled': 'Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location',
+        'isAndroidBackgroundLocationEnabledgit': 'Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location',
+      }
+    ]
+  ]
 };
