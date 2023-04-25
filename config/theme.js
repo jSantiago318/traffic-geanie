@@ -39,6 +39,20 @@ const darkMode = {
   textDisabled: '#ee6c4d',
   text: '#98c1d9',
   subText: '#e0fbfc', 
+  card:{
+    backgroundColor: '#3d5a80',
+    borderRadius: 10,
+    padding: 10,
+    margin: 10,
+    width: '90%',
+    height: 'auto',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+    
+  },
   TextHeading: {
     fontSize: 16,
     fontWeight: "bold",

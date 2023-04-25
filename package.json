@@ -24,12 +24,14 @@
     "package": "com.josiba.mayatransit"
   },
   "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
     "@react-native-async-storage/async-storage": "1.17.11",
     "@react-native-community/datetimepicker": "6.7.3",
     "@react-native-masked-view/masked-view": "0.2.8",
     "@react-navigation/drawer": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/stack": "^6.3.16",
+    "@tabler/icons-react": "^2.17.0",
     "dotenv": "^10.0.0",
     "eas-cli": "^3.9.2",
     "expo": "~48.0.11",

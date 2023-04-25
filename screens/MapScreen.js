@@ -28,7 +28,6 @@ import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import { getStops, getStopsByRouteId } from "../assets/gtfs/stops";
 
-import { FaLocationArrow } from "react-icons/fa";
 import { Pedometer } from "expo-sensors";
 import { StopRenderMinimal } from "../components/OBAFetches/StopRenderMinimal";
 import { database } from "../config/firebase";
@@ -157,7 +156,7 @@ export const MapScreen = () => {
               >
                 <Image
                   source={require("../assets/car-online.png")}
-                  style={{ height: 35, width: 35 }}
+                  style={{ height: 35, width: 35, zIndex: 1000}}
                 />
                 <Callout
                   style={{
@@ -257,7 +256,9 @@ export const MapScreen = () => {
                   source={require("../assets/BusStop.png")}
                   style={{ height: 35, width: 35 }}
                 />
-                <Callout>
+                <Callout style={{
+                    width: 200,
+                  }}>
                   <Text>{stop.name}</Text>
                   <Text>{stop.id}</Text>
                 </Callout>
@@ -279,7 +280,9 @@ export const MapScreen = () => {
                   setSelectedStop(stop);
                 }}
               >
-                <Callout>
+                <Callout style={{
+                    width: 200,
+                  }}>
                   <Text>{stop.name}</Text>
                   <Text>{stop.id}</Text>
                 </Callout>
@@ -392,18 +395,13 @@ export const MapScreen = () => {
           );
         })}
       </MapView>
-      <View style={
-
-   styles.carousel
-              
-            }>
+      <View style={styles.carousel}>
         <HStack space={4}>
           {onlyShowOnline ? (
             <Button
               onPress={() => setOnlyShowOnline(false)}
-              style={styles.settingBtn}
-            >
-              Show offline
+              style={styles.settingBtn}>
+               'item'
             </Button>
           ) : (
             <Button
