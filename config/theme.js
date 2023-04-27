@@ -1,5 +1,6 @@
+import { color } from "react-native-reanimated";
 
- const Colors = {
+const Colors = {
   orange: '#f57c00',
   blue: '#039be5',
   black: '#222222',
@@ -142,6 +143,20 @@ const lightMode = {
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#e0fbfc'
+  },loginBtn:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    width: '50%',
+    height: 50,
+    backgroundColor: '#3d5a80',
+    
+  },
+  btnText:{
+    fontSize: 14,
+    fontWeight: "normal",
+    color: '#e0fbfc',
+    
   },
   routeList:{
   width: '90%',

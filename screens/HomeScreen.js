@@ -53,8 +53,8 @@ const [alarmModalVisible, setAlarmModalVisible] = useState(false);
         <HStack>
         <Stack>
 
-        <Text fontSize={'md'} bold >Online Buses: {busCount}</Text>
-        <Text fontSize={'md'} bold >Connected Routes: {activeTripCount}
+        <Text style={ colorScheme == 'dark' ? darkMode.Text : lightMode.Text } bold >Online Buses: {busCount}</Text>
+        <Text style={ colorScheme == 'dark' ? darkMode.Text : lightMode.Text } bold >Connected Routes: {activeTripCount}
         </Text>
         </Stack>
 

@@ -1,10 +1,11 @@
 import { Button, FormErrorMessage, TextInput, View } from "../components";
-import { Colors, Images, auth, provider } from "../config";
-import { Heading, Image } from "native-base";
+import { Center, Checkbox, HStack, Heading, Image, Modal, Text } from "native-base";
+import { Colors, Images, auth, darkMode, lightMode, provider } from "../config";
 import React, { useState } from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, useColorScheme } from "react-native";
 import { signInWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
 
+import { AntDesign } from '@expo/vector-icons';
 import { Formik } from "formik";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { loginValidationSchema } from "../utils";
@@ -22,7 +23,9 @@ export const LoginScreen = ({ navigation }) => {
       setErrorState(error.message)
     );
   };
-
+  const colorScheme = useColorScheme();
+  const [showModal, setShowModal] = useState(false);
+  const [checkbox, setCheckbox] = useState(false);
   return (
     <View isSafe style={styles.container}>
       <KeyboardAwareScrollView
@@ -34,12 +37,12 @@ export const LoginScreen = ({ navigation }) => {
             <Image
               source={logo}
               alt="Logo"
-              size="lg"
+              size="md"
               resizeMode="contain"
-              style={{ width: 200, height: 200 }}
+              style={{ width: 150, height: 150 }}
             />
           </View>
-          <Text style={styles.screenTitle}>Mayaguez Transit Tracker </Text>
+          <Text style={ colorScheme == 'dark'? darkMode.Title:lightMode.Title }>Mayaguez Transit Tracker </Text>
 
           <Formik
             initialValues={{
@@ -90,6 +93,7 @@ export const LoginScreen = ({ navigation }) => {
                 onChangeText={handleChange("password")}
                 onBlur={handleBlur("password")}
               />
+
                 <FormErrorMessage
                   error={errors.password}
                   visible={touched.password}
@@ -99,14 +103,87 @@ export const LoginScreen = ({ navigation }) => {
                   <FormErrorMessage error={errorState} visible={true} />
                 ) : null}
                 {/* Login button */}
-                <Button style={styles.button} onPress={handleSubmit}>
-                  <Text style={styles.buttonText}>Login</Text>
+                <Button style={colorScheme == 'dark'?  darkMode.loginBtn : lightMode.loginBtn } onPress={
+                    checkbox ? handleSubmit : () => {
+                      alert("Please accept terms and read conditions");
+                    } 
+
+                }>
+                  <Text style={colorScheme == 'dark'?  darkMode.btnText : lightMode.btnText }>Login</Text>
                 </Button>
+                {/* <Disclaimer /> */}
               </>
             )}
           </Formik>
           {/* Button to navigate to SignupScreen to create a new account */}
+          <Center>
+      <HStack alignItems="center" justifyContent="space-between" style={{marginTop:5}}  >
+        <Checkbox
+value="one"
+            
+          colorScheme="blue"
+          accessibilityLabel="This is a dummy checkbox"
+          onChange={(e) => {
+            setCheckbox(e);
+          }}
+        >
+          <Text >
+            I agree to the terms and conditions
+          </Text>
+        </Checkbox>
 
+        <AntDesign
+          name="infocirlceo"
+          style={{ marginRight: 10, color: Colors.blue }}
+          size={12}
+          onPress={() => setShowModal(true)}
+        />
+      </HStack>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
+        <Modal.Content maxWidth="350">
+          <Modal.CloseButton />
+          <Modal.Header>Disclaimer</Modal.Header>
+          <Modal.Body>
+          <Text >
+          This app was made for research purposes. If you want to delete all of your data you may do so in the settings page. 
+          By accepting these terms and conditions, you agree to the following:
+          You will not use this app for any illegal purposes.
+          You will not use this app to harm others.
+          You will not use this app to harm the environment.
+          This app will track your location and store it in a database.
+          You may delete this information. 
+          This app will ask for feedback and store it a database. Researchers may review this feedback. 
+          Researchers will look at user travel behaviour and app use in order to provide a better user experience.
+          
+          </Text>
+            {/* <VStack space={3}>
+              <HStack alignItems="center" justifyContent="space-between">
+                <Text fontWeight="medium">The </Text>
+                <Text color="blueGray.400">$298.77</Text>
+              </HStack>
+              <HStack alignItems="center" justifyContent="space-between">
+                <Text fontWeight="medium">Tax</Text>
+                <Text color="blueGray.400">$38.84</Text>
+              </HStack>
+              <HStack alignItems="center" justifyContent="space-between">
+                <Text fontWeight="medium">Total Amount</Text>
+                <Text color="green.500">$337.61</Text>
+              </HStack>
+            </VStack> */}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              flex="1"
+              onPress={() => {
+                setShowModal(false);
+              }}
+            >
+              <Text>Continue</Text> 
+            </Button>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+    </Center>
           <Button
             style={styles.borderlessButtonContainer}
             borderless
@@ -122,12 +199,7 @@ export const LoginScreen = ({ navigation }) => {
         </View>
       </KeyboardAwareScrollView>
 
-      {/* App info footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          This application is used for reasearch purposes
-        </Text>
-      </View>
+     
     </View>
   );
 };
@@ -136,7 +208,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.white,
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
   },
   input: {
     width: "100%",
@@ -164,7 +237,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.highlihgted,
     marginTop: 20,
     marginBottom: 20,
-    width: "100%",
+    width: "50%",
     height: 50,
     justifyContent: "center",
     alignItems: "center",
