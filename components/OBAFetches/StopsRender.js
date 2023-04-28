@@ -1,6 +1,6 @@
 import { HStack, Icon, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, } from 'react-native';
+import { StyleSheet, View, useColorScheme } from 'react-native';
 
 export const StopssRender = ({stop}) => {
 
@@ -77,17 +77,6 @@ function getNextStop(){
   
   for (let index = 0; index < allStops.length; index++) {
     const element = allStops[index];
-    // console.log(element)
-    //  TYPE OF DOC RECIEVED 
-    // Object {
-    //   "arrivalEnabled": true,
-    //   "arrivalTime": 1680721628000,
-    //   "departureEnabled": false,
-    //   "departureTime": 1680721638000,
-    //   "serviceId": "TIM_WD",
-    //   "stopHeadsign": "",
-    //   "tripId": "TIM_RR105T09A",
-    // }
     if (element.predictedArrivalTime > currentTime && found === false) {
       found = true
       return new Date(element.arrivalTime).toLocaleTimeString()

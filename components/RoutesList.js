@@ -1,11 +1,9 @@
+import { Box, FlatList, HStack, Icon, Text, VStack } from 'native-base';
 import { Colors, darkMode, lightMode } from '../config';
-import { FlatList, HStack, Icon, Text, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, useColorScheme } from 'react-native';
 
 import { StopRender } from './OBAFetches/StopRender';
-import {getStopsByRouteId} from "../components/URLFetcher";
-import {useNavigation} from "@react-navigation/native";
 
 export const RoutesList = ({route}) => {
   const [stp, setStp] = useState([]);
@@ -38,29 +36,13 @@ export const RoutesList = ({route}) => {
 
   
   return (
-  < >
+  <Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card} >
 <FlatList
       style={colorScheme == 'dark' ? darkMode.routeList : lightMode.routeList}
       data={stp}
       renderItem={renderItem} />
-
-
-</>
+</Box >
 
   
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    maxHeight: '55%',
-    width: '100%',
-    borderRadius: 10,
-    backgroundColor: Colors.secondary,
-    padding: 10,
-  }, timePred:{
-    fontSize: 20,
-    fontWeight: 'bold',
-  }, 
-  
-});

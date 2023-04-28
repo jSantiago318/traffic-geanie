@@ -40,23 +40,45 @@ const darkMode = {
   textDisabled: '#ee6c4d',
   text: '#98c1d9',
   subText: '#e0fbfc', 
+  horizontalBtn:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: '#3d5a80',
+    marginRight: 10,
+  },
+  horizontalBtn:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: '#3d5a80',
+    marginRight: 10,
+  },
   Card:{
     backgroundColor: '#3d5a80',
     width: '90%',
     justifyContent: 'center',
     borderRadius: 10,
-    padding: 10,
-    margin: 10,
+    padding: 5,
+    margin: 5,
+  },
+  Select:{
+    backgroundColor: '#3d5a80',
+    width: '90%',
+    justifyContent: 'center',
+    borderRadius: 10,
+    padding: 5,
+    margin: 5,
+    
   },
   CardView:{
     // flex: 1,
     width:'90%',
-    height: 'auto',
     justifyContent: 'center',
     backgroundColor: '#3d5a80',
     margin: 10,
     borderRadius: 10,
-    padding: 10,
+    padding: 5,
   },
   CarouselView:{
     flex: 1,
@@ -93,7 +115,15 @@ const darkMode = {
       width:'100%',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#293241'
+      backgroundColor: '#293241',
+  }, 
+  TicketView:{
+    flex: 1,
+      width:'100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#293241',
+      color: '#98c1d9',
   }, 
   Text :{
     fontSize: 14,
@@ -127,10 +157,20 @@ Title:{
 routeList:{
   width: '90%',
   borderRadius: 10,
-  padding: 10,
-  margin: 10,
+  padding: 5,
+  margin: 5,
   backgroundColor: '#3d5a80',
-  
+  height: '40%',
+}, 
+LoginBtn:{
+  alignItems : 'center',
+  justifyContent: 'center',
+  borderRadius: 10,
+  width: '50%',
+  height: 50,
+  backgroundColor: '#3d5a80',
+
+
 }
 
   
@@ -142,8 +182,18 @@ const lightMode = {
     flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#e0fbfc'
-  },loginBtn:{
+      backgroundColor: '#e0fbfc',
+      width:'90%',
+  },
+  Select:{
+    backgroundColor: '#e0fbfc',
+    width: '90%',
+    justifyContent: 'center',
+    borderRadius: 10,
+    padding: 5,
+    
+  },
+  loginBtn:{
     alignItems : 'center',
     justifyContent: 'center',
     borderRadius: 10,
@@ -151,7 +201,14 @@ const lightMode = {
     height: 50,
     backgroundColor: '#3d5a80',
     
-  },
+  },TicketView:{
+    flex: 1,
+      width:'100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#293241',
+      color: '#98c1d9',
+  }, 
   btnText:{
     fontSize: 14,
     fontWeight: "normal",
@@ -171,6 +228,15 @@ const lightMode = {
     fontSize: 16,
     fontWeight: "bold",
     color: '#293241',
+    
+  },
+  LoginBtn:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    width: '50%',
+    height: 50,
+    backgroundColor: '#3d5a80',
     
   },
   CarouselView:{

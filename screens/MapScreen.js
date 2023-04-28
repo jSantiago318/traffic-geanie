@@ -2,19 +2,31 @@ import * as Location from "expo-location";
 import * as MapVal from "../assets/map.json";
 
 import {
+  Box,
   Button,
   Center,
   CheckIcon,
+  FlatList,
   FormControl,
   HStack,
   Icon,
+  Input,
+  Modal,
+  ScrollView,
   Select,
   Text,
   WarningIcon,
   WarningOutlineIcon,
 } from "native-base";
 import { Colors, darkMode, lightMode } from "../config";
-import { Dimensions, Image, StatusBar, StyleSheet, View, useColorScheme } from "react-native";
+import {
+  Dimensions,
+  Image,
+  StatusBar,
+  StyleSheet,
+  View,
+  useColorScheme,
+} from "react-native";
 import MapView, {
   Callout,
   Marker,
@@ -22,6 +34,7 @@ import MapView, {
   PROVIDER_GOOGLE,
   Polyline,
 } from "react-native-maps";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { setTimeout, useEffect, useState } from "react";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
@@ -32,13 +45,14 @@ import { Pedometer } from "expo-sensors";
 import { StopRenderMinimal } from "../components/OBAFetches/StopRenderMinimal";
 import { database } from "../config/firebase";
 import { getAuth } from "firebase/auth";
+import { render } from "react-dom";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
 const Shapes = require("../assets/gtfs/shapes.json");
 
 export const MapScreen = () => {
-    const colorScheme = useColorScheme();
+  const colorScheme = useColorScheme();
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const navigation = useNavigation();
@@ -54,7 +68,7 @@ export const MapScreen = () => {
   const [runTime, setRunTime] = useState(false);
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
-
+  const [showModal, setShowModal] = useState(false);
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -62,7 +76,10 @@ export const MapScreen = () => {
         setErrorMsg("Permission to access location was denied");
         return;
       }
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+          
+      });
       setLocation(location);
 
       const interval = setInterval(async () => {
@@ -71,35 +88,34 @@ export const MapScreen = () => {
         if (setShowTrip == false) {
           setUserLocHistory([...userLocHistory, loc]);
         }
-      }, 5000);
+      }, 2000);
       return () => clearInterval(interval);
     })();
   }, [location]);
 
   const Timer = () => {
-    if (runTime == true) {
-      if (isRunning == false) {
-        start();
-      }
+    if (runTime == true || isRunning == true) {
       return (
         <View>
-          <Text>
-            {hours}:{minutes}:{seconds}
+          <Text 
+          style={colorScheme=='dark'?darkMode.Text:lightMode.Text}
+          >
+            {minutes}:{seconds}
           </Text>
         </View>
       );
     } else {
       return (
         <View>
-          <Text>
-            {hours}:{minutes}:{seconds}
+          <Text 
+          style={colorScheme=='dark'?darkMode.Text:lightMode.Text}
+          >
+            {minutes}:{seconds}
           </Text>
         </View>
       );
     }
   };
-
-  let text = "Waiting..";
   if (errorMsg) {
     text = errorMsg;
   } else if (location) {
@@ -122,7 +138,7 @@ export const MapScreen = () => {
   return (
     <View style={styles.container}>
       <MapView
-        userLocationUpdateInterval={2000}
+        userLocationUpdateInterval={1000}
         // minZoomLevel={25}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
@@ -151,7 +167,7 @@ export const MapScreen = () => {
               >
                 <Image
                   source={require("../assets/car-online.png")}
-                  style={{ height: 35, width: 35, zIndex: 1000}}
+                  style={{ height: 40, width: 40, zIndex: 1000 }}
                 />
                 <Callout
                   style={{
@@ -177,7 +193,7 @@ export const MapScreen = () => {
                 >
                   <Image
                     source={require("../assets/car-online.png")}
-                    style={{ height: 35, width: 35 }}
+                    style={{ height: 40, width: 40 }}
                   />
                   <Callout
                     style={{
@@ -202,7 +218,7 @@ export const MapScreen = () => {
                 >
                   <Image
                     source={require("../assets/car-default.png")}
-                    style={{ height: 35, width: 35 }}
+                    style={{ height: 40, width: 40 }}
                   />
                   <Callout
                     style={{
@@ -247,7 +263,58 @@ export const MapScreen = () => {
                 </Callout>
               </Marker>
             );
-          } else if (showAll != true && stop.id.includes(selectedRoute)) {
+          } else if (showAll != true && stop.id.includes(startStop)) {
+            return (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: stop.lat,
+                  longitude: stop.lon,
+                }}
+                 pinColor={getRouteColor(stop.id)}
+                onPress={() => {
+                  setSelectedStop(stop);
+                }}
+              >
+              <Image
+                  source={require("../assets/busStop1.png")}
+                  style={{ height: 45, width: 45 }}
+                />
+                <Callout style={{
+                    width: 200,
+                  }}>
+                  <Text>{stop.name}</Text>
+                  <Text>{stop.id}</Text>
+                </Callout>
+              </Marker>
+            );
+          } else if (showAll != true && stop.id.includes(finalStop)) {
+            return (
+              <Marker
+                key={index}
+                coordinate={{
+                  latitude: stop.lat,
+                  longitude: stop.lon,
+                }}
+                 pinColor={getRouteColor(stop.id)}
+                onPress={() => {
+                  setSelectedStop(stop);
+                }}
+              >
+              <Image
+                  source={require("../assets/busStop2.png")}
+                  style={{ height: 45, width: 45 }}
+                />
+                <Callout style={{
+                    width: 200,
+                  }}>
+                  <Text>{stop.name}</Text>
+                  <Text>{stop.id}</Text>
+                </Callout>
+              </Marker>
+            );
+          }
+          else if (showAll != true && stop.id.includes(selectedRoute)) {
             return (
               <Marker
                 key={index}
@@ -275,6 +342,7 @@ export const MapScreen = () => {
           }
         })}
 
+
         {getPosition().map((device, index) => {
           const isOnline = getOnlineById(device.deviceId);
           if (onlyShowOnline && isOnline == "online") {
@@ -285,10 +353,10 @@ export const MapScreen = () => {
                   latitude: device.latitude,
                   longitude: device.longitude,
                 }}
-           >
+              >
                 <Image
                   source={require("../assets/car-online.png")}
-                  style={{ height: 35, width: 35 }}
+                  style={{ height: 40, width: 40 }}
                 />
                 <Callout
                   style={{
@@ -316,7 +384,7 @@ export const MapScreen = () => {
                 >
                   <Image
                     source={require("../assets/car-default.png")}
-                    style={{ height: 35, width: 35 }}
+                    style={{ height: 40, width: 40 }}
                   />
                   <Callout
                     style={{
@@ -338,11 +406,10 @@ export const MapScreen = () => {
                     latitude: device.latitude,
                     longitude: device.longitude,
                   }}
-                
                 >
                   <Image
                     source={require("../assets/car-default.png")}
-                    style={{ height: 35, width: 35 }}
+                    style={{ height: 40, width: 40 }}
                   />
                   <Callout
                     style={{
@@ -372,57 +439,76 @@ export const MapScreen = () => {
         })}
       </MapView>
       <View style={styles.carousel}>
-        {/* <HStack space={4}>
+        <HStack space={4}>
           {onlyShowOnline ? (
             <Button
               onPress={() => setOnlyShowOnline(false)}
-              style={styles.settingBtn}>
-               item
+              style={styles.settingBtn}
+            >
+              <MaterialCommunityIcons
+                name="bus-alert"
+                size={24}
+                color="black"
+              />
             </Button>
           ) : (
             <Button
               style={styles.settingBtn}
               onPress={() => setOnlyShowOnline(true)}
             >
-              Show online
+              <MaterialCommunityIcons
+                name="bus-alert"
+                size={24}
+                color="green"
+              />
             </Button>
           )}
           <Button
             style={styles.settingBtn}
             onPress={() => {
-             if(location.coords != null){
-              return _mapView.animateToRegion(
-                {
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                  latitudeDelta: 0.0122,
-                  longitudeDelta: 0.0121,
-                },
-                1000
-              );
-             }
+              if (location.coords != null) {
+                return _mapView.animateToRegion(
+                  {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                    latitudeDelta: 0.0122,
+                    longitudeDelta: 0.0121,
+                  },
+                  500
+                );
+              }
             }}
           >
-            My location
+            <MaterialIcons name="my-location" size={24} color="black" />
           </Button>
-        </HStack> */}
+        </HStack>
 
         {/*  TICKET */}
 
         {showTrip == false ? (
-          <View style={styles.tripContainer}>
-            <Text style={styles.stopListTitle}>Ticket</Text>
-            <Text>Route: {selectedRoute}</Text>
-            <Timer isStart={true} />
+          <View style={ 
+            colorScheme === "dark" ? darkMode.CarouselView : lightMode.CarouselView
+          }>
+            <Text style={ 
+            colorScheme === "dark" ? darkMode.Text : lightMode.Text
+          }>Ticket</Text>
+            <Text style={ 
+            colorScheme === "dark" ? darkMode.Text : lightMode.Text
+          }>Route: {selectedRoute}</Text>
+            <Timer  isStart={true} />
 
             <HStack>
-              <Text>
-                First Stop: <StopRenderMinimal stop={"TIM_" + startStop} />
+              <Text style={ 
+            colorScheme === "dark" ? darkMode.Text : lightMode.Text
+          } >
+                Parada 1: <StopRenderMinimal stop={"TIM_" + startStop} />
               </Text>
             </HStack>
             <HStack>
-              <Text>
-                Final Stop: <StopRenderMinimal stop={"TIM_" + finalStop} />
+              <Text style={ 
+            colorScheme === "dark" ? darkMode.Text : lightMode.Text
+          } >
+                Parada 2: <StopRenderMinimal stop={"TIM_" + finalStop} />
               </Text>
             </HStack>
             <HStack>
@@ -458,6 +544,7 @@ export const MapScreen = () => {
                       pause();
                       reset();
                       setRunTime(false);
+                      
                     } catch (e) {
                       console.error("Error adding document: ", e);
                     }
@@ -470,159 +557,228 @@ export const MapScreen = () => {
           </View>
         ) : null}
         {showTrip ? (
-          <View style={colorScheme =='dark' ? darkMode.CarouselView : lightMode.CarouselView}>
-            <HStack>
-              <Text style={colorScheme =='dark'? darkMode.Text : lightMode.Text  }>Trip</Text>
+          <View
+            style={
+              colorScheme == "dark"
+                ? darkMode.CarouselView
+                : lightMode.CarouselView
+            }
+          >
+            <HStack justifyContent={"space-between"}>
+              <Text
+                style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
+              >
+                Trip
+              </Text>
+              <Button
+                style={
+                  colorScheme == "dark"
+                    ? darkMode.subtleBtn
+                    : lightMode.subtleBtn
+                }
+                onPress={() => {
+                  setSelectedRoute(null);
+                  setStartStop(null);
+                  setFinalStop(null);
+                  setShowTrip(false);
+                }}
+              >
+                Close Ticket
+              </Button>
             </HStack>
+            <Button
+              onPress={() => {
+                setShowModal(true);
+              }}
+            >
+              <Text>Pick Route</Text>
+            </Button>
             <Center>
-              <FormControl isRequired>
-                <FormControl.Label>Choose a route</FormControl.Label>
-
-                <Select
-                  placeholder="Select a route"
-                  selectedValue={selectedRoute}
-                  minWidth={200}
-                  accessibilityLabel="Select a route"
-                  _selectedItem={{
-                    bg: "teal.600",
-                    endIcon: <CheckIcon size={5} />,
-                  }}
-                  mt="1"
-                  onValueChange={(itemValue) => {
-                    setSelectedRoute(itemValue);
-                    setStartStop(null);
-                    setSelectedStop(null);
-                    setShowAll(false);
-                  }}
-                >
-                  {getRoutes().map((route, index) => {
-                    return (
-                      <Select.Item
-                        key={index}
-                        label={route.id}
-                        value={route.id}
-                        onPress={() => {
-                          setSelectedRoute(route.id);
-                          setShowAll(false);
-
-                          _mapView.animateToRegion(
+              <Modal
+                style={colorScheme == "dark" ? darkMode.TicketView : lightMode.TicketView}
+                isOpen={showModal}
+                onClose={() => setShowModal(false)}
+              >
+                <Modal.Content maxWidth="80%">
+                  <Modal.CloseButton />
+                  <Modal.Header>Start Ticket 🎫</Modal.Header>
+                  <Modal.Body>
+                    <Text
+                      style={
+                        colorScheme == "dark" ? darkMode.Text : lightMode.Text
+                      }
+                    >
+                      Select Route
+                    </Text>
+                    <ScrollView>
+                      <FlatList
+                        data={getRoutes()}
+                        keyExtractor={(item, index) =>
+                          item.id + index.toString()
+                        }
+                        horizontal={true}
+                        renderItem={({ item }) => {
+                          return (
+                            <Button
+                              onPress={() => {
+                                setSelectedRoute(item.id);
+                              }}
+                              style={
+                                colorScheme == "dark"
+                                  ? darkMode.horizontalBtn
+                                  : lightMode.horizontalBtn
+                              }
+                            >
+                            <HStack space={2}>
                             {
-                              latitude: route.lat,
-                              longitude: route.lon,
-                              latitudeDelta: route.latD,
-                              longitudeDelta: route.lonD,
-                            },
-                            1000
+                              selectedRoute == item.id ? (<MaterialCommunityIcons name="bus-stop" size={24} color="black" />):null
+                            }
+                              <Text
+                                style={
+                                  colorScheme == "dark"
+                                    ? darkMode.Text
+                                    : lightMode.Text
+                                }
+                              >
+                                {item.name}
+                              </Text>
+                              </HStack>
+                            </Button>
                           );
                         }}
                       />
-                    );
-                  })}
-                </Select>
-              </FormControl>
-
-              {selectedRoute != null ? (
-                <FormControl isRequired>
-                  <FormControl.Label>Choose first stop</FormControl.Label>
-
-                  <Select
-                    placeholder="Select first stop"
-                    selectedValue={startStop}
-                    minWidth={200}
-                    accessibilityLabel="Select first stop"
-                    _selectedItem={{
-                      bg: "teal.600",
-                      endIcon: <CheckIcon size={5} />,
-                    }}
-                    mt="1"
-                    onValueChange={(itemValue) => {
-                      setStartStop(itemValue);
-                      setSelectedStop(itemValue);
-                    }}
-                  >
-                    {getStopsByRouteId(selectedRoute).map((stop, index) => {
-                      return (
-                        <Select.Item
-                          key={index}
-                          label={stop.id}
-                          value={stop.id}
-                          onPress={() => {
-                            setStartStop(stop.id);
-                            setSelectedStop(stop.id);
-                            _mapView.animateToRegion(
-                              {
-                                latitude: stop.lat,
-                                longitude: stop.lon,
-                                latitudeDelta: "0.0202",
-                                longitudeDelta: "0.0202",
-                              },
-                              1000
-                            );
-                          }}
-                        />
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              ) : null}
-
-              {startStop != null ? (
-                <FormControl isRequired>
-                  <FormControl.Label>Choose final stop</FormControl.Label>
-
-                  <Select
-                    placeholder="Select final stop"
-                    selectedValue={finalStop}
-                    minWidth={200}
-                    accessibilityLabel="Select final stop"
-                    _selectedItem={{
-                      bg: "teal.600",
-                      endIcon: <CheckIcon size={5} />,
-                    }}
-                    mt="1"
-                    onValueChange={(itemValue) => {
-                      setFinalStop(itemValue);
-                      setSelectedStop(itemValue);
-                    }}
-                  >
-                    {getStopsByRouteId(selectedRoute).map((stop, index) => {
-                      return (
-                        <Select.Item
-                          key={index}
-                          label={stop.id}
-                          value={stop.id}
-                          onPress={() => {
-                            setFinalStop(stop.id);
-                            setSelectedStop(stop.id);
-                            setShowAll(true);
-                            _mapView.animateToRegion(
-                              {
-                                latitude: stop.lat,
-                                longitude: stop.lon,
-                                latitudeDelta: "0.0202",
-                                longitudeDelta: "0.0202",
-                              },
-                              1000
-                            );
-                          }}
-                        />
-                      );
-                    })}
-                  </Select>
-                  <Button
-                    style={{ marginTop: 10 }}
-                    onPress={() => {
-                      setShowTrip(false);
-                      setShowAll(true);
-                      setRunTime(true);
-                      const item = new Date().getTime();
-                      setStartTime(item);
-                    }}
-                  >
-                    Start Trip
-                  </Button>
-                </FormControl>
-              ) : null}
+                    </ScrollView>
+                    {
+                      selectedRoute != null ? (
+                        <ScrollView>
+                        <Text style={
+                          colorScheme == "dark" ? darkMode.Text : lightMode.Text
+                        }>
+                          Select First Stop
+                        </Text>
+                      <FlatList
+                        data={getStopsByRouteId(selectedRoute)}
+                        keyExtractor={(item, index) =>
+                          item.id + index.toString()
+                        }
+                        horizontal={true}
+                        renderItem={({ item }) => {
+                          return (
+                            <Button
+                              onPress={() => {
+                                setStartStop(item.id);
+                              }}
+                              style={
+                                colorScheme == "dark"
+                                  ? darkMode.horizontalBtn
+                                  : lightMode.horizontalBtn
+                              }
+                            >
+                            <HStack space={2}>
+                            {
+                              startStop == item.id ? (<MaterialCommunityIcons name="bus-stop" size={24} color="black" />):null
+                            }
+                              <Text
+                                style={
+                                  colorScheme == "dark"
+                                    ? darkMode.Text
+                                    : lightMode.Text
+                                }
+                              >
+                                {item.name}
+                              </Text>
+                              </HStack>
+                            </Button>
+                          );
+                        }}
+                      />
+                    </ScrollView>
+                      ) : (
+                        <Text>
+                          Select a route to continue
+                        </Text>
+                      )
+                    }
+                    {
+                      startStop != null ? (
+                        <ScrollView>
+                        <Text style={
+                          colorScheme == "dark" ? darkMode.Text : lightMode.Text
+                        }>
+                          Select Final Stop
+                        </Text>
+                      <FlatList
+                        data={getStopsByRouteId(selectedRoute)} //TODO optimize change this to a useState variable
+                        keyExtractor={(item, index) =>
+                          item.id + index.toString()
+                        }
+                        horizontal={true}
+                        renderItem={({ item }) => {
+                          return (
+                            <Button
+                              onPress={() => {
+                                setFinalStop(item.id);
+                              }}
+                              style={
+                                colorScheme == "dark"
+                                  ? darkMode.horizontalBtn
+                                  : lightMode.horizontalBtn
+                              }
+                            >
+                             <HStack space={2}>
+                            {
+                              finalStop == item.id ? (<MaterialCommunityIcons name="bus-stop" size={24} color="black" />):null
+                            }
+                              <Text
+                                style={
+                                  colorScheme == "dark"
+                                    ? darkMode.Text
+                                    : lightMode.Text
+                                }
+                              >
+                                {item.name}
+                              </Text>
+                              </HStack>
+                              
+                            </Button>
+                          );
+                        }}
+                      />
+                    </ScrollView>
+                      ) : (
+                        null
+                      )
+                    }
+                    
+                  </Modal.Body>
+                  <Modal.Footer>
+                    <Button.Group space={2}>
+                      <Button
+                        variant="ghost"
+                        colorScheme="blueGray"
+                        onPress={() => {
+                          setShowModal(false);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onPress={() => {
+                          setShowModal(false);
+                          const item = new Date().getTime();
+                          setRunTime(true);
+                          setStartTime(item)
+                          setShowTrip(false);
+                          setShowAll(false);
+                          start();
+                        }}
+                      >
+                        Start Trip
+                      </Button>
+                    </Button.Group>
+                  </Modal.Footer>
+                </Modal.Content>
+              </Modal>
             </Center>
           </View>
         ) : null}
@@ -650,8 +806,7 @@ const styles = StyleSheet.create({
   stopListTitle: {
     fontSize: 15, //hykj8LmMrfnx
     fontWeight: "bold",
-    color: 'white',
-    
+    color: "white",
   },
   stopListDescription: {
     fontSize: 10,

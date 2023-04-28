@@ -103,15 +103,15 @@ export const LoginScreen = ({ navigation }) => {
                   <FormErrorMessage error={errorState} visible={true} />
                 ) : null}
                 {/* Login button */}
-                <Button style={colorScheme == 'dark'?  darkMode.loginBtn : lightMode.loginBtn } onPress={
+                <Button onPress={
                     checkbox ? handleSubmit : () => {
                       alert("Please accept terms and read conditions");
                     } 
 
-                }>
-                  <Text style={colorScheme == 'dark'?  darkMode.btnText : lightMode.btnText }>Login</Text>
+                }
+                style={colorScheme == 'dark'?  darkMode.LoginBtn : lightMode.LoginBtn }>
+                  <Text >Login</Text>
                 </Button>
-                {/* <Disclaimer /> */}
               </>
             )}
           </Formik>

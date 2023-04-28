@@ -1,9 +1,10 @@
 import { HStack, Icon, Text } from 'native-base';
+import { ImageComponent, StyleSheet, View, useColorScheme } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, } from 'react-native';
-
+import { darkMode, lightMode } from '../../config';
 export const StopRenderMinimal = ({stop}) => {
 
+  const colorScheme = useColorScheme();
 
   
   const [allStops, setAllStops] = useState([]);
@@ -101,6 +102,8 @@ function getNextStop(){
 
 
 const TimePred = () => {
+  const colorScheme = useColorScheme();
+
   if (predStop[0] === true) {
     return( <Text style={styles.timePred}> {new Date(predStop[1]).toLocaleTimeString()} -{
             Math.floor((predStop[1] - currentTime)/60000) <0 ? 
@@ -114,7 +117,9 @@ const TimePred = () => {
   } else{
     // return (<Text> {new Date(getNextStop())} </Text>)
     const val = getNextStop()
-    return (<Text> {val} </Text>)
+    return (<Text style={ 
+      colorScheme === "dark" ? darkMode.Text : lightMode.Text
+    }> {val} </Text>)
   }
 }
 
@@ -122,7 +127,11 @@ const TimePred = () => {
   <>
     <HStack space={1} alignItems="center">
       {
-        stopName.length > 0 ? <Text> {stopName} </Text> :<Text> loading... </Text>
+        stopName.length > 0 ? <Text style={ 
+            colorScheme === "dark" ? darkMode.Text : lightMode.Text
+          } > {stopName} </Text> :<Text style={ 
+            colorScheme === "dark" ? darkMode.Text : lightMode.Text
+          }> loading... </Text>
       }      
       <TimePred/>
     </HStack>
