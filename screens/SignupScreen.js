@@ -1,19 +1,20 @@
 import { Button, FormErrorMessage, TextInput, View } from "../components";
 import { Center, Checkbox, HStack, Image, Modal, Text } from "native-base";
+import { Colors, darkMode, lightMode } from "../config";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   getAuth,
 } from "firebase/auth";
 import React, { useState } from "react";
+import { StyleSheet, useColorScheme } from "react-native";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { auth, database } from "../config/firebase";
 
 import { AntDesign } from '@expo/vector-icons';
-import { Colors } from "../config";
 import { Formik } from "formik";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { StyleSheet } from "react-native";
+import { PrivacyPolicy } from "../assets/PrivacyPolicy";
 import { getCurrentTime } from "../utils";
 import logo from "../assets/car-blue.png";
 import { signupValidationSchema } from "../utils";
@@ -23,6 +24,7 @@ export const SignupScreen = ({ navigation }) => {
   const [errorState, setErrorState] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [checkbox, setCheckbox] = useState(false);
+  const colorScheme = useColorScheme();
   const {
     passwordVisibility,
     handlePasswordVisibility,
@@ -54,18 +56,19 @@ export const SignupScreen = ({ navigation }) => {
   };
 
   return (
-    <View isSafe style={styles.container}>
+    <View isSafe style={ colorScheme == 'dark'? darkMode.View:lightMode.View }>
     <View style={styles.keyboardView} >
       <KeyboardAwareScrollView enableOnAndroid={true}  >
         {/* LogoContainer: consits app logo and screen title */}
         <View style={styles.logoContainer}>
-          <Image
-            style={styles.logo}
-            source={logo}
-            alt="Logo"
-            resizeMode={"contain"}
-          />
-        </View>
+            <Image
+              source={logo}
+              alt="Logo"
+              size="md"
+              resizeMode="contain"
+              style={{ width: 150, height: 150 }}
+            />
+          </View>
         {/* Formik Wrapper */}
         <Formik
           initialValues={{
@@ -88,7 +91,7 @@ export const SignupScreen = ({ navigation }) => {
           }) => (
             <>
               {/* Input fields */}
-          <Text style={styles.screenTitle}>Creating Account</Text>
+          <Text style={colorScheme == 'dark'? darkMode.Title:lightMode.Title }>Creating Account</Text>
               <TextInput
                 name="email"
                 leftIconName="email"
@@ -165,72 +168,65 @@ export const SignupScreen = ({ navigation }) => {
           )}
         </Formik>
         <Center>
-      <HStack alignItems="center" justifyContent="space-between" style={{marginTop:5}}  >
-        <Checkbox
-value="one"
-            
-          colorScheme="blue"
-          accessibilityLabel="This is a dummy checkbox"
-          onChange={(e) => {
-            setCheckbox(e);
-          }}
-        >
-          <Text >
-            I agree to the terms and conditions
-          </Text>
-        </Checkbox>
-
-        <AntDesign
-          name="infocirlceo"
-          style={{ marginRight: 10, color: Colors.blue }}
-          size={12}
-          onPress={() => setShowModal(true)}
-        />
-      </HStack>
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
-        <Modal.Content maxWidth="350">
-          <Modal.CloseButton />
-          <Modal.Header>Disclaimer</Modal.Header>
-          <Modal.Body>
-          <Text >
-          This app was made for research purposes. If you want to delete all of your data you may do so in the settings page. 
-          By accepting these terms and conditions, you agree to the following:
-          You will not use this app for any illegal purposes.
-          You will not use this app to harm others.
-          You will not use this app to harm the environment.
-          This app will track your location and store it in a database.
-          You may delete this information. 
-          This app will ask for feedback and store it a database. Researchers may review this feedback. 
-          Researchers will look at user travel behaviour and app use in order to provide a better user experience.
-          
-          </Text>
-            {/* <VStack space={3}>
-              <HStack alignItems="center" justifyContent="space-between">
-                <Text fontWeight="medium">The </Text>
-                <Text color="blueGray.400">$298.77</Text>
-              </HStack>
-              <HStack alignItems="center" justifyContent="space-between">
-                <Text fontWeight="medium">Tax</Text>
-                <Text color="blueGray.400">$38.84</Text>
-              </HStack>
-              <HStack alignItems="center" justifyContent="space-between">
-                <Text fontWeight="medium">Total Amount</Text>
-                <Text color="green.500">$337.61</Text>
-              </HStack>
-            </VStack> */}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              flex="1"
-              onPress={() => {
-                setShowModal(false);
-              }}
+        <HStack
+              alignItems="center"
+              justifyContent="space-between"
+              style={{ marginTop: 5 }}
             >
-              <Text>Continue</Text> 
-            </Button>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
+              <Checkbox
+                value="one"
+                colorScheme="blue"
+                accessibilityLabel="This is a dummy checkbox"
+                onChange={(e) => {
+                  setCheckbox(e);
+                }}
+              >
+                <Text
+                  style={
+                    colorScheme == "dark"
+                      ? darkMode.Text
+                      : lightMode.Text
+                  }
+                
+                  > I agree to the terms and conditions
+                </Text>
+              </Checkbox>
+
+              <AntDesign
+                name="infocirlceo"
+                style={
+                    colorScheme == "dark"
+                      ? darkMode.icon
+                      : lightMode.icon
+                  }
+                size={18}
+                onPress={() => setShowModal(true)}
+              />
+            </HStack>
+      <Modal
+              isOpen={showModal}
+              onClose={() => setShowModal(false)}
+              size="lg"
+            >
+              <Modal.Content maxWidth="350">
+                <Modal.CloseButton />
+                <Modal.Header>Privacy Policy</Modal.Header>
+                <Modal.Body>
+                  <PrivacyPolicy />
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    flex="1"
+                    onPress={() => {
+                      setShowModal(false);
+                    }}
+                    style={useColorScheme == 'dark'? darkMode.subtleBtn : lightMode.subtleBtn}
+                  >
+                    <Text>Continue</Text>
+                  </Button>
+                </Modal.Footer>
+              </Modal.Content>
+            </Modal>
     </Center>
         {/* Button to navigate to Login screen */}
         <Button

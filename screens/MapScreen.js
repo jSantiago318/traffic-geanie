@@ -41,6 +41,7 @@ import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import { getStops, getStopsByRouteId } from "../assets/gtfs/stops";
 
+import { AntDesign } from '@expo/vector-icons';
 import { Pedometer } from "expo-sensors";
 import { StopRenderMinimal } from "../components/OBAFetches/StopRenderMinimal";
 import { database } from "../config/firebase";
@@ -566,24 +567,23 @@ export const MapScreen = () => {
           >
             <HStack justifyContent={"space-between"}>
               <Text
-                style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
+                style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
               >
                 Trip
               </Text>
               <Button
                 style={
-                  colorScheme == "dark"
-                    ? darkMode.subtleBtn
-                    : lightMode.subtleBtn
+                  {
+                    backgroundColor: "transparent",
+                  }
                 }
                 onPress={() => {
                   setSelectedRoute(null);
                   setStartStop(null);
                   setFinalStop(null);
-                  setShowTrip(false);
                 }}
               >
-                Close Ticket
+                <AntDesign name="closecircleo" style={colorScheme=='dark'?darkMode.icon: lightMode.icon} size={24}  />
               </Button>
             </HStack>
             <Button

@@ -1,13 +1,22 @@
 import { Button, FormErrorMessage, TextInput, View } from "../components";
-import { Center, Checkbox, HStack, Heading, Image, Modal, Text } from "native-base";
+import {
+  Center,
+  Checkbox,
+  HStack,
+  Heading,
+  Image,
+  Modal,
+  Text,
+} from "native-base";
 import { Colors, Images, auth, darkMode, lightMode, provider } from "../config";
 import React, { useState } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
 import { signInWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
 
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign } from "@expo/vector-icons";
 import { Formik } from "formik";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import {PrivacyPolicy} from "../assets/PrivacyPolicy";
 import { loginValidationSchema } from "../utils";
 import logo from "../assets/car-blue.png";
 import { useTogglePasswordVisibility } from "../hooks";
@@ -27,7 +36,7 @@ export const LoginScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
   const [checkbox, setCheckbox] = useState(false);
   return (
-    <View isSafe style={styles.container}>
+    <View isSafe style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
       <KeyboardAwareScrollView
         style={styles.keyboardView}
         enableOnAndroid={true}
@@ -42,7 +51,6 @@ export const LoginScreen = ({ navigation }) => {
               style={{ width: 150, height: 150 }}
             />
           </View>
-          <Text style={ colorScheme == 'dark'? darkMode.Title:lightMode.Title }>Mayaguez Transit Tracker </Text>
 
           <Formik
             initialValues={{
@@ -62,6 +70,14 @@ export const LoginScreen = ({ navigation }) => {
               handleBlur,
             }) => (
               <>
+                <Text
+                  style={
+                    colorScheme == "dark" ? darkMode.Title : lightMode.Title
+                  }
+                >
+                  Mayaguez Transit Tracker{" "}
+                </Text>
+
                 {/* Input fields */}
                 <TextInput
                   name="email"
@@ -79,20 +95,20 @@ export const LoginScreen = ({ navigation }) => {
                   error={errors.email}
                   visible={touched.email}
                 />
-                 <TextInput
-                name="password"
-                leftIconName="key-variant"
-                placeholder="Enter password"
-                autoCapitalize="none"
-                autoCorrect={false}
-                secureTextEntry={passwordVisibility}
-                textContentType="newPassword"
-                rightIcon={rightIcon}
-                handlePasswordVisibility={handlePasswordVisibility}
-                value={values.password}
-                onChangeText={handleChange("password")}
-                onBlur={handleBlur("password")}
-              />
+                <TextInput
+                  name="password"
+                  leftIconName="key-variant"
+                  placeholder="Enter password"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  secureTextEntry={passwordVisibility}
+                  textContentType="newPassword"
+                  rightIcon={rightIcon}
+                  handlePasswordVisibility={handlePasswordVisibility}
+                  value={values.password}
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                />
 
                 <FormErrorMessage
                   error={errors.password}
@@ -103,90 +119,91 @@ export const LoginScreen = ({ navigation }) => {
                   <FormErrorMessage error={errorState} visible={true} />
                 ) : null}
                 {/* Login button */}
-                <Button onPress={
-                    checkbox ? handleSubmit : () => {
-                      alert("Please accept terms and read conditions");
-                    } 
-
-                }
-                style={colorScheme == 'dark'?  darkMode.LoginBtn : lightMode.LoginBtn }>
-                  <Text >Login</Text>
+                <Button
+                  onPress={
+                    checkbox
+                      ? handleSubmit
+                      : () => {
+                          alert("Please accept terms and read conditions");
+                        }
+                  }
+                  style={
+                    colorScheme == "dark"
+                      ? darkMode.LoginBtn
+                      : lightMode.LoginBtn
+                  }
+                >
+                  <Text>Login</Text>
                 </Button>
               </>
             )}
           </Formik>
           {/* Button to navigate to SignupScreen to create a new account */}
           <Center>
-      <HStack alignItems="center" justifyContent="space-between" style={{marginTop:5}}  >
-        <Checkbox
-value="one"
-            
-          colorScheme="blue"
-          accessibilityLabel="This is a dummy checkbox"
-          onChange={(e) => {
-            setCheckbox(e);
-          }}
-        >
-          <Text >
-            I agree to the terms and conditions
-          </Text>
-        </Checkbox>
-
-        <AntDesign
-          name="infocirlceo"
-          style={{ marginRight: 10, color: Colors.blue }}
-          size={12}
-          onPress={() => setShowModal(true)}
-        />
-      </HStack>
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
-        <Modal.Content maxWidth="350">
-          <Modal.CloseButton />
-          <Modal.Header>Disclaimer</Modal.Header>
-          <Modal.Body>
-          <Text >
-          This app was made for research purposes. If you want to delete all of your data you may do so in the settings page. 
-          By accepting these terms and conditions, you agree to the following:
-          You will not use this app for any illegal purposes.
-          You will not use this app to harm others.
-          You will not use this app to harm the environment.
-          This app will track your location and store it in a database.
-          You may delete this information. 
-          This app will ask for feedback and store it a database. Researchers may review this feedback. 
-          Researchers will look at user travel behaviour and app use in order to provide a better user experience.
-          
-          </Text>
-            {/* <VStack space={3}>
-              <HStack alignItems="center" justifyContent="space-between">
-                <Text fontWeight="medium">The </Text>
-                <Text color="blueGray.400">$298.77</Text>
-              </HStack>
-              <HStack alignItems="center" justifyContent="space-between">
-                <Text fontWeight="medium">Tax</Text>
-                <Text color="blueGray.400">$38.84</Text>
-              </HStack>
-              <HStack alignItems="center" justifyContent="space-between">
-                <Text fontWeight="medium">Total Amount</Text>
-                <Text color="green.500">$337.61</Text>
-              </HStack>
-            </VStack> */}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              flex="1"
-              onPress={() => {
-                setShowModal(false);
-              }}
+            <HStack
+              alignItems="center"
+              justifyContent="space-between"
+              style={{ marginTop: 5 }}
             >
-              <Text>Continue</Text> 
-            </Button>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
-    </Center>
+              <Checkbox
+                value="one"
+                colorScheme="blue"
+                accessibilityLabel="This is a dummy checkbox"
+                onChange={(e) => {
+                  setCheckbox(e);
+                }}
+              >
+                <Text
+                  style={
+                    colorScheme == "dark"
+                      ? darkMode.Text
+                      : lightMode.Text
+                  }
+                
+                  > I agree to the terms and conditions
+                </Text>
+              </Checkbox>
+
+              <AntDesign
+                name="infocirlceo"
+                style={
+                    colorScheme == "dark"
+                      ? darkMode.icon
+                      : lightMode.icon
+                  }
+                size={18}
+                onPress={() => setShowModal(true)}
+              />
+            </HStack>
+            <Modal
+              isOpen={showModal}
+              onClose={() => setShowModal(false)}
+              size="lg"
+            >
+              <Modal.Content maxWidth="350">
+                <Modal.CloseButton />
+                <Modal.Header>Privacy Policy</Modal.Header>
+                <Modal.Body>
+                  <PrivacyPolicy />
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    flex="1"
+                    onPress={() => {
+                      setShowModal(false);
+                    }}
+                    style={useColorScheme == 'dark'? darkMode.subtleBtn : lightMode.subtleBtn}
+                  >
+                    <Text>Continue</Text>
+                  </Button>
+                </Modal.Footer>
+              </Modal.Content>
+            </Modal>
+          </Center>
           <Button
             style={styles.borderlessButtonContainer}
-            borderless
+            borderless 
+            
             title={"Create a new account?"}
             onPress={() => navigation.navigate("Signup")}
           />
@@ -198,8 +215,6 @@ value="one"
           />
         </View>
       </KeyboardAwareScrollView>
-
-     
     </View>
   );
 };

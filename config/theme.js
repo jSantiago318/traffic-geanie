@@ -1,5 +1,4 @@
-import { color } from "react-native-reanimated";
-
+import { StyleSheet } from 'react-native';
 const Colors = {
   orange: '#f57c00',
   blue: '#039be5',
@@ -40,6 +39,9 @@ const darkMode = {
   textDisabled: '#ee6c4d',
   text: '#98c1d9',
   subText: '#e0fbfc', 
+  icon:{
+    color: '#98c1d9',
+  },
   horizontalBtn:{
     alignItems : 'center',
     justifyContent: 'center',
@@ -102,6 +104,14 @@ const darkMode = {
     backgroundColor: '#293241'
     
   }, 
+  transparentBtn:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: 'transparent',
+    borderColor: '#98c1d9',
+  },
+
 
   outlineBtn:{
     alignItems : 'center',
@@ -171,7 +181,20 @@ LoginBtn:{
   backgroundColor: '#3d5a80',
 
 
-}
+} ,Map:{
+  flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      ...StyleSheet.absoluteFillObject,
+  
+},loginBtn:{
+  alignItems : 'center',
+  justifyContent: 'center',
+  borderRadius: 10,
+  width: '50%',
+  height: 50,
+  backgroundColor: '#98c1d9',
+},
 
   
 };
@@ -253,6 +276,21 @@ const lightMode = {
     fontWeight: "normal",
     color: '#293241',
 
+  }, carousel:{
+    position: "absolute",
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    bottom: "10%",
+    left: 0,
+    width: "100%",
+    backgroundColor: "#293241",
+  }, Map:{
+    flex: 1,
+
+    justifyContent: "center",
+    alignItems: "center",
+    ...StyleSheet.absoluteFillObject,
   },
   orange: '#f57c00',
   blue: '#039be5',
