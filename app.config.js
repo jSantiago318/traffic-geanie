@@ -6,7 +6,7 @@ export default {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '1.4.6',
+    version: '1.5.55',
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
@@ -42,7 +42,7 @@ export default {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 12,
+      "versionCode": 15,
       "package": "com.josiba.mayatransit",
 
     },
