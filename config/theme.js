@@ -42,20 +42,23 @@ const darkMode = {
   icon:{
     color: '#98c1d9',
   },
-  horizontalBtn:{
-    alignItems : 'center',
+  Modal:{
+    backgroundColor: '#293241',
+    width: '90%',
     justifyContent: 'center',
     borderRadius: 10,
-    backgroundColor: '#3d5a80',
-    marginRight: 10,
+    padding: 5,
+    margin: 5,
   },
   horizontalBtn:{
     alignItems : 'center',
     justifyContent: 'center',
     borderRadius: 10,
     backgroundColor: '#3d5a80',
-    marginRight: 10,
+    marginRight: 2,
+    paddingRight: 2,
   },
+  
   Card:{
     backgroundColor: '#3d5a80',
     width: '90%',
@@ -81,6 +84,14 @@ const darkMode = {
     margin: 10,
     borderRadius: 10,
     padding: 5,
+  },
+  settingBtn:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: '#3d5a80',
+    marginRight: 10,
+    with: '50%',
   },
   CarouselView:{
     flex: 1,
@@ -161,6 +172,8 @@ const darkMode = {
 Title:{
     fontSize: 16,
     fontWeight: "bold",
+    margin: 2,
+    padding: 2,
     color: '#98c1d9',
     
 } , 
@@ -208,6 +221,21 @@ const lightMode = {
       backgroundColor: '#e0fbfc',
       width:'90%',
   },
+  subtleBtn:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: '#e0fbfc'
+    
+  }, 
+  horizontalBtn:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: '#3d5a80',
+    marginRight: 2,
+    paddingRigth: 2,
+  },
   Select:{
     backgroundColor: '#e0fbfc',
     width: '90%',
@@ -238,6 +266,14 @@ const lightMode = {
     color: '#e0fbfc',
     
   },
+  settingBtn:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: '#98c1d9',
+    marginRight: 10,
+    with: '50%',
+  },
   routeList:{
   width: '90%',
   height: 'auto',
@@ -250,6 +286,8 @@ const lightMode = {
   Title:{
     fontSize: 16,
     fontWeight: "bold",
+    margin: 2,
+    padding: 2,
     color: '#293241',
     
   },
@@ -266,7 +304,7 @@ const lightMode = {
     flex: 1,
     width:'90%',
     justifyContent: 'center',
-    backgroundColor: '#e0fbfc',
+    backgroundColor: '#ffff',
     margin: 10,                                             
     borderRadius: 10,
     padding: 10,
@@ -283,8 +321,8 @@ const lightMode = {
     justifyContent: "center",
     bottom: "10%",
     left: 0,
-    width: "100%",
-    backgroundColor: "#293241",
+    width: "80%",
+    backgroundColor: "#fff",
   }, Map:{
     flex: 1,
 

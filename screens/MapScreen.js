@@ -470,8 +470,8 @@ export const MapScreen = () => {
               if (location.coords != null) {
                 return _mapView.animateToRegion(
                   {
-                    latitude: location.coords.latitude,
-                    longitude: location.coords.longitude,
+                    latitude: location.coords.latitude || 18.201025,
+                    longitude: location.coords.longitude || -67.1318,
                     latitudeDelta: 0.0122,
                     longitudeDelta: 0.0121,
                   },
@@ -536,8 +536,8 @@ export const MapScreen = () => {
                         stopTime: new Date().getTime(),
                         timeframe: hours + ":" + minutes + ":" + seconds,
                         location: {
-                          lat: location.coords.latitude,
-                          lon: location.coords.longitude,
+                          lat: location.coords.latitude || 18.201025,
+                          lon: location.coords.longitude || -67.1318,
                         },
                       });
 
@@ -571,20 +571,7 @@ export const MapScreen = () => {
               >
                 Trip
               </Text>
-              <Button
-                style={
-                  {
-                    backgroundColor: "transparent",
-                  }
-                }
-                onPress={() => {
-                  setSelectedRoute(null);
-                  setStartStop(null);
-                  setFinalStop(null);
-                }}
-              >
-                <AntDesign name="closecircleo" style={colorScheme=='dark'?darkMode.icon: lightMode.icon} size={24}  />
-              </Button>
+            
             </HStack>
             <Button
               onPress={() => {
