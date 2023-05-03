@@ -55,8 +55,8 @@ const darkMode = {
     justifyContent: 'center',
     borderRadius: 10,
     backgroundColor: '#3d5a80',
-    marginRight: 2,
-    paddingRight: 2,
+    margin: 2,
+    // padding: 2,
   },
   
   Card:{
@@ -221,6 +221,8 @@ const lightMode = {
       backgroundColor: '#e0fbfc',
       width:'90%',
   },
+  card: '#3d5a80',
+
   subtleBtn:{
     alignItems : 'center',
     justifyContent: 'center',
@@ -257,8 +259,6 @@ const lightMode = {
       width:'100%',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#293241',
-      color: '#98c1d9',
   }, 
   btnText:{
     fontSize: 14,
