@@ -31,8 +31,6 @@ const slides = [
   },
 ];
 const App = () => {
-  const [showRealApp, setShowRealApp] = React.useState(false);
-
   const storeData = async (value) => {
     try {
       await AsyncStorage.setItem('@firstTime', value)
@@ -53,8 +51,6 @@ const getData = async () => {
     return false;
   }
 }
-
-
 
   _renderItem = ({ item }) => {
     return (

@@ -54,7 +54,6 @@
     "react-native": "0.71.6",
     "react-native-app-intro-slider": "^4.0.4",
     "react-native-bouncing-preloader": "^1.0.1",
-    "react-native-flipper": "^0.190.0",
     "react-native-gesture-handler": "~2.9.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-maps": "1.3.2",
