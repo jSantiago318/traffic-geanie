@@ -17,13 +17,10 @@ import {
 } from "native-base";
 import { Colors, auth } from "../config";
 import { StyleSheet, View, useColorScheme } from "react-native";
-import { darkMode, lightMode } from "../config/theme";
 import { deleteUser, getAuth } from "firebase/auth";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { collection } from "firebase/firestore";
-import { database } from "../config/firebase";
 import { signOut } from "firebase/auth";
 
 export const SettingsScreen = () => {
@@ -32,7 +29,7 @@ export const SettingsScreen = () => {
   const handleLogout = () => {
     signOut(auth).catch((error) => console.log("Error logging out: ", error));
   };
-  const id = getAuth().currentUser.uid;
+  const id = getAuth().currentUser?.uid;
   const cUser = getAuth().currentUser;
 
   return (
@@ -142,29 +139,56 @@ export const SettingsScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
+const darkMode = StyleSheet.create({
+  View:{
     flex: 1,
-    backgroundColor: Colors.backgroundColor,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#293241',
+      width:'100%',
   },
-  btn: {
-    marginVertical: 5,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  
+})
+
+const lightMode = StyleSheet.create({
+  View:{
+    flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#fff',
+      width:'100%',
   },
-  text: {
+  CardView:{
+    width:'100%',
+    backgroundColor: '#8CCCF4',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+  }, 
+  TextHeading: {
     fontSize: 16,
     fontWeight: "bold",
-    marginTop: 10,
-  },
-  logout: {
-    margin: 5,
-  },
-  subText: {
-    fontSize: 14,
-    fontWeight: "normal",
-    marginTop: 10,
-  },
-});
+    color: "#000",
+    marginBottom: 10,
+    
+  }, subtleBtn:{
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    
+  }, outlineBtn:{
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    borderColor: '#8CCCF4',
+    borderWidth: 1,
+  }, Text:{
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 10,
+  }
+  
+})

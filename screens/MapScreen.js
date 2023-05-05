@@ -464,7 +464,7 @@ export const MapScreen = () => {
               />
             </Button>
           )}
-          <Button
+          {/* <Button
             style={styles.settingBtn}
             onPress={() => {
               if (location.coords != null) {
@@ -481,7 +481,7 @@ export const MapScreen = () => {
             }}
           >
             <MaterialIcons name="my-location" size={24} color="black" />
-          </Button>
+          </Button> */}
         </HStack>
 
         {/*  TICKET */}

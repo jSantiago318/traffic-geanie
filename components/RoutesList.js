@@ -1,5 +1,4 @@
 import { Box, FlatList, HStack, Icon, Text, VStack } from 'native-base';
-import { Colors, darkMode, lightMode } from '../config';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, useColorScheme } from 'react-native';
 
@@ -46,3 +45,24 @@ export const RoutesList = ({route}) => {
   
   );
 }
+const darkMode = StyleSheet.create({
+  Card:{
+    flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#293241',
+      width:'90%',
+  },
+  
+})
+
+const lightMode = StyleSheet.create({
+  Card:{
+    width: '90%',
+    backgroundColor: '#8CCCF4',
+    borderRadius: 10,
+    margin: 10, 
+    padding: 10,
+    maxHeight: '50%',
+  } 
+})

@@ -13,7 +13,6 @@ import {
   Text,
   VStack,
 } from "native-base";
-import { Colors, darkMode, lightMode } from "../config";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
 import {
@@ -30,6 +29,7 @@ import {
 } from "../components/URLFetcher";
 
 import { CheckIcon } from "native-base";
+import { Colors, } from "../config";
 import { DarkTheme } from "@react-navigation/native";
 import { RoutesList } from "../components/RoutesList.js";
 import { database } from "../config/firebase";
@@ -118,3 +118,31 @@ export const HomeScreen = () => {
   );
 };
 
+
+const darkMode = StyleSheet.create({
+  View:{
+    flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#293241',
+      width:'90%',
+  },
+  
+})
+
+const lightMode = StyleSheet.create({
+  View:{
+    flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#fff',
+      width:'100%',
+  },
+  CardView:{
+    width:'90%',
+    backgroundColor: '#8CCCF4',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+  }
+})

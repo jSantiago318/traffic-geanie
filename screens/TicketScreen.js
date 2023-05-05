@@ -28,12 +28,15 @@ import {
 export const TicketScreen = () => {
   const [trips, setTrips] = React.useState(0);
   const [showTripHistory, setShowTripHistory] = React.useState(false);
+  const [showFeedback, setShowFeedback] = React.useState(false);
   const handleLogout = () => {
     signOut(auth).catch((error) => console.log("Error logging out: ", error));
   };
   const id = getAuth().currentUser.uid;
   const query = collection(database, "users/" + id + "/trips");
+  const query1 = collection(database, "users/" + id + "/feedback");
   const [docs, loading, error] = useCollectionDataOnce(query);
+  const [docs1, loading1, error1] = useCollectionDataOnce(query1);
   return (
       <View
         style={{
@@ -85,6 +88,44 @@ export const TicketScreen = () => {
             }}
             keyExtractor={(item) => item.startTime}
           />
+        </>
+      ) : (
+       null
+        
+      )}
+      <Button
+              title="Show Feedback History"
+              onPress={() => setShowFeedback(!showFeedback)}
+              variant={"outline"}
+              style={{
+                marginVertical: 20,
+                width: "70%",
+              }}
+            >
+              Show Feedback History
+            </Button>
+         {showFeedback ? (
+        <>
+          <FlatList
+            data={docs1}
+            renderItem={({ item }) => {
+                return (
+                <View
+                  style={{
+                    backgroundColor: "white",
+                    padding: 12,
+                    borderRadius: 5,
+                    marginVertical: 8,
+                    marginHorizontal: 16,
+                  }}
+                >
+                  <Text> {item.desc} </Text>
+                  <Text>{item.location} </Text>
+                  <Text>{item.problem} </Text>
+                 
+                </View>
+              );
+            }}          />
         </>
       ) : (
        null
