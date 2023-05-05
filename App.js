@@ -1,9 +1,10 @@
-import {AsyncStorage, StyleSheet, Text, View, useColorScheme} from 'react-native';
 import React, {useEffect} from 'react';
+import { StyleSheet, Text, View, useColorScheme } from 'react-native';
+
 import AppIntroSlider from 'react-native-app-intro-slider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthenticatedUserProvider } from './providers';
 import { NativeBaseProvider } from 'native-base';
-import React from 'react';
 import { RootNavigator } from './navigation/RootNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -32,18 +33,27 @@ const slides = [
 const App = () => {
   const [showRealApp, setShowRealApp] = React.useState(false);
 
-  useEffect(() => {
-    // AsyncStorage.clear();
-    AsyncStorage.getItem('first_time').then((value) => {
-      console.log('first_time', value);
-      if (value == null) {
-        AsyncStorage.setItem('first_time', 'true');
-        setShowRealApp(false);
-      } else {
-        setShowRealApp(true);
-      }
-    });
-  }, [showRealApp]);
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem('@firstTime', value)
+    } catch (e) {
+      // saving error
+    }
+  }
+
+const getData = async () => {
+  try {
+    const value = await AsyncStorage.getItem('@firstTime')
+    if(value !== null) {
+      setShowRealApp(true);
+      return true;
+    }
+  } catch(e) {
+    // error reading value
+    return false;
+  }
+}
+
 
 
   _renderItem = ({ item }) => {
@@ -58,14 +68,14 @@ const App = () => {
   _onDone = () => {
 
     //store data to asyncstorage
-    AsyncStorage.setItem('first_time', 'true');
+   storeData('true');
     
     // User finished the introduction. Show real app through
     // navigation or simply by controlling state
   setShowRealApp(true );
   }
   
-    if (showRealApp) {
+    if (getData()) {
       return (
         <AuthenticatedUserProvider>
           <SafeAreaProvider>
