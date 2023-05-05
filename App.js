@@ -1,5 +1,5 @@
-import {StyleSheet, Text, View, useColorScheme} from 'react-native';
-
+import {AsyncStorage, StyleSheet, Text, View, useColorScheme} from 'react-native';
+import React, {useEffect} from 'react';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import { AuthenticatedUserProvider } from './providers';
 import { NativeBaseProvider } from 'native-base';
@@ -30,8 +30,22 @@ const slides = [
   },
 ];
 const App = () => {
-  
   const [showRealApp, setShowRealApp] = React.useState(false);
+
+  useEffect(() => {
+    // AsyncStorage.clear();
+    AsyncStorage.getItem('first_time').then((value) => {
+      console.log('first_time', value);
+      if (value == null) {
+        AsyncStorage.setItem('first_time', 'true');
+        setShowRealApp(false);
+      } else {
+        setShowRealApp(true);
+      }
+    });
+  }, [showRealApp]);
+
+
   _renderItem = ({ item }) => {
     return (
       <View style={styles.slide} backgroundColor={item.backgroundColor} >
@@ -42,6 +56,10 @@ const App = () => {
     );
   }
   _onDone = () => {
+
+    //store data to asyncstorage
+    AsyncStorage.setItem('first_time', 'true');
+    
     // User finished the introduction. Show real app through
     // navigation or simply by controlling state
   setShowRealApp(true );

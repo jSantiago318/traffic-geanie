@@ -24,6 +24,7 @@ export default {
     },
     assetBundlePatterns: ['**/*'],
     "ios": {
+      "ios": {"image": "latest"},
       supportsTablet: true,
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
