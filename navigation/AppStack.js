@@ -6,11 +6,22 @@ import { Entypo } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 import { getAuth } from 'firebase/auth';
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 export const AppStack = () => {
+  React.useEffect(() => {
+    (
+      async () => {
+        const { status } = await requestTrackingPermissionsAsync();
+        if (status === 'authorized') {
+          console.log('Tracking permission granted');
+        }
+      }
+    )
+   }, []);
   return (
 
     <Drawer.Navigator  >

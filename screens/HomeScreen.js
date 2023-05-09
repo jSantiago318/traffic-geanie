@@ -81,7 +81,7 @@ export const HomeScreen = () => {
                 </Text>
               </Stack>
             </HStack>
-            <Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card}>
+            <Box >
               <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>Select Route: </Text>
               <Select
                 style={colorScheme == 'dark' ? darkMode.Select : lightMode.Select}
@@ -125,8 +125,20 @@ const darkMode = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#293241',
-      width:'90%',
+      width:'100%',
   },
+  CardView:{
+    width:'80%',
+    backgroundColor: '#5F86C5',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 20,
+  },
+  Card:{
+    width:'100%',
+    backgroundColor: '#8CCCF4',
+  }
   
 })
 
@@ -139,7 +151,7 @@ const lightMode = StyleSheet.create({
       width:'100%',
   },
   CardView:{
-    width:'90%',
+    width:'100%',
     backgroundColor: '#8CCCF4',
     borderRadius: 10,
     padding: 10,

@@ -23,7 +23,7 @@ import { StyleSheet, View, useColorScheme } from "react-native";
 import { addDoc, collection, doc } from "firebase/firestore";
 import { deleteUser, getAuth } from "firebase/auth";
 
-import Checkbox from 'expo-checkbox';
+import Checkbox from "expo-checkbox";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { database } from "../config/firebase";
@@ -33,7 +33,7 @@ import { useState } from "react";
 function FormC() {
   const [formData, setData] = React.useState({});
   const [errors, setErrors] = React.useState({});
-
+  const colorScheme = useColorScheme();
   // const validate = () => {
   //   if (formData.name === undefined) {
   //     setErrors({ ...errors,
@@ -51,78 +51,86 @@ function FormC() {
   // };
 
   const onSubmit = () => {
-    console.log('submit');
+    console.log("submit");
     // validate() ? console.log('Submitted') : console.log('Validation Failed');
   };
   const [isChecked, setChecked] = useState(false);
-  return <VStack width="90%" mx="3" maxW="300px">
-      <FormControl isRequired isInvalid={'name' in errors}>
-        <FormControl.Label _text={{
-        bold: true
-      }}>Whats the problem?</FormControl.Label>
-        <Input placeholder="problem..." onChangeText={value => setData({ ...formData,
-        desc: value
-      })} />
-      <FormControl.Label _text={{bold:true}}>
-      Problem lated to:
+  return (
+    <VStack width="80%" mx="3">
+      <FormControl isRequired isInvalid={"name" in errors}>
+        <FormControl.Label>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            Whats the problem?
+          </Text>
         </FormControl.Label>
-        <Select minWidth="200" accessibilityLabel="Choose problem"
-          onValueChange={(itemValue) => setData({ ...formData,
-          problem: itemValue
-          }  )}
-         placeholder="Choose Service" _selectedItem={{
-        bg: "teal.600",
+        <Input
+          placeholder="problem..."
+          onChangeText={(value) => setData({ ...formData, desc: value })}
+        />
+        <FormControl.Label>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            Problem lated to:
+          </Text>
+        </FormControl.Label>
+        <Select
+          minWidth="200"
+          accessibilityLabel="Choose problem"
+          onValueChange={(itemValue) =>
+            setData({ ...formData, problem: itemValue })
+          }
+          placeholder="Choose Service"
+          _selectedItem={{
+            bg: "teal.600",
 
-        endIcon: <CheckIcon size={5} />
-      }} mt="1">
+            endIcon: <CheckIcon size={5} />,
+          }}
+          mt="1"
+        >
           <Select.Item label="Problem with route" value="problemRoute" />
           <Select.Item label="Problem with bus" value="problemBus" />
           <Select.Item label="Problem with app" value="problemApp" />
           <Select.Item label="Feedback or comment" value="feedbackComment" />
         </Select>
-      <FormControl.Label _text={{
-          bold: true
-        }}>Include Location</FormControl.Label>
-        <HStack
-        alignItems="center"
-        justifyContent="space-between"
-        width="80%"
-        
+        <FormControl.Label
+          _text={{
+            bold: true,
+          }}
         >
-       <Checkbox
-          style={styles.checkbox}
-          value={isChecked}
-          onValueChange={setChecked}
-          color={isChecked ? '#4630EB' : undefined}
-        />
-       <Text>
-          Pair Feedback with Location
-       </Text>
-        </HStack>
-       
+          <Checkbox
+            style={
+              colorScheme == "dark" ? darkMode.checkbox : lightMode.checkbox
+            }
+            value={isChecked}
+            onValueChange={setChecked}
+            color={isChecked ? "#4630EB" : undefined}
+          />
+          <Text style={
+              colorScheme == "dark" ? darkMode.Text : lightMode.Text
+            }>Include Location</Text>
+        </FormControl.Label>
       </FormControl>
-      <Button onPress={
-        async () => {
-          try{
+      <Button
+        onPress={async () => {
+          try {
             const id = getAuth().currentUser?.uid;
-            const docRed = doc(database, "users", id)
+            const docRed = doc(database, "users", id);
             await addDoc(collection(docRed, "feedback"), {
               location: isChecked,
               problem: formData.problem,
               desc: formData.desc,
               uid: id,
-            })
+            });
           } catch (e) {
             console.log(e);
           }
-
-        }
-      } mt="5" colorScheme="cyan"
-        
+        }}
+        mt="5"
+        colorScheme="cyan"
       >
         Submit
       </Button>
-    </VStack>;
+    </VStack>
+  );
 }
 
 export const FeedbackScreen = () => {
@@ -135,19 +143,41 @@ export const FeedbackScreen = () => {
   const cUser = getAuth().currentUser;
 
   return (
-    <Center flex={1}>
-      <FormC />
-    </Center>
+    <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
+      <Center flex={1}>
+        <FormC />
+      </Center>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
+const darkMode = StyleSheet.create({
+  View: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#293241",
+    width: "100%",
+  },
+  CardView: {
+    width: "80%",
+    backgroundColor: "#5F86C5",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+    marginTop: 20,
+  },
+  Card: {
+    width: "100%",
+    backgroundColor: "#8CCCF4",
+  },
   container: {
     flex: 1,
-    backgroundColor: Colors.backgroundColor,
-  }, section: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    backgroundColor: "#293241",
+  },
+  section: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   paragraph: {
     fontSize: 15,
@@ -162,10 +192,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  text: {
-    fontSize: 16,
+  Text: {
+    fontSize: 13,
     fontWeight: "bold",
     marginTop: 10,
+    color: "#fff",
   },
   logout: {
     margin: 5,
@@ -174,5 +205,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "normal",
     marginTop: 10,
+  },
+});
+
+const lightMode = StyleSheet.create({
+  View: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    width: "100%",
+  },
+  CardView: {
+    width: "100%",
+    backgroundColor: "#8CCCF4",
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
   },
 });

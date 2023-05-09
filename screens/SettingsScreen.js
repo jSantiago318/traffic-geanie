@@ -147,6 +147,26 @@ const darkMode = StyleSheet.create({
       backgroundColor: '#293241',
       width:'100%',
   },
+  Text: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  TextHeading: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff",
+  },
+  subtleBtn:{
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+    padding: 5,
+
+  }, outlineBtn:{
+    borderRadius: 10,
+    padding: 5,
+
+  },
   
 })
 
@@ -158,37 +178,25 @@ const lightMode = StyleSheet.create({
       backgroundColor: '#fff',
       width:'100%',
   },
-  CardView:{
-    width:'100%',
-    backgroundColor: '#8CCCF4',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-  }, 
-  TextHeading: {
-    fontSize: 16,
+  Text: {
+    fontSize: 13,
     fontWeight: "bold",
-    color: "#000",
-    marginBottom: 10,
-    
-  }, subtleBtn:{
+    color: "#293241",
+  },
+  TextHeading: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#293241",
+  },
+  subtleBtn:{
     backgroundColor: 'transparent',
     borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-    
+    padding: 5,
+
   }, outlineBtn:{
-    backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-    borderColor: '#8CCCF4',
-    borderWidth: 1,
-  }, Text:{
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#000",
-    marginBottom: 10,
-  }
+    padding: 5,
+
+  },
   
 })

@@ -1,6 +1,6 @@
 import { HStack, Icon, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, } from 'react-native';
+import { StyleSheet, View, useColorScheme } from 'react-native';
 
 import {Colors} from '../../config/';
 
@@ -81,8 +81,9 @@ function getNextStop(){
 
 
 const TimePred = () => {
+  const colorScheme = useColorScheme();
   if (predStop[0] === true) {
-    return( <Text style={styles.timePred}> {new Date(predStop[1]).toLocaleTimeString()} -{
+    return( <Text style={colorScheme == "dark" ? darkMode.timePred : lightMode.timePred}> {new Date(predStop[1]).toLocaleTimeString()} -{
             Math.floor((predStop[1] - currentTime)/60000) <0 ? 
             ""+Math.floor((predStop[1] - currentTime)/60000)*-1+" min" : 
             ""+Math.floor((predStop[1] - currentTime)/60000)+" min"
@@ -116,6 +117,33 @@ const TimePred = () => {
   );
 }
 
+// const darkMode = StyleSheet.create({
+//   timePred:{
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//     backgroundColor: '#0CAC59',
+//   },
+//   timeSch: {
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//     backgroundColor: '#0CAC59',
+//     },
+// })
+
+// const lightMode = StyleSheet.create({
+//   timePred:{
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//     color: 'green',
+//   },
+//   timeSch: {
+//     fontSize: 16,
+//     fontWeight: 'bold',
+//     color: Colors.schText,
+//     },
+// })
+
+
 const styles = StyleSheet.create({
   container: {
     // maxHeight: '50%'s,
@@ -125,7 +153,7 @@ const styles = StyleSheet.create({
   }, timePred:{
     fontSize: 16,
     fontWeight: 'bold',
-    color: 'green',
+    color: '#049C64',
   }, card: {
     margin: 5,
     padding: 5,
@@ -134,7 +162,7 @@ const styles = StyleSheet.create({
   }, timeSch: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: Colors.schText,
+    color: '#383838',
     }, 
   
 });

@@ -56,8 +56,7 @@ export const SignupScreen = ({ navigation }) => {
   };
 
   return (
-    <View isSafe style={ colorScheme == 'dark'? darkMode.View:lightMode.View }>
-    <View style={styles.keyboardView} >
+    <View isSafe style={ styles.View }>
       <KeyboardAwareScrollView enableOnAndroid={true}  >
         {/* LogoContainer: consits app logo and screen title */}
         <View style={styles.logoContainer}>
@@ -236,7 +235,7 @@ export const SignupScreen = ({ navigation }) => {
           onPress={() => navigation.navigate("Login")}
         />
       </KeyboardAwareScrollView>
-      </View>
+      
      
     </View>
   );
@@ -262,6 +261,12 @@ const styles = StyleSheet.create({
   footerText: {
     color: Colors.white,
     fontSize: 12,
+  },View:{
+    flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#ffff',
+      width:'100%',
   },
   
   input:{

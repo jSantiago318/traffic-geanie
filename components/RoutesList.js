@@ -47,11 +47,12 @@ export const RoutesList = ({route}) => {
 }
 const darkMode = StyleSheet.create({
   Card:{
-    flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#293241',
-      width:'90%',
+    width: '90%',
+    backgroundColor: '#5F86C5',
+    borderRadius: 10,
+    margin: 10, 
+    padding: 10,
+    maxHeight: '50%',
   },
   
 })

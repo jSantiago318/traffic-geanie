@@ -16,7 +16,8 @@ export const RootNavigator = () => {
   const appearance = useColorScheme();
 
   useEffect(() => {
-    // onAuthStateChanged returns an unsubscriber
+    
+  
 
     const unsubscribeAuthStateChanged = onAuthStateChanged(
       auth,

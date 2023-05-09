@@ -36,7 +36,7 @@ export const LoginScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
   const [checkbox, setCheckbox] = useState(false);
   return (
-    <View isSafe style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
+    <View isSafe style={styles.View}>
       <KeyboardAwareScrollView
         style={styles.keyboardView}
         enableOnAndroid={true}
@@ -278,5 +278,12 @@ const styles = StyleSheet.create({
   },
   keyboardView: {
     width: "100%",
+  },
+  View:{
+    flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#ffff',
+      width:'100%',
   },
 });
