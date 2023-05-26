@@ -13,7 +13,7 @@ export const RouteListSelection = ({route}) => {
 
    useEffect(() => {
    const dataFetch = async () => {
-    const url = "https://pr-oba.live/api/where/stops-for-route/TIM_"+route+".json?key=TEST"
+    const url = "https://proba.live/api/where/stops-for-route/TIM_"+route+".json?key=TEST"
     await  fetch(url)
     .then((response) => response.json())
     .then((data) => {

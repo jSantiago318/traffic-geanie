@@ -7,6 +7,14 @@ import { AuthenticatedUserProvider } from './providers';
 import { NativeBaseProvider } from 'native-base';
 import { RootNavigator } from './navigation/RootNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { createTheme } from '@mui/material/styles';
+
+// import '@fontsource/roboto/300.css';
+// import '@fontsource/roboto/400.css';
+// import '@fontsource/roboto/500.css';
+// import '@fontsource/roboto/700.css';
+
+
 
 const slides = [
   {
@@ -31,6 +39,25 @@ const slides = [
   },
 ];
 const App = () => {
+  const [mode, setMode] = React.useState('light');
+
+  
+  const colorMode = React.useMemo(
+    () => ({
+      // The dark mode switch would invoke this method
+      toggleColorMode: () => {
+        setMode((prevMode) =>
+          prevMode === 'light' ? 'dark' : 'light',
+        );
+      },
+    }),
+    [],
+  );
+
+  // Update the theme only if the mode changes
+  // const theme = React.useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
+
+
   const storeData = async (value) => {
     try {
       await AsyncStorage.setItem('@firstTime', value)

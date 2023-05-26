@@ -7,7 +7,6 @@ import {
   HStack,
   Input,
   Modal,
-  SafeAreaView,
   Select,
   Stack,
   Text,
@@ -45,7 +44,7 @@ export const HomeScreen = () => {
   setInterval(() => {
     setBusCount(getOnlineCount());
     setActiveTripCount(getOnlineActiveTripsCount());
-  }, 2000);
+  }, 1000);
 
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
@@ -59,7 +58,6 @@ export const HomeScreen = () => {
           >
             Mayaguez Bus Tracker
           </Text>
-
           <View
             style={
               colorScheme == "dark" ? darkMode.CardView : lightMode.CardView
@@ -89,8 +87,8 @@ export const HomeScreen = () => {
                 accessibilityLabel="Choose a route"
                 placeholder="Choose a route"
                 _selectedItem={{
-                  bg: colorScheme == 'dark' ? 'blueGray.400' : 'blueGray.400',
-                  endIcon: <CheckIcon size="5" />,
+                  // bg: colorScheme == 'dark' ? 'blueGray.400' : 'blueGray.400',
+                  endIcon: <CheckIcon size="5"  />,
                 }}
                 mt={1}
                 onValueChange={(itemValue) => {
@@ -105,6 +103,7 @@ export const HomeScreen = () => {
                 <Select.Item label="Route 349" value="TIM_RR349" />
               </Select>
             </Box>
+
           </View>
         </Center>
       </View>
@@ -114,6 +113,7 @@ export const HomeScreen = () => {
       ) : (
         <Text> Finding Stops ... </Text>
       )}
+
     </View>
   );
 };
@@ -122,13 +122,13 @@ export const HomeScreen = () => {
 const darkMode = StyleSheet.create({
   View:{
     flex: 1,
-      justifyContent: 'center',
+      // justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#293241',
       width:'100%',
   },
   CardView:{
-    width:'80%',
+    width:'90%',
     backgroundColor: '#5F86C5',
     borderRadius: 10,
     padding: 10,
@@ -145,16 +145,21 @@ const darkMode = StyleSheet.create({
 const lightMode = StyleSheet.create({
   View:{
     flex: 1,
-      justifyContent: 'center',
+      // justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: '#fff',
       width:'100%',
   },
   CardView:{
-    width:'100%',
+    width:'90%',
     backgroundColor: '#8CCCF4',
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
+    marginTop: 20,
+  },
+  Card:{
+    width:'100%',
+    backgroundColor: '#8CCCF4',
   }
 })

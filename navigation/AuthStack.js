@@ -20,7 +20,7 @@ export const AuthStack = () => {
     <Drawer.Navigator  >
     <Drawer.Screen name='Routes' component={HomeScreen}   />
     <Drawer.Screen name='Feedback' component={FeedbackScreen} />
-    <Drawer.Screen name='Settings' component={SettingsScreen} />
+    {/* <Drawer.Screen name='Settings' component={SettingsScreen} /> */}
 
     <Drawer.Screen name='Login' component={LoginScreen} />
       <Drawer.Screen name='Signup' component={SignupScreen} />

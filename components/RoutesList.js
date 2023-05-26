@@ -10,7 +10,7 @@ export const RoutesList = ({route}) => {
    useEffect(() => {
     const interval = setInterval(() => {
          const dataFetch = async () => {
-    const url = "https://pr-oba.live/api/where/stops-for-route/TIM_"+route+".json?key=TEST"
+    const url = "https://proba.live/api/where/stops-for-route/TIM_"+route+".json?key=TEST"
     await  fetch(url)
     .then((response) => response.json())
     .then((data) => {
@@ -52,7 +52,7 @@ const darkMode = StyleSheet.create({
     borderRadius: 10,
     margin: 10, 
     padding: 10,
-    maxHeight: '50%',
+    maxHeight: '60%',
   },
   
 })
@@ -64,6 +64,6 @@ const lightMode = StyleSheet.create({
     borderRadius: 10,
     margin: 10, 
     padding: 10,
-    maxHeight: '50%',
+    maxHeight: '60%',
   } 
 })

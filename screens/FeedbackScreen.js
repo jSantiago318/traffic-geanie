@@ -34,37 +34,22 @@ function FormC() {
   const [formData, setData] = React.useState({});
   const [errors, setErrors] = React.useState({});
   const colorScheme = useColorScheme();
-  // const validate = () => {
-  //   if (formData.name === undefined) {
-  //     setErrors({ ...errors,
-  //       name: 'Name is required'
-  //     });
-  //     return false;
-  //   } else if (formData.name.length < 3) {
-  //     setErrors({ ...errors,
-  //       name: 'Name is too short'
-  //     });
-  //     return false;
-  //   }
-
-  //   return true;
-  // };
-
   const onSubmit = () => {
     console.log("submit");
-    // validate() ? console.log('Submitted') : console.log('Validation Failed');
   };
   const [isChecked, setChecked] = useState(false);
   return (
-    <VStack width="80%" mx="3">
+    <VStack width="90%" mx="3">
       <FormControl isRequired isInvalid={"name" in errors}>
         <FormControl.Label>
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            Whats the problem?
+            Feedback
           </Text>
         </FormControl.Label>
         <Input
           placeholder="problem..."
+          size={ "md" }
+          style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
           onChangeText={(value) => setData({ ...formData, desc: value })}
         />
         <FormControl.Label>
@@ -73,7 +58,6 @@ function FormC() {
           </Text>
         </FormControl.Label>
         <Select
-          minWidth="200"
           accessibilityLabel="Choose problem"
           onValueChange={(itemValue) =>
             setData({ ...formData, problem: itemValue })
@@ -154,10 +138,14 @@ export const FeedbackScreen = () => {
 const darkMode = StyleSheet.create({
   View: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    // justifyContent: "center",
+    // alignItems: "center",
     backgroundColor: "#293241",
     width: "100%",
+  },
+  Input:{
+    width: "100%",
+    minWidth: '30%',
   },
   CardView: {
     width: "80%",
@@ -193,8 +181,8 @@ const darkMode = StyleSheet.create({
     alignItems: "center",
   },
   Text: {
-    fontSize: 13,
-    fontWeight: "bold",
+    fontSize: 16,
+    // fontWeight: "bold",
     marginTop: 10,
     color: "#fff",
   },

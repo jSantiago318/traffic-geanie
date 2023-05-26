@@ -29,7 +29,7 @@ if (gOnline.length === 0) {
 }
 export function getStopTime(route, index) {
   fetch(
-    "https://pr-oba.live/api/where/schedule-for-stop/TIM_" +
+    "https://proba.live/api/where/schedule-for-stop/TIM_" +
       route +
       "S" +
       index +
@@ -44,7 +44,7 @@ export function getStopTime(route, index) {
 
 
 export function getRouteIdforAgency() {
-  fetch("https://pr-oba.live/api/where/route-ids-for-agency/TIM.json?key=TEST")
+  fetch("https://proba.live/api/where/route-ids-for-agency/TIM.json?key=TEST")
     .then((response) => response.json())
     .then((data) => {
       gCurrentTime = data.currentTime;

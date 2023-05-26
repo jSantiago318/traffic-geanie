@@ -12,6 +12,7 @@ import {
 import { StyleSheet, View } from "react-native";
 
 import BouncingPreLoader from "react-native-bouncing-preloader";
+import MapView from "react-native-maps";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { auth } from "../config";
@@ -56,7 +57,7 @@ export const TicketScreen = () => {
             >
               Show Trip History
             </Button>
-         {showTripHistory ? (
+         {/* {showTripHistory ? (
         <>
           <FlatList
             data={docs}
@@ -92,7 +93,7 @@ export const TicketScreen = () => {
       ) : (
        null
         
-      )}
+      )} */}
       <Button
               title="Show Feedback History"
               onPress={() => setShowFeedback(!showFeedback)}
@@ -132,7 +133,23 @@ export const TicketScreen = () => {
         
       )}
 
-      
+      {
+        showTripHistory ? (
+          <MapView style={{flex: 1, width: "80%"}} >
+            <MapView.Marker
+              coordinate={{
+                latitude: 37.78825,
+                longitude: -122.4324,
+              }}
+              title={"title"}
+              description={"description"}
+            />
+          </MapView>
+        ) : (
+          null
+          
+        )
+      }
       </View>
   );
 };

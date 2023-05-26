@@ -14,6 +14,7 @@ import {
   Modal,
   ScrollView,
   Select,
+  Switch,
   Text,
   WarningIcon,
   WarningOutlineIcon,
@@ -22,6 +23,7 @@ import { Colors, darkMode, lightMode } from "../config";
 import {
   Dimensions,
   Image,
+  Pressable,
   StatusBar,
   StyleSheet,
   View,
@@ -42,11 +44,12 @@ import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import { getStops, getStopsByRouteId } from "../assets/gtfs/stops";
 
 import { AntDesign } from '@expo/vector-icons';
+import Carousel from 'react-native-snap-carousel';
 import { Pedometer } from "expo-sensors";
 import { StopRenderMinimal } from "../components/OBAFetches/StopRenderMinimal";
 import { database } from "../config/firebase";
 import { getAuth } from "firebase/auth";
-import { render } from "react-dom";
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
@@ -77,11 +80,16 @@ export const MapScreen = () => {
         setErrorMsg("Permission to access location was denied");
         return;
       }
+
       let location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.BestForNavigation,
           
       });
       setLocation(location);
+      const { status2 } = await requestTrackingPermissionsAsync();
+      if (status2 === 'granted') {
+        console.log('Yay! I have user permission to track data');
+      }
 
       const interval = setInterval(async () => {
         const loc = await Location.getCurrentPositionAsync({});
@@ -123,6 +131,8 @@ export const MapScreen = () => {
     text = JSON.stringify(location);
   }
 
+    const [showAppOptions, setShowAppOptions] = useState(false);
+
   function getShapeByRouteId(routeId) {
     let coord = [];
     Shapes.map((shape) => {
@@ -140,7 +150,6 @@ export const MapScreen = () => {
     <View style={styles.container}>
       <MapView
         userLocationUpdateInterval={1000}
-        // minZoomLevel={25}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
         showsUserLocation={true}
@@ -342,8 +351,6 @@ export const MapScreen = () => {
             );
           }
         })}
-
-
         {getPosition().map((device, index) => {
           const isOnline = getOnlineById(device.deviceId);
           if (onlyShowOnline && isOnline == "online") {
@@ -439,342 +446,125 @@ export const MapScreen = () => {
           );
         })}
       </MapView>
-      <View style={styles.carousel}>
-        <HStack space={4}>
-          {onlyShowOnline ? (
-            <Button
-              onPress={() => setOnlyShowOnline(false)}
-              style={styles.settingBtn}
-            >
-              <MaterialCommunityIcons
-                name="bus-alert"
-                size={24}
-                color="black"
-              />
-            </Button>
-          ) : (
-            <Button
-              style={styles.settingBtn}
-              onPress={() => setOnlyShowOnline(true)}
-            >
-              <MaterialCommunityIcons
-                name="bus-alert"
-                size={24}
-                color="green"
-              />
-            </Button>
-          )}
-          {/* <Button
-            style={styles.settingBtn}
-            onPress={() => {
-              if (location.coords != null) {
-                return _mapView.animateToRegion(
-                  {
-                    latitude: location.coords.latitude || 18.201025,
-                    longitude: location.coords.longitude || -67.1318,
-                    latitudeDelta: 0.0122,
-                    longitudeDelta: 0.0121,
-                  },
-                  500
-                );
-              }
-            }}
-          >
-            <MaterialIcons name="my-location" size={24} color="black" />
-          </Button> */}
-        </HStack>
+      {
+        showAppOptions ?
+      (  <View style={styles.appOptionsContainer}>
+        <Text style={styles.appOptionsTitle}>Map Options</Text>
 
-        {/*  TICKET */}
-
-        {showTrip == false ? (
-          <View style={ 
-            colorScheme === "dark" ? darkMode.CarouselView : lightMode.CarouselView
-          }>
-            <Text style={ 
-            colorScheme === "dark" ? darkMode.Text : lightMode.Text
-          }>Ticket</Text>
-            <Text style={ 
-            colorScheme === "dark" ? darkMode.Text : lightMode.Text
-          }>Route: {selectedRoute}</Text>
-            <Timer  isStart={true} />
-
-            <HStack>
-              <Text style={ 
-            colorScheme === "dark" ? darkMode.Text : lightMode.Text
-          } >
-                Parada 1: <StopRenderMinimal stop={"TIM_" + startStop} />
-              </Text>
-            </HStack>
-            <HStack>
-              <Text style={ 
-            colorScheme === "dark" ? darkMode.Text : lightMode.Text
-          } >
-                Parada 2: <StopRenderMinimal stop={"TIM_" + finalStop} />
-              </Text>
-            </HStack>
-            <HStack>
-              <Button
-                onPress={async () => {
-                  if (
-                    selectedRoute == null ||
-                    startStop == null ||
-                    finalStop == null
-                  ) {
-                    setShowTrip(true);
-                    pause();
-                    reset();
-                    setRunTime(false);
-                  } else {
-                    try {
-                      const id = getAuth().currentUser.uid;
-                      const docRef = doc(database, "users", id);
-                      await addDoc(collection(docRef, "trips"), {
-                        route: selectedRoute,
-                        startStop: startStop,
-                        finalStop: finalStop,
-                        startTime: startTime,
-                        stopTime: new Date().getTime(),
-                        timeframe: hours + ":" + minutes + ":" + seconds,
-                        location: {
-                          lat: location.coords.latitude || 18.201025,
-                          lon: location.coords.longitude || -67.1318,
-                        },
-                      });
-
-                      setShowTrip(true);
-                      pause();
-                      reset();
-                      setRunTime(false);
-                      
-                    } catch (e) {
-                      console.error("Error adding document: ", e);
-                    }
-                  }
-                }}
-              >
-                End Trip
-              </Button>
-            </HStack>
-          </View>
-        ) : null}
-        {showTrip ? (
-          <View
-            style={
-              colorScheme == "dark"
-                ? darkMode.CarouselView
-                : lightMode.CarouselView
+          {/* <Pressable style={styles.appOption} onPress={
+            () => {
+              setShowAll(!showAll);
             }
-          >
-            <HStack justifyContent={"space-between"}>
-              <Text
-                style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
-              >
-                Trip
-              </Text>
-            
+          }>
+            <Text style={styles.appOptionText}>Show All Stops</Text>
+          </Pressable> */}
+          <Text style={styles.appOptionText}>Show Only Online Buses</Text>
+            <HStack space={2} marginY={2} alignItems="center">
+            <Switch
+              trackColor={{ false: "#767577", true: "#048444" }}
+              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                setEnable(!showAll);
+              }
+              }
+              value={showAll}
+            />
+            <Text >Ruta 105</Text>
             </HStack>
-            <Button
-              onPress={() => {
-                setShowModal(true);
-              }}
-            >
-              <Text>Pick Route</Text>
-            </Button>
-            <Center>
-              <Modal
-                style={colorScheme == "dark" ? darkMode.TicketView : lightMode.TicketView}
-                isOpen={showModal}
-                onClose={() => setShowModal(false)}
-              >
-                <Modal.Content maxWidth="80%">
-                  <Modal.CloseButton />
-                  <Modal.Header>Start Ticket 🎫</Modal.Header>
-                  <Modal.Body>
-                    <Text
-                      style={
-                        colorScheme == "dark" ? darkMode.Text : lightMode.Text
-                      }
-                    >
-                      Select Route
-                    </Text>
-                    <ScrollView>
-                      <FlatList
-                        data={getRoutes()}
-                        keyExtractor={(item, index) =>
-                          item.id + index.toString()
-                        }
-                        horizontal={true}
-                        renderItem={({ item }) => {
-                          return (
-                            <Button
-                              onPress={() => {
-                                setSelectedRoute(item.id);
-                              }}
-                              style={
-                                colorScheme == "dark"
-                                  ? darkMode.horizontalBtn
-                                  : lightMode.horizontalBtn
-                              }
-                            >
-                            <HStack space={2}>
-                            {
-                              selectedRoute == item.id ? (<MaterialCommunityIcons name="bus-stop" size={24} color="black" />):null
-                            }
-                              <Text
-                                style={
-                                  colorScheme == "dark"
-                                    ? darkMode.Text
-                                    : lightMode.Text
-                                }
-                              >
-                                {item.name}
-                              </Text>
-                              </HStack>
-                            </Button>
-                          );
-                        }}
-                      />
-                    </ScrollView>
-                    {
-                      selectedRoute != null ? (
-                        <ScrollView>
-                        <Text style={
-                          colorScheme == "dark" ? darkMode.Text : lightMode.Text
-                        }>
-                          Select First Stop
-                        </Text>
-                      <FlatList
-                        data={getStopsByRouteId(selectedRoute)}
-                        keyExtractor={(item, index) =>
-                          item.id + index.toString()
-                        }
-                        horizontal={true}
-                        renderItem={({ item }) => {
-                          return (
-                            <Button
-                              onPress={() => {
-                                setStartStop(item.id);
-                              }}
-                              style={
-                                colorScheme == "dark"
-                                  ? darkMode.horizontalBtn
-                                  : lightMode.horizontalBtn
-                              }
-                            >
-                            <HStack space={2}>
-                            {
-                              startStop == item.id ? (<MaterialCommunityIcons name="bus-stop" size={24} color="black" />):null
-                            }
-                              <Text
-                                style={
-                                  colorScheme == "dark"
-                                    ? darkMode.Text
-                                    : lightMode.Text
-                                }
-                              >
-                                {item.name}
-                              </Text>
-                              </HStack>
-                            </Button>
-                          );
-                        }}
-                      />
-                    </ScrollView>
-                      ) : (
-                        <Text>
-                          Select a route to continue
-                        </Text>
-                      )
-                    }
-                    {
-                      startStop != null ? (
-                        <ScrollView>
-                        <Text style={
-                          colorScheme == "dark" ? darkMode.Text : lightMode.Text
-                        }>
-                          Select Final Stop
-                        </Text>
-                      <FlatList
-                        data={getStopsByRouteId(selectedRoute)} //TODO optimize change this to a useState variable
-                        keyExtractor={(item, index) =>
-                          item.id + index.toString()
-                        }
-                        horizontal={true}
-                        renderItem={({ item }) => {
-                          return (
-                            <Button
-                              onPress={() => {
-                                setFinalStop(item.id);
-                              }}
-                              style={
-                                colorScheme == "dark"
-                                  ? darkMode.horizontalBtn
-                                  : lightMode.horizontalBtn
-                              }
-                            >
-                             <HStack space={2}>
-                            {
-                              finalStop == item.id ? (<MaterialCommunityIcons name="bus-stop" size={24} color="black" />):null
-                            }
-                              <Text
-                                style={
-                                  colorScheme == "dark"
-                                    ? darkMode.Text
-                                    : lightMode.Text
-                                }
-                              >
-                                {item.name}
-                              </Text>
-                              </HStack>
-                              
-                            </Button>
-                          );
-                        }}
-                      />
-                    </ScrollView>
-                      ) : (
-                        null
-                      )
-                    }
-                    
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <Button.Group space={2}>
-                      <Button
-                        variant="ghost"
-                        colorScheme="blueGray"
-                        onPress={() => {
-                          setShowModal(false);
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        onPress={() => {
-                          setShowModal(false);
-                          const item = new Date().getTime();
-                          setRunTime(true);
-                          setStartTime(item)
-                          setShowTrip(false);
-                          setShowAll(false);
-                          start();
-                        }}
-                      >
-                        Start Trip
-                      </Button>
-                    </Button.Group>
-                  </Modal.Footer>
-                </Modal.Content>
-              </Modal>
-            </Center>
-          </View>
-        ) : null}
-      </View>
+            <HStack space={2} alignItems="center">
+            <Switch
+              trackColor={{ false: "#767577", true: "#048444" }}
+              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                setEnable(!showAll);
+              }
+              }
+              value={showAll}
+            />
+            <Text >Ruta 105</Text>
+            </HStack>
+            <HStack space={2} alignItems="center">
+            <Switch
+              trackColor={{ false: "#767577", true: "#048444" }}
+              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                setEnable(!showAll);
+              }
+              }
+              value={showAll}
+            />
+            <Text >Ruta 105</Text>
+            </HStack>
+            <HStack space={2} alignItems="center">
+            <Switch
+              trackColor={{ false: "#767577", true: "#048444" }}
+              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                setEnable(!showAll);
+              }
+              }
+              value={showAll}
+            />
+            <Text >Ruta 105</Text>
+            </HStack>
+            <HStack space={2} alignItems="center">
+            <Switch
+              trackColor={{ false: "#767577", true: "#048444" }}
+              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                setEnable(!showAll);
+              }
+              }
+              value={showAll}
+            />
+            <Text >Ruta 105</Text>
+            </HStack>
+        </ View>) :
+        (
+          null
+        )
+      }
+      <View style={styles.circleButtonContainer}>
+      <Pressable style={styles.circleButton} onPress={
+        () => {
+          setShowAppOptions(!showAppOptions);
+        }
+      }
+      onClick={
+        () => {
+          setShowAppOptions(!showAppOptions);
+        }
+      }
+      >
+      {
+        showAppOptions ?(
+          <MaterialIcons name="close" size={38} color="#25292e" />
+        ) :
+        (
+          <MaterialIcons name="commute" size={38} color="#25292e" />
+        )
+      }
+      </Pressable>
+    </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  appOptionsContainer:{
+    position: 'absolute',
+    top: 0,
+    backgroundColor: 'white',
+    width: Dimensions.get("window").width * 0.9,
+    height: Dimensions.get("window").height * 0.3,
+    marginVertical: 20,
+    padding: 10,
+  },
   containerScroll: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
@@ -838,4 +628,24 @@ const styles = StyleSheet.create({
   settingBtn: {
     backgroundColor: Colors.highlihgted,
   },
+  circleButtonContainer: {
+    width: 84,
+    height: 84,
+    marginHorizontal: 20,
+    borderWidth: 4,
+    borderColor: '#048444',
+    borderRadius: 42,
+    padding: 3,
+    bottom: 10,
+    right: 10,
+    position: 'absolute',
+  },
+  circleButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 42,
+    backgroundColor: '#fff',
+  },
 });
+ 

@@ -19,7 +19,7 @@ export const StopRender = ({stop}) => {
       async function dataFetch(){
         console.log(stop)
         await fetch(
-          "https://pr-oba.live/api/where/schedule-for-stop/" +
+          "https://proba.live/api/where/schedule-for-stop/" +
           stop +
           ".json?key=TEST"
           ).then((response) => response.json())
@@ -34,7 +34,7 @@ export const StopRender = ({stop}) => {
           });
           
           
-          await fetch('https://pr-oba.live/api/where/arrivals-and-departures-for-stop/'+stop+'.json?key=TEST').then((response) => response.json())
+          await fetch('https://proba.live/api/where/arrivals-and-departures-for-stop/'+stop+'.json?key=TEST').then((response) => response.json())
           .then((data) => {
             //   console.log(data.data.entry.arrivalsAndDepartures[0].lastKnownLocation)
             //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.nextStop)
