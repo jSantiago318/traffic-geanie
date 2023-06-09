@@ -4,17 +4,18 @@ import { StyleSheet, Text, View, useColorScheme } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthenticatedUserProvider } from './providers';
-import { NativeBaseProvider } from 'native-base';
-import { RootNavigator } from './navigation/RootNavigator';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { createTheme } from '@mui/material/styles';
-
 // import '@fontsource/roboto/300.css';
 // import '@fontsource/roboto/400.css';
 // import '@fontsource/roboto/500.css';
 // import '@fontsource/roboto/700.css';
+import LogRocket from '@logrocket/react-native';
+import { NativeBaseProvider } from 'native-base';
+import { RootNavigator } from './navigation/RootNavigator';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { createTheme } from '@mui/material/styles';
+import { enableScreens } from 'react-native-screens';
 
-
+enableScreens();
 
 const slides = [
   {

@@ -102,3 +102,11 @@ export function getStops() {
       longitudeDelta: 0.0421 }
   }
   
+  export function getStopsByRouteIdSelect(routeId){
+    const val = stops.filter((s) => s.id.startsWith(routeId))
+    let arr = []
+    for (let index = 0; index < val.length; index++) {
+      arr.push({label: val[index].name, value: val[index].id})
+    }
+    return arr
+  }

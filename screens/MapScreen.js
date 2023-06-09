@@ -23,7 +23,6 @@ import { Colors, darkMode, lightMode } from "../config";
 import {
   Dimensions,
   Image,
-  Pressable,
   StatusBar,
   StyleSheet,
   View,
@@ -41,21 +40,43 @@ import React, { setTimeout, useEffect, useState } from "react";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
-import { getStops, getStopsByRouteId } from "../assets/gtfs/stops";
+import {
+  getStops,
+  getStopsByRouteId,
+  getStopsByRouteIdSelect,
+} from "../assets/gtfs/stops";
 
-import { AntDesign } from '@expo/vector-icons';
-import Carousel from 'react-native-snap-carousel';
+import { AntDesign } from "@expo/vector-icons";
+import Carousel from "react-native-snap-carousel";
+import DropDownPicker from "react-native-dropdown-picker";
 import { Pedometer } from "expo-sensors";
+import { Picker } from "@react-native-picker/picker";
 import { StopRenderMinimal } from "../components/OBAFetches/StopRenderMinimal";
 import { database } from "../config/firebase";
 import { getAuth } from "firebase/auth";
-import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
 const Shapes = require("../assets/gtfs/shapes.json");
 
 export const MapScreen = () => {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+
+  const [items, setItems] = useState([
+    { value: "RR102", label: "Ruta Rural 102" },
+    { value: "RR105", label: "Ruta Rural 105" },
+    { value: "RR106", label: "Ruta Rural 106" },
+    { value: "RR108", label: "Ruta Rural 108" },
+    { value: "RR348", label: "Ruta Rural 348" },
+    { value: "RR349", label: "Ruta Rural 349" },
+  ]);
+  const [open2, setOpen2] = useState(false);
+  const [open3, setOpen3] = useState(false);
+  const [value2, setValue2] = useState(null);
+  const [value3, setValue3] = useState(null);
+  const [selectedLanguage, setSelectedLanguage] = useState();
   const colorScheme = useColorScheme();
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -83,12 +104,11 @@ export const MapScreen = () => {
 
       let location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.BestForNavigation,
-          
       });
       setLocation(location);
       const { status2 } = await requestTrackingPermissionsAsync();
-      if (status2 === 'granted') {
-        console.log('Yay! I have user permission to track data');
+      if (status2 === "granted") {
+        console.log("Yay! I have user permission to track data");
       }
 
       const interval = setInterval(async () => {
@@ -106,9 +126,7 @@ export const MapScreen = () => {
     if (runTime == true || isRunning == true) {
       return (
         <View>
-          <Text 
-          style={colorScheme=='dark'?darkMode.Text:lightMode.Text}
-          >
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             {minutes}:{seconds}
           </Text>
         </View>
@@ -116,9 +134,7 @@ export const MapScreen = () => {
     } else {
       return (
         <View>
-          <Text 
-          style={colorScheme=='dark'?darkMode.Text:lightMode.Text}
-          >
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             {minutes}:{seconds}
           </Text>
         </View>
@@ -131,7 +147,7 @@ export const MapScreen = () => {
     text = JSON.stringify(location);
   }
 
-    const [showAppOptions, setShowAppOptions] = useState(false);
+  const [showAppOptions, setShowAppOptions] = useState(false);
 
   function getShapeByRouteId(routeId) {
     let coord = [];
@@ -255,7 +271,6 @@ export const MapScreen = () => {
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-              
                 pinColor={getRouteColor(stop.id)}
                 onPress={() => {
                   setSelectedStop(stop.id);
@@ -265,9 +280,11 @@ export const MapScreen = () => {
                   source={require("../assets/BusStop.png")}
                   style={{ height: 35, width: 35 }}
                 />
-                <Callout style={{
+                <Callout
+                  style={{
                     width: 200,
-                  }}>
+                  }}
+                >
                   <Text>{stop.name}</Text>
                   <Text>{stop.id}</Text>
                 </Callout>
@@ -281,18 +298,20 @@ export const MapScreen = () => {
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-                 pinColor={getRouteColor(stop.id)}
+                pinColor={getRouteColor(stop.id)}
                 onPress={() => {
                   setSelectedStop(stop);
                 }}
               >
-              <Image
+                <Image
                   source={require("../assets/busStop1.png")}
                   style={{ height: 45, width: 45 }}
                 />
-                <Callout style={{
+                <Callout
+                  style={{
                     width: 200,
-                  }}>
+                  }}
+                >
                   <Text>{stop.name}</Text>
                   <Text>{stop.id}</Text>
                 </Callout>
@@ -306,25 +325,26 @@ export const MapScreen = () => {
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-                 pinColor={getRouteColor(stop.id)}
+                pinColor={getRouteColor(stop.id)}
                 onPress={() => {
                   setSelectedStop(stop);
                 }}
               >
-              <Image
+                <Image
                   source={require("../assets/busStop2.png")}
                   style={{ height: 45, width: 45 }}
                 />
-                <Callout style={{
+                <Callout
+                  style={{
                     width: 200,
-                  }}>
+                  }}
+                >
                   <Text>{stop.name}</Text>
                   <Text>{stop.id}</Text>
                 </Callout>
               </Marker>
             );
-          }
-          else if (showAll != true && stop.id.includes(selectedRoute)) {
+          } else if (showAll != true && stop.id.includes(selectedRoute)) {
             return (
               <Marker
                 key={index}
@@ -332,18 +352,20 @@ export const MapScreen = () => {
                   latitude: stop.lat,
                   longitude: stop.lon,
                 }}
-                 pinColor={getRouteColor(stop.id)}
+                pinColor={getRouteColor(stop.id)}
                 onPress={() => {
                   setSelectedStop(stop);
                 }}
               >
-              <Image
+                <Image
                   source={require("../assets/BusStop.png")}
                   style={{ height: 35, width: 35 }}
                 />
-                <Callout style={{
+                <Callout
+                  style={{
                     width: 200,
-                  }}>
+                  }}
+                >
                   <Text>{stop.name}</Text>
                   <Text>{stop.id}</Text>
                 </Callout>
@@ -446,122 +468,236 @@ export const MapScreen = () => {
           );
         })}
       </MapView>
-      {
-        showAppOptions ?
-      (  <View style={styles.appOptionsContainer}>
-        <Text style={styles.appOptionsTitle}>Map Options</Text>
+      {showAppOptions ? (
+        <View style={styles.appOptionsContainer}>
+          {
+            runTime == true ? (
+<View>
+<Text style={styles.appOptionsTitle}>Map Options</Text>
+          <Text style={styles.appOptionText}>Show/Hide routes</Text>
+          <HStack space={2} marginY={1} alignItems="center">
+            <Switch
+              trackColor={{ false: "#767577", true: "#048444" }}
+              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                setEnable(!showAll);
+              }}
+              value={showAll}
+            />
+            <Text>Ruta 105</Text>
+          </HStack>
+          <HStack space={2} marginY={1} alignItems="center">
+            <Switch
+              trackColor={{ false: "#767577", true: "#048444" }}
+              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                setEnable(!showAll);
+              }}
+              value={showAll}
+            />
+            <Text>Ruta 106</Text>
+          </HStack>
+          <HStack space={2} marginY={1} alignItems="center">
+            <Switch
+              trackColor={{ false: "#767577", true: "#048444" }}
+              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={() => {
+                setEnable(!showAll);
+              }}
+              value={showAll}
+            />
+            <Text>Ruta 105</Text>
+          </HStack>
+          
+          
+            <Button
+              style={styles.settingBtn}
+              onPress={() => {
+                setShowModal(false);
+                const item = new Date().getTime();
+                setRunTime(true);
+                setStartTime(item);
+                setShowAppOptions(!showAppOptions);
+                start();
+              }}
+              onClick={() => {
+                setShowModal(false);
+                const item = new Date().getTime();
+                setRunTime(true);
+                setStartTime(item);
+                setShowAppOptions(!showAppOptions);
+                start();
+              }}
+            >
+              <Text>Stop Trip</Text>
+            </Button>
+          
+</View>
 
-          {/* <Pressable style={styles.appOption} onPress={
-            () => {
-              setShowAll(!showAll);
-            }
-          }>
-            <Text style={styles.appOptionText}>Show All Stops</Text>
-          </Pressable> */}
-          <Text style={styles.appOptionText}>Show Only Online Buses</Text>
-            <HStack space={2} marginY={2} alignItems="center">
+            ):(
+              <View>
+              <Text style={styles.appOptionsTitle}>Map Options</Text>
+          <Text style={styles.appOptionText}>Show/Hide routes</Text>
+          <HStack space={2} marginY={1} alignItems="center">
             <Switch
               trackColor={{ false: "#767577", true: "#048444" }}
               thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
               onValueChange={() => {
                 setEnable(!showAll);
-              }
-              }
+              }}
               value={showAll}
             />
-            <Text >Ruta 105</Text>
-            </HStack>
-            <HStack space={2} alignItems="center">
+            <Text>Ruta 105</Text>
+          </HStack>
+          <HStack space={2} marginY={1} alignItems="center">
             <Switch
               trackColor={{ false: "#767577", true: "#048444" }}
               thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
               onValueChange={() => {
                 setEnable(!showAll);
-              }
-              }
+              }}
               value={showAll}
             />
-            <Text >Ruta 105</Text>
-            </HStack>
-            <HStack space={2} alignItems="center">
+            <Text>Ruta 105</Text>
+          </HStack>
+          <HStack space={2} marginY={1} alignItems="center">
             <Switch
               trackColor={{ false: "#767577", true: "#048444" }}
               thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
               onValueChange={() => {
                 setEnable(!showAll);
-              }
-              }
+              }}
               value={showAll}
             />
-            <Text >Ruta 105</Text>
-            </HStack>
-            <HStack space={2} alignItems="center">
+            <Text>Ruta 105</Text>
+          </HStack>
+          <HStack space={2} marginY={1} alignItems="center">
             <Switch
               trackColor={{ false: "#767577", true: "#048444" }}
               thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
               onValueChange={() => {
                 setEnable(!showAll);
-              }
-              }
+              }}
               value={showAll}
             />
-            <Text >Ruta 105</Text>
-            </HStack>
-            <HStack space={2} alignItems="center">
+            <Text>Ruta 105</Text>
+          </HStack>
+          <HStack space={2} marginY={1} alignItems="center">
             <Switch
               trackColor={{ false: "#767577", true: "#048444" }}
               thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
               ios_backgroundColor="#3e3e3e"
               onValueChange={() => {
                 setEnable(!showAll);
-              }
-              }
+              }}
               value={showAll}
             />
-            <Text >Ruta 105</Text>
-            </HStack>
-        </ View>) :
-        (
-          null
-        )
-      }
+            <Text>Ruta 105</Text>
+          </HStack>
+          <Text>Choose Trip Route</Text>
+          <DropDownPicker
+            zIndex={2000}
+            open={open}
+            items={items}
+            setOpen={setOpen}
+            setValue={setValue}
+            setItems={setItems}
+            value={value}
+            style={{
+              height: 50,
+              width: 150,
+            }}
+          />
+          <Text>Choose First Stop</Text>
+          <DropDownPicker
+            zIndex={1000}
+            open={open2}
+            value={value2}
+            items={getStopsByRouteIdSelect(value)}
+            setOpen={setOpen2}
+            setValue={setValue2}
+            style={{
+              height: 50,
+              width: 150,
+            }}
+          />
+          <Text>Choose Final Stop</Text>
+          <DropDownPicker
+            zIndex={900}
+            open={open3}
+            value={value3}
+            items={getStopsByRouteIdSelect(value)}
+            setOpen={setOpen3}
+            setValue={setValue3}
+            style={{
+              height: 50,
+              width: 150,
+              marginBottom: 10,
+            }}
+          />
+          {value2 != null && value3 != null ? (
+            <Button
+              style={styles.settingBtn}
+              onPress={() => {
+                setShowModal(false);
+                const item = new Date().getTime();
+                setRunTime(true);
+                setStartTime(item);
+                setShowAppOptions(!showAppOptions);
+                start();
+              }}
+              onClick={() => {
+                setShowModal(false);
+                const item = new Date().getTime();
+                setRunTime(true);
+                setStartTime(item);
+                setShowAppOptions(!showAppOptions);
+                start();
+              }}
+            >
+              <Text>Start Trip</Text>
+            </Button>
+          ) : null}
+              </View>
+            )
+          }
+        </View>
+      ) : null}
       <View style={styles.circleButtonContainer}>
-      <Pressable style={styles.circleButton} onPress={
-        () => {
-          setShowAppOptions(!showAppOptions);
-        }
-      }
-      onClick={
-        () => {
-          setShowAppOptions(!showAppOptions);
-        }
-      }
-      >
-      {
-        showAppOptions ?(
-          <MaterialIcons name="close" size={38} color="#25292e" />
-        ) :
-        (
-          <MaterialIcons name="commute" size={38} color="#25292e" />
-        )
-      }
-      </Pressable>
-    </View>
+        <Button
+          style={styles.circleButton}
+          onPress={() => {
+            setShowAppOptions(!showAppOptions);
+          }}
+          onClick={() => {
+            setShowAppOptions(!showAppOptions);
+          }}
+        >
+          {showAppOptions ? (
+            <MaterialIcons name="close" size={38} color="#25292e" />
+          ) : (
+            <MaterialIcons name="commute" size={38} color="#25292e" />
+          )}
+        </Button>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  appOptionsContainer:{
-    position: 'absolute',
+  appOptionsContainer: {
+    position: "absolute",
     top: 0,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     width: Dimensions.get("window").width * 0.9,
-    height: Dimensions.get("window").height * 0.3,
+    height: Dimensions.get("window").height * 0.7,
     marginVertical: 20,
     padding: 10,
   },
@@ -633,19 +769,18 @@ const styles = StyleSheet.create({
     height: 84,
     marginHorizontal: 20,
     borderWidth: 4,
-    borderColor: '#048444',
+    borderColor: "#048444",
     borderRadius: 42,
     padding: 3,
     bottom: 10,
     right: 10,
-    position: 'absolute',
+    position: "absolute",
   },
   circleButton: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 42,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
 });
- 

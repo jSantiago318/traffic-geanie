@@ -4,6 +4,7 @@ import { FeedbackScreen, HomeScreen, MapScreen, SettingsScreen, TicketScreen } f
 
 import { Entypo } from '@expo/vector-icons';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { createStackNavigator } from '@react-navigation/stack';
 import { getAuth } from 'firebase/auth';
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
