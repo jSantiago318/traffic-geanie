@@ -43,7 +43,7 @@ export default {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 19,
+      "versionCode": 20,
       "package": "com.josiba.mayatransit",
 
     },
