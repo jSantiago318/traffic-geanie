@@ -39,42 +39,38 @@ function FormC() {
   };
   const [isChecked, setChecked] = useState(false);
   return (
-    <VStack width="90%" mx="3">
-      <FormControl isRequired isInvalid={"name" in errors}>
+    <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
+      <FormControl
+        isRequired
+        isInvalid={"name" in errors}
+        style={colorScheme == "dark" ? darkMode.CardView : lightMode.CardView}
+      >
         <FormControl.Label>
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             Feedback
           </Text>
         </FormControl.Label>
         <Input
-          placeholder="problem..."
-          size={ "md" }
-          style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
-          onChangeText={(value) => setData({ ...formData, desc: value })}
-        />
+            variant="outline"
+            w={"100%"}
+            placeholder="problem..."
+            onChangeText={(value) => setData({ ...formData, desc: value })}
+            style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
+          />
+
         <FormControl.Label>
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            Problem lated to:
+            Problem Description
           </Text>
         </FormControl.Label>
-        <Select
-          accessibilityLabel="Choose problem"
-          onValueChange={(itemValue) =>
-            setData({ ...formData, problem: itemValue })
-          }
-          placeholder="Choose Service"
-          _selectedItem={{
-            bg: "teal.600",
+        <Input
+            variant="outline"
+            w={"100%"}
+            placeholder="problem description ..."
+            onChangeText={(value) => setData({ ...formData, desc: value })}
+            style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
+          />
 
-            endIcon: <CheckIcon size={5} />,
-          }}
-          mt="1"
-        >
-          <Select.Item label="Problem with route" value="problemRoute" />
-          <Select.Item label="Problem with bus" value="problemBus" />
-          <Select.Item label="Problem with app" value="problemApp" />
-          <Select.Item label="Feedback or comment" value="feedbackComment" />
-        </Select>
         <FormControl.Label
           _text={{
             bold: true,
@@ -88,9 +84,9 @@ function FormC() {
             onValueChange={setChecked}
             color={isChecked ? "#4630EB" : undefined}
           />
-          <Text style={
-              colorScheme == "dark" ? darkMode.Text : lightMode.Text
-            }>Include Location</Text>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+             Include Current Location
+          </Text>
         </FormControl.Label>
       </FormControl>
       <Button
@@ -100,6 +96,7 @@ function FormC() {
             const docRed = doc(database, "users", id);
             await addDoc(collection(docRed, "feedback"), {
               location: isChecked,
+              main: formData.main,
               problem: formData.problem,
               desc: formData.desc,
               uid: id,
@@ -109,11 +106,11 @@ function FormC() {
           }
         }}
         mt="5"
-        colorScheme="cyan"
+        colorScheme="blue"
       >
         Submit
       </Button>
-    </VStack>
+    </View>
   );
 }
 
@@ -138,18 +135,13 @@ export const FeedbackScreen = () => {
 const darkMode = StyleSheet.create({
   View: {
     flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
+    // justifyContent: 'center',
+    alignItems: "center",
     backgroundColor: "#293241",
     width: "100%",
   },
-  Input:{
-    width: "100%",
-    minWidth: '30%',
-  },
   CardView: {
-    width: "80%",
-    backgroundColor: "#5F86C5",
+    width: "100%",
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
@@ -159,56 +151,36 @@ const darkMode = StyleSheet.create({
     width: "100%",
     backgroundColor: "#8CCCF4",
   },
-  container: {
-    flex: 1,
-    backgroundColor: "#293241",
-  },
-  section: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  paragraph: {
-    fontSize: 15,
-  },
-  checkbox: {
-    margin: 8,
-  },
-  btn: {
-    marginVertical: 5,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  Text: {
-    fontSize: 16,
-    // fontWeight: "bold",
-    marginTop: 10,
-    color: "#fff",
-  },
-  logout: {
-    margin: 5,
-  },
-  subText: {
-    fontSize: 14,
-    fontWeight: "normal",
-    marginTop: 10,
-  },
 });
 
 const lightMode = StyleSheet.create({
   View: {
     flex: 1,
-    justifyContent: "center",
+    // justifyContent: 'center',
     alignItems: "center",
     backgroundColor: "#fff",
     width: "100%",
   },
   CardView: {
-    width: "100%",
+    width: "90%",
     backgroundColor: "#8CCCF4",
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
+    marginTop: 20,
+  },
+  Card: {
+    width: "100%",
+    backgroundColor: "#8CCCF4",
+  },
+  Input: {
+    backgroundColor: "#fff",
+    width: "90%",
+    borderRadius: 10,
+    padding: 5,
+  }, checkbox:{
+    backgroundColor: "#fff",
+    marginRight: 10,
+
   },
 });

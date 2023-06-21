@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+
 const Colors = {
   orange: '#f57c00',
   blue: '#039be5',
@@ -170,6 +171,7 @@ const darkMode = {
     width: "100%",
     backgroundColor: "#293241",
   },
+
 Title:{
     fontSize: 16,
     fontWeight: "bold",
@@ -217,10 +219,19 @@ LoginBtn:{
 const lightMode = {
   View:{
     flex: 1,
-      justifyContent: 'center',
       alignItems: 'center',
+      padding: 5,
+
       backgroundColor: '#e0fbfc',
-      width:'90%',
+      width:'100%',
+  },
+  Input:{
+    backgroundColor: '#e0fbfc',
+    width: '90%',
+    justifyContent: 'center',
+    borderRadius: 10,
+    padding: 5,
+    
   },
   card: '#3d5a80',
 
