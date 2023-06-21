@@ -134,7 +134,8 @@ const darkMode = {
   View:{
     flex: 1,
       width:'100%',
-      justifyContent: 'center',
+      // justifyContent: 'center',
+      padding: 5,
       alignItems: 'center',
       backgroundColor: '#293241',
   }, 
@@ -149,7 +150,7 @@ const darkMode = {
   Text :{
     fontSize: 14,
     fontWeight: "normal",
-    color: '#98c1d9',
+    color: '#FBFCFF',
   }, 
   disabled:{
     backgroundColor: '#ee6c4d',

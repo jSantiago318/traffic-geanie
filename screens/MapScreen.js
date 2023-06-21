@@ -91,6 +91,16 @@ export const MapScreen = () => {
   const [userLocHistory, setUserLocHistory] = useState([]);
   const [startTime, setStartTime] = useState(null);
   const [runTime, setRunTime] = useState(false);
+
+
+  const memoRoute = React.useMemo(() => getStopsByRouteIdSelect(value), [
+    selectedRoute,
+  ]);
+  const memoStop = React.useMemo(() => getStops(), [
+  ]);
+
+
+
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
   const [showModal, setShowModal] = useState(false);
@@ -122,6 +132,8 @@ export const MapScreen = () => {
     })();
   }, [location]);
 
+
+ 
   const Timer = () => {
     if (runTime == true || isRunning == true) {
       return (
@@ -165,7 +177,7 @@ export const MapScreen = () => {
   return (
     <View style={styles.container}>
       <MapView
-        userLocationUpdateInterval={1000}
+        userLocationUpdateInterval={500}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
         showsUserLocation={true}
@@ -262,7 +274,7 @@ export const MapScreen = () => {
           }
         })}
 
-        {getStops().map((stop, index) => {
+        {memoStop.map((stop, index) => {
           if (showAll == true) {
             return (
               <Marker
@@ -276,10 +288,19 @@ export const MapScreen = () => {
                   setSelectedStop(stop.id);
                 }}
               >
-                <Image
-                  source={require("../assets/BusStop.png")}
-                  style={{ height: 35, width: 35 }}
+                {
+                  stop.id == selectedStop ? (
+                    <Image
+                  source={require("../assets/busStop1.png")}
+                  style={{ height: 40, width: 40 }}
                 />
+                ) :(
+                  <Image
+                  source={require("../assets/BusStop.png")}
+                  style={{ height: 40, width: 40 }}
+                />
+                )
+                }
                 <Callout
                   style={{
                     width: 200,
@@ -327,7 +348,7 @@ export const MapScreen = () => {
                 }}
                 pinColor={getRouteColor(stop.id)}
                 onPress={() => {
-                  setSelectedStop(stop);
+                  setSelectedStop(stop.id);
                 }}
               >
                 <Image
@@ -468,6 +489,11 @@ export const MapScreen = () => {
           );
         })}
       </MapView>
+
+  
+
+
+
       {showAppOptions ? (
         <View style={styles.appOptionsContainer}>
           {
@@ -541,66 +567,6 @@ export const MapScreen = () => {
               <View>
               <Text style={styles.appOptionsTitle}>Map Options</Text>
           <Text style={styles.appOptionText}>Show/Hide routes</Text>
-          <HStack space={2} marginY={1} alignItems="center">
-            <Switch
-              trackColor={{ false: "#767577", true: "#048444" }}
-              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => {
-                setEnable(!showAll);
-              }}
-              value={showAll}
-            />
-            <Text>Ruta 105</Text>
-          </HStack>
-          <HStack space={2} marginY={1} alignItems="center">
-            <Switch
-              trackColor={{ false: "#767577", true: "#048444" }}
-              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => {
-                setEnable(!showAll);
-              }}
-              value={showAll}
-            />
-            <Text>Ruta 105</Text>
-          </HStack>
-          <HStack space={2} marginY={1} alignItems="center">
-            <Switch
-              trackColor={{ false: "#767577", true: "#048444" }}
-              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => {
-                setEnable(!showAll);
-              }}
-              value={showAll}
-            />
-            <Text>Ruta 105</Text>
-          </HStack>
-          <HStack space={2} marginY={1} alignItems="center">
-            <Switch
-              trackColor={{ false: "#767577", true: "#048444" }}
-              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => {
-                setEnable(!showAll);
-              }}
-              value={showAll}
-            />
-            <Text>Ruta 105</Text>
-          </HStack>
-          <HStack space={2} marginY={1} alignItems="center">
-            <Switch
-              trackColor={{ false: "#767577", true: "#048444" }}
-              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => {
-                setEnable(!showAll);
-              }}
-              value={showAll}
-            />
-            <Text>Ruta 105</Text>
-          </HStack>
           <Text>Choose Trip Route</Text>
           <DropDownPicker
             zIndex={2000}
@@ -670,6 +636,7 @@ export const MapScreen = () => {
           }
         </View>
       ) : null}
+      
       <View style={styles.circleButtonContainer}>
         <Button
           style={styles.circleButton}
@@ -687,6 +654,7 @@ export const MapScreen = () => {
           )}
         </Button>
       </View>
+      
     </View>
   );
 };

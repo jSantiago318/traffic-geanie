@@ -22,6 +22,7 @@ import {
   setDoc,
   where,
 } from "firebase/firestore";
+// import {darkMode, lightMode} from '../config/theme'
 import {
   getOnlineActiveTripsCount,
   getOnlineCount,
@@ -35,7 +36,7 @@ import { database } from "../config/firebase";
 import { getAuth } from "firebase/auth";
 
 export const HomeScreen = () => {
-  const [selectedRoute, setSelectedRoute] = React.useState("TIM_RR102");
+  const [selectedRoute, setSelectedRoute] = React.useState("TIM_RR105");
   const [busCount, setBusCount] = React.useState(0);
   const [activeTripCount, setActiveTripCount] = React.useState(0);
   const colorScheme = useColorScheme();
@@ -45,6 +46,8 @@ export const HomeScreen = () => {
     setBusCount(getOnlineCount());
     setActiveTripCount(getOnlineActiveTripsCount());
   }, 1000);
+
+  
 
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
@@ -129,7 +132,7 @@ const darkMode = StyleSheet.create({
   },
   CardView:{
     width:'90%',
-    backgroundColor: '#5F86C5',
+    backgroundColor: '#8CCCF4',
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,

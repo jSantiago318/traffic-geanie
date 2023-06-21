@@ -24,7 +24,7 @@ export const AuthStack = () => {
 
     <Drawer.Screen name='Login' component={LoginScreen} />
       <Drawer.Screen name='Signup' component={SignupScreen} />
-      <Drawer.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
+      {/* <Drawer.Screen name='ForgotPassword' component={ForgotPasswordScreen} /> */}
 
   </Drawer.Navigator>
   );

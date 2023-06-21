@@ -1,29 +1,70 @@
 import { Box, FlatList, HStack, Icon, Text, VStack } from 'native-base';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View, useColorScheme } from 'react-native';
 
 import { StopRender } from './OBAFetches/StopRender';
+import { set } from 'react-native-reanimated';
+
+// export const RoutesList = ({route}) => {
+//   const [stp, setStp] = useState([]);
+//   const colorScheme = useColorScheme();
+//    useEffect(() => {
+//     const interval = setInterval(() => {
+//          const dataFetch = async () => {
+//     const url = "https://proba.live/api/where/stops-for-route/"+route+".json?key=TEST"
+//     await  fetch(url)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       // console.log(data.data.entry.stopGroupings[0].stopGroups[0].stopIds)
+      // const stops = data.data.entry.stopGroupings[0].stopGroups[0].stopIds
+      // setStp(stops)
+//         // setStp(data.data.entry.stopGroupings[0].stopGroups[0].stopIds)
+//     })} 
+//     dataFetch();
+//   }, 1000);
+
+//   return () => clearInterval(interval);
+//    }, [stp]);
+
+//   const renderItem = ({ item, index }) => (
+//     <StopRender stop={item} />
+//     )
+
+//   if (route.includes('TIM')) {
+//     route = route.substring( 4, route.length)
+//   } 
+
+  
+//   return (
+//   <Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card} >
+// <FlatList
+//       style={colorScheme == 'dark' ? darkMode.routeList : lightMode.routeList}
+//       data={stp}
+//       renderItem={renderItem} />
+// </Box >
+
+  
+//   );
+// }
 
 export const RoutesList = ({route}) => {
-  const [stp, setStp] = useState([]);
   const colorScheme = useColorScheme();
-   useEffect(() => {
-    const interval = setInterval(() => {
-         const dataFetch = async () => {
-    const url = "https://proba.live/api/where/stops-for-route/TIM_"+route+".json?key=TEST"
-    await  fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      // console.log(data.data.entry.stopGroupings[0].stopGroups[0].stopIds)
-      const stops = data.data.entry.stopGroupings[0].stopGroups[0].stopIds
-      setStp(stops)
-        // setStp(data.data.entry.stopGroupings[0].stopGroups[0].stopIds)
-    })} 
-    dataFetch();
-  }, 1000);
-
-  return () => clearInterval(interval);
-   }, [stp]);
+  const [stp, setStp] = useState([]);
+  const memo = useMemo(() => getURL(route), [route]);
+  async function getURL(url) {
+    const response = await fetch("https://proba.live/api/where/stops-for-route/"+url+".json?key=TEST");
+    const data = await response.json();
+    const stops = data.data.entry.stopGroupings[0].stopGroups[0].stopIds
+    setStp(stops)
+    return stops;
+  }
+  // const memo = useMemo(() => {getURL("https://proba.live/api/where/stops-for-route/"+route+".json?key=TEST")}, [route])
+  
+  // useEffect(() => {
+  //   if (memo) {
+  //     setStp(memo)
+  //   }
+  // }, [memo])
 
   const renderItem = ({ item, index }) => (
     <StopRender stop={item} />
@@ -41,14 +82,16 @@ export const RoutesList = ({route}) => {
       data={stp}
       renderItem={renderItem} />
 </Box >
-
-  
-  );
+  )
 }
+
+
+
 const darkMode = StyleSheet.create({
   Card:{
     width: '90%',
-    backgroundColor: '#5F86C5',
+    // backgroundColor: '##046C1C',#046C1C
+    backgroundColor: '#8CCCF4',
     borderRadius: 10,
     margin: 10, 
     padding: 10,
