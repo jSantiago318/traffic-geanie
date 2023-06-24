@@ -366,14 +366,17 @@ export const MapScreen = () => {
             </Button>
           </HStack>
         ) : null}
+     
         {
           confirm == 1 ? (
-            <VStack space={2} alignItems="center" justifyContent="center">
+            <HStack space={2} alignItems="center" justifyContent="center">
             <Button
             style={{
               backgroundColor: '#98c1d9',
               borderRadius: 10,
-              width: '50%',
+              width: '30%',
+              alignItems : 'center',
+              justifyContent: 'center',
               height: 50,
               margin: 5,
             }}
@@ -385,7 +388,15 @@ export const MapScreen = () => {
               }}
             > <Text >Clear</Text> </Button>
             <Button
-            
+              style={{
+              backgroundColor: '#98c1d9',
+              borderRadius: 10,
+              width: '30%',
+              alignItems : 'center',
+              justifyContent: 'center',
+              height: 50,
+              margin: 5,
+            }}
               onPress={() => {
                 // setRunTime(true);
                 // setStartTime(new Date());
@@ -393,22 +404,31 @@ export const MapScreen = () => {
                 start();
               }}
             > <Text> Start Trip </Text> </Button>
-            </VStack>
+            </HStack>
           ): null
         }
 
         {
           confirm == 2 ? (
+            
+            <VStack space={2} alignItems="center" justifyContent="center">
             <Box Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card}>
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             {minutes}:{seconds}
           </Text>
             
+            
+            </Box>
             <Button
-             backgroundColor='#98c1d9'
-             m={2}
-             size='sm'
-             
+              style={{
+              backgroundColor: '#98c1d9',
+              borderRadius: 10,
+              width: '50%',
+              alignItems : 'center',
+              justifyContent: 'center',
+              height: 50,
+              margin: 5,
+            }}
               onPress={() => {
                 // setRunTime(false);
                 setConfirm(3);
@@ -416,7 +436,7 @@ export const MapScreen = () => {
                 setFinalStop(null);
               }}
             > <Text> End Trip </Text> </Button>
-            </Box>
+            </VStack>
           ):null
         }
         {
@@ -434,13 +454,15 @@ export const MapScreen = () => {
           </Text>
             
             <Button
-             style={{
+              style={{
               backgroundColor: '#98c1d9',
               borderRadius: 10,
-              padding: 5,
+              width: '50%',
+              alignItems : 'center',
+              justifyContent: 'center',
+              height: 50,
               margin: 5,
-            zIndex: 100,
-             }}
+            }}
               onPress={() => {
                 // setRunTime(false);
                 setConfirm(0);
