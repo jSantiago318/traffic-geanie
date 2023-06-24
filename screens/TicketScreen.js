@@ -38,6 +38,7 @@ export const TicketScreen = () => {
   const query1 = collection(database, "users/" + id + "/feedback");
   const [docs, loading, error] = useCollectionDataOnce(query);
   const [docs1, loading1, error1] = useCollectionDataOnce(query1);
+  
   return (
       <View
         style={{
@@ -57,11 +58,11 @@ export const TicketScreen = () => {
             >
               Show Trip History
             </Button>
-         {/* {showTripHistory ? (
+         {showTripHistory ? (
         <>
           <FlatList
             data={docs}
-            renderItem={({ item }) => {
+            renderItem={({ item, index }) => {
               const dt = new Date(item.startTime).toLocaleDateString();
               const stTime = new Date(item.startTime).toLocaleTimeString();
               const spTime = new Date(item.stopTime).toLocaleTimeString();
@@ -75,25 +76,24 @@ export const TicketScreen = () => {
                     marginHorizontal: 16,
                   }}
                 >
+                  <Text>
+                    # {index +1} | {dt}  | {stTime} - {spTime}
+                  </Text>
                   <Text>Route: {item.route} </Text>
-                  <Text>First Stop: {item.startStop} </Text>
-                  <Text>Final Stop: {item.finalStop} </Text>
+                  <Text>Stop 1: {item.startStop} </Text>
+                  <Text>Stop 2: {item.finalStop} </Text>
                   <Text>
                     User logs: {0} - Bus logs: {0}
-                  </Text>
-                  <Text>
-                    Time: {dt} : {stTime} - {spTime}
                   </Text>
                 </View>
               );
             }}
-            keyExtractor={(item) => item.startTime}
           />
         </>
       ) : (
        null
         
-      )} */}
+      )}
       <Button
               title="Show Feedback History"
               onPress={() => setShowFeedback(!showFeedback)}
@@ -109,20 +109,21 @@ export const TicketScreen = () => {
         <>
           <FlatList
             data={docs1}
-            renderItem={({ item }) => {
+            renderItem={({ item , index }) => {
                 return (
                 <View
                   style={{
                     backgroundColor: "white",
+                    width: "100%",
                     padding: 12,
                     borderRadius: 5,
                     marginVertical: 8,
                     marginHorizontal: 16,
                   }}
                 >
+                <Text> # {index+1}</Text>
                   <Text> {item.desc} </Text>
-                  <Text>{item.location} </Text>
-                  <Text>{item.problem} </Text>
+                  <Text>{item.main} </Text>
                  
                 </View>
               );
@@ -132,24 +133,6 @@ export const TicketScreen = () => {
        null
         
       )}
-
-      {
-        showTripHistory ? (
-          <MapView style={{flex: 1, width: "80%"}} >
-            <MapView.Marker
-              coordinate={{
-                latitude: 37.78825,
-                longitude: -122.4324,
-              }}
-              title={"title"}
-              description={"description"}
-            />
-          </MapView>
-        ) : (
-          null
-          
-        )
-      }
       </View>
   );
 };

@@ -1,28 +1,12 @@
 import * as Location from "expo-location";
 import * as MapVal from "../assets/map.json";
 
-import {
-  Box,
-  Button,
-  Center,
-  CheckIcon,
-  FlatList,
-  FormControl,
-  HStack,
-  Icon,
-  Input,
-  Modal,
-  ScrollView,
-  Select,
-  Switch,
-  Text,
-  WarningIcon,
-  WarningOutlineIcon,
-} from "native-base";
+import { Box, Button, HStack, Icon, Text, VStack } from "native-base";
 import { Colors, darkMode, lightMode } from "../config";
 import {
   Dimensions,
   Image,
+  Pressable,
   StatusBar,
   StyleSheet,
   View,
@@ -46,14 +30,7 @@ import {
   getStopsByRouteIdSelect,
 } from "../assets/gtfs/stops";
 
-import { AntDesign } from "@expo/vector-icons";
-import Carousel from "react-native-snap-carousel";
-import DropDownPicker from "react-native-dropdown-picker";
 import { Pedometer } from "expo-sensors";
-import { Picker } from "@react-native-picker/picker";
-import { StopRenderMinimal } from "../components/OBAFetches/StopRenderMinimal";
-import { database } from "../config/firebase";
-import { getAuth } from "firebase/auth";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
@@ -61,49 +38,25 @@ import { useStopwatch } from "react-timer-hook";
 const Shapes = require("../assets/gtfs/shapes.json");
 
 export const MapScreen = () => {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-
-  const [items, setItems] = useState([
-    { value: "RR102", label: "Ruta Rural 102" },
-    { value: "RR105", label: "Ruta Rural 105" },
-    { value: "RR106", label: "Ruta Rural 106" },
-    { value: "RR108", label: "Ruta Rural 108" },
-    { value: "RR348", label: "Ruta Rural 348" },
-    { value: "RR349", label: "Ruta Rural 349" },
-  ]);
-  const [open2, setOpen2] = useState(false);
-  const [open3, setOpen3] = useState(false);
-  const [value2, setValue2] = useState(null);
-  const [value3, setValue3] = useState(null);
-  const [selectedLanguage, setSelectedLanguage] = useState();
   const colorScheme = useColorScheme();
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const navigation = useNavigation();
-  const [onlyShowOnline, setOnlyShowOnline] = useState(true);
-  const [startStop, setStartStop] = useState(null);
-  const [finalStop, setFinalStop] = useState(null);
-  const [selectedStop, setSelectedStop] = useState([]);
+  const [confirm, setConfirm] = useState(0);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [showAll, setShowAll] = useState(true);
   const [showTrip, setShowTrip] = useState(true);
+  const [startStop, setStartStop] = useState(null);
+  const [finalStop, setFinalStop] = useState(null);
+  const [selectedStop, setSelectedStop] = useState(null);
   const [userLocHistory, setUserLocHistory] = useState([]);
   const [startTime, setStartTime] = useState(null);
   const [runTime, setRunTime] = useState(false);
 
-
-  const memoRoute = React.useMemo(() => getStopsByRouteIdSelect(value), [
-    selectedRoute,
-  ]);
-  const memoStop = React.useMemo(() => getStops(), [
-  ]);
-
-
+  const memoStop = React.useMemo(() => getStops(), []);
 
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
-  const [showModal, setShowModal] = useState(false);
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -124,42 +77,14 @@ export const MapScreen = () => {
       const interval = setInterval(async () => {
         const loc = await Location.getCurrentPositionAsync({});
         setLocation(loc);
-        if (setShowTrip == false) {
+        if (isRunning) {
           setUserLocHistory([...userLocHistory, loc]);
         }
-      }, 2000);
+      }, 1000);
       return () => clearInterval(interval);
     })();
   }, [location]);
 
-
- 
-  const Timer = () => {
-    if (runTime == true || isRunning == true) {
-      return (
-        <View>
-          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            {minutes}:{seconds}
-          </Text>
-        </View>
-      );
-    } else {
-      return (
-        <View>
-          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            {minutes}:{seconds}
-          </Text>
-        </View>
-      );
-    }
-  };
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
-
-  const [showAppOptions, setShowAppOptions] = useState(false);
 
   function getShapeByRouteId(routeId) {
     let coord = [];
@@ -173,11 +98,35 @@ export const MapScreen = () => {
     });
     return coord;
   }
+  function returnStop(stopId) {
+    if (stopId == startStop) {
+      return (
+        <Image
+          source={require("../assets/busStop1.png")}
+          style={{ height: 40, width: 40 }}
+        />
+      );
+    } else if (stopId == finalStop) {
+      return (
+        <Image
+          source={require("../assets/busStop2.png")}
+          style={{ height: 40, width: 40 }}
+        />
+      );
+    } else {
+      return (
+        <Image
+          source={require("../assets/BusStop.png")}
+          style={{ height: 40, width: 40 }}
+        />
+      );
+    }
+  }
 
   return (
     <View style={styles.container}>
       <MapView
-        userLocationUpdateInterval={500}
+        userLocationUpdateInterval={1000}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
         showsUserLocation={true}
@@ -192,34 +141,49 @@ export const MapScreen = () => {
           longitudeDelta: 0.0421,
         }}
       >
-        {getPosition().map((device, index) => {
-          const isOnline = getOnlineById(device.deviceId);
-          if (onlyShowOnline && isOnline == "online") {
-            return (
-              <Marker
-                key={index}
-                coordinate={{
-                  latitude: device.latitude,
-                  longitude: device.longitude,
+        {memoStop.map((stop, index) => {
+          return (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: stop.lat,
+                longitude: stop.lon,
+              }}
+              pinColor={getRouteColor(stop.id)}
+              onPress={() => {
+                if (stop.id.length >= 4) {
+                  const rt = stop.id.slice(0, 5);
+                  setSelectedRoute(rt);
+
+                  if (startStop == null) {
+                    setSelectedStop(stop);
+                    setConfirm(0.5);
+                  } else if (finalStop == null && startStop != null) {
+                    setSelectedStop(stop);
+                    setConfirm(0.5);
+                  }
+                } else {
+                  setSelectedRoute(stop.id);
+                }
+              }}
+            >
+              {returnStop(stop.id)}
+
+              <Callout
+                style={{
+                  width: 200,
                 }}
               >
-                <Image
-                  source={require("../assets/car-online.png")}
-                  style={{ height: 40, width: 40, zIndex: 1000 }}
-                />
-                <Callout
-                  style={{
-                    width: 200,
-                  }}
-                >
-                  <Text>
-                    Bus {device.deviceId} - {isOnline}
-                  </Text>
-                  <Text> {device.accuracy}</Text>
-                </Callout>
-              </Marker>
-            );
-          } else if (!onlyShowOnline) {
+                <Text>{stop.name}</Text>
+                <Text>{stop.id}</Text>
+              </Callout>
+            </Marker>
+          );
+        })}
+        {getPosition().map((device, index) => {
+          const isOnline = getOnlineById(device.deviceId);
+
+          if (showAll) {
             if (isOnline == "online") {
               return (
                 <Marker
@@ -236,16 +200,20 @@ export const MapScreen = () => {
                   <Callout
                     style={{
                       width: 200,
+                      borderRadius: 10,
                     }}
                   >
                     <Text>
                       Bus {device.deviceId} - {isOnline}
                     </Text>
-                    <Text> {device.accuracy}</Text>
+                    <Text> acc: {device.accuracy}</Text>
+                    <Text> kmh: {device.speed}</Text>
+                    <Text> bat: {device.altitude}</Text>
+                    <Text> bat: {device.attributes.batteryLevel}</Text>
                   </Callout>
                 </Marker>
               );
-            } else {
+            } else if (isOnline == "offline") {
               return (
                 <Marker
                   key={index}
@@ -261,169 +229,21 @@ export const MapScreen = () => {
                   <Callout
                     style={{
                       width: 200,
+                      borderRadius: 10,
                     }}
                   >
                     <Text>
                       Bus {device.deviceId} - {isOnline}
                     </Text>
-                    <Text> {device.accuracy}</Text>
+                    <Text> acc: {device.accuracy}</Text>
+                    <Text> kmh: {device.speed}</Text>
+                    <Text> bat: {device.altitude}</Text>
+                    <Text> bat: {device.attributes.batteryLevel}</Text>
                   </Callout>
                 </Marker>
               );
             }
-          }
-        })}
-
-        {memoStop.map((stop, index) => {
-          if (showAll == true) {
-            return (
-              <Marker
-                key={index}
-                coordinate={{
-                  latitude: stop.lat,
-                  longitude: stop.lon,
-                }}
-                pinColor={getRouteColor(stop.id)}
-                onPress={() => {
-                  setSelectedStop(stop.id);
-                }}
-              >
-                {
-                  stop.id == selectedStop ? (
-                    <Image
-                  source={require("../assets/busStop1.png")}
-                  style={{ height: 40, width: 40 }}
-                />
-                ) :(
-                  <Image
-                  source={require("../assets/BusStop.png")}
-                  style={{ height: 40, width: 40 }}
-                />
-                )
-                }
-                <Callout
-                  style={{
-                    width: 200,
-                  }}
-                >
-                  <Text>{stop.name}</Text>
-                  <Text>{stop.id}</Text>
-                </Callout>
-              </Marker>
-            );
-          } else if (showAll != true && stop.id.includes(startStop)) {
-            return (
-              <Marker
-                key={index}
-                coordinate={{
-                  latitude: stop.lat,
-                  longitude: stop.lon,
-                }}
-                pinColor={getRouteColor(stop.id)}
-                onPress={() => {
-                  setSelectedStop(stop);
-                }}
-              >
-                <Image
-                  source={require("../assets/busStop1.png")}
-                  style={{ height: 45, width: 45 }}
-                />
-                <Callout
-                  style={{
-                    width: 200,
-                  }}
-                >
-                  <Text>{stop.name}</Text>
-                  <Text>{stop.id}</Text>
-                </Callout>
-              </Marker>
-            );
-          } else if (showAll != true && stop.id.includes(finalStop)) {
-            return (
-              <Marker
-                key={index}
-                coordinate={{
-                  latitude: stop.lat,
-                  longitude: stop.lon,
-                }}
-                pinColor={getRouteColor(stop.id)}
-                onPress={() => {
-                  setSelectedStop(stop.id);
-                }}
-              >
-                <Image
-                  source={require("../assets/busStop2.png")}
-                  style={{ height: 45, width: 45 }}
-                />
-                <Callout
-                  style={{
-                    width: 200,
-                  }}
-                >
-                  <Text>{stop.name}</Text>
-                  <Text>{stop.id}</Text>
-                </Callout>
-              </Marker>
-            );
-          } else if (showAll != true && stop.id.includes(selectedRoute)) {
-            return (
-              <Marker
-                key={index}
-                coordinate={{
-                  latitude: stop.lat,
-                  longitude: stop.lon,
-                }}
-                pinColor={getRouteColor(stop.id)}
-                onPress={() => {
-                  setSelectedStop(stop);
-                }}
-              >
-                <Image
-                  source={require("../assets/BusStop.png")}
-                  style={{ height: 35, width: 35 }}
-                />
-                <Callout
-                  style={{
-                    width: 200,
-                  }}
-                >
-                  <Text>{stop.name}</Text>
-                  <Text>{stop.id}</Text>
-                </Callout>
-              </Marker>
-            );
-          }
-        })}
-        {getPosition().map((device, index) => {
-          const isOnline = getOnlineById(device.deviceId);
-          if (onlyShowOnline && isOnline == "online") {
-            return (
-              <Marker
-                key={index}
-                coordinate={{
-                  latitude: device.latitude,
-                  longitude: device.longitude,
-                }}
-              >
-                <Image
-                  source={require("../assets/car-online.png")}
-                  style={{ height: 40, width: 40 }}
-                />
-                <Callout
-                  style={{
-                    width: 200,
-                  }}
-                >
-                  <Text>
-                    Bus {device.deviceId} - {isOnline}
-                  </Text>
-                  <Text> {device.accuracy}</Text>
-                  <Text> {device.speed}</Text>
-                  <Text> {device.attributes.battery}</Text>
-                </Callout>
-              </Marker>
-            );
-          } else if (!onlyShowOnline) {
+          } else {
             if (isOnline == "online") {
               return (
                 <Marker
@@ -434,43 +254,22 @@ export const MapScreen = () => {
                   }}
                 >
                   <Image
-                    source={require("../assets/car-default.png")}
+                    source={require("../assets/car-online.png")}
                     style={{ height: 40, width: 40 }}
                   />
                   <Callout
                     style={{
                       width: 200,
+                      borderRadius: 10,
                     }}
                   >
                     <Text>
                       Bus {device.deviceId} - {isOnline}
                     </Text>
-                    <Text> {device.accuracy}</Text>
-                  </Callout>
-                </Marker>
-              );
-            } else {
-              return (
-                <Marker
-                  key={index}
-                  coordinate={{
-                    latitude: device.latitude,
-                    longitude: device.longitude,
-                  }}
-                >
-                  <Image
-                    source={require("../assets/car-default.png")}
-                    style={{ height: 40, width: 40 }}
-                  />
-                  <Callout
-                    style={{
-                      width: 200,
-                    }}
-                  >
-                    <Text>
-                      Bus {device.deviceId} - {isOnline}
-                    </Text>
-                    <Text> {device.accuracy}</Text>
+                    <Text> acc: {device.accuracy}</Text>
+                    <Text> kmh: {device.speed}</Text>
+                    <Text> bat: {device.altitude}</Text>
+                    <Text> bat: {device.attributes.batteryLevel}</Text>
                   </Callout>
                 </Marker>
               );
@@ -484,177 +283,219 @@ export const MapScreen = () => {
               key={index}
               coordinates={getShapeByRouteId(route.id)}
               strokeColor={getRouteColor(route.id)}
-              strokeWidth={3}
+              strokeWidth={2}
             />
           );
+
         })}
       </MapView>
 
-  
-
-
-
-      {showAppOptions ? (
-        <View style={styles.appOptionsContainer}>
-          {
-            runTime == true ? (
-<View>
-<Text style={styles.appOptionsTitle}>Map Options</Text>
-          <Text style={styles.appOptionText}>Show/Hide routes</Text>
-          <HStack space={2} marginY={1} alignItems="center">
-            <Switch
-              trackColor={{ false: "#767577", true: "#048444" }}
-              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => {
-                setEnable(!showAll);
-              }}
-              value={showAll}
-            />
-            <Text>Ruta 105</Text>
-          </HStack>
-          <HStack space={2} marginY={1} alignItems="center">
-            <Switch
-              trackColor={{ false: "#767577", true: "#048444" }}
-              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => {
-                setEnable(!showAll);
-              }}
-              value={showAll}
-            />
-            <Text>Ruta 106</Text>
-          </HStack>
-          <HStack space={2} marginY={1} alignItems="center">
-            <Switch
-              trackColor={{ false: "#767577", true: "#048444" }}
-              thumbColor={showAll ? "#f4f3f4" : "#f4f3f4"}
-              ios_backgroundColor="#3e3e3e"
-              onValueChange={() => {
-                setEnable(!showAll);
-              }}
-              value={showAll}
-            />
-            <Text>Ruta 105</Text>
-          </HStack>
-          
-          
+      {/* TEext overlay at bottom
+       */}
+      <VStack
+        style={{
+          position: "absolute",
+          alignContent: "center",
+          alignItems: "center",
+          justifyContent: "center",
+          bottom: "5%",
+          left: 0,
+          width: "100%",
+        }}
+      >
+        <Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              color:
+                colorScheme == "dark"
+                  ? darkMode.Text.color
+                  : lightMode.Text.color,
+            }}
+          >
+            Selected Route: {selectedRoute}
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              color:
+                colorScheme == "dark"
+                  ? darkMode.Text.color
+                  : lightMode.Text.color,
+            }}
+          >
+            First Stop: {startStop}
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              color:
+                colorScheme == "dark"
+                  ? darkMode.Text.color
+                  : lightMode.Text.color,
+            }}
+          >
+            Final Stop: {finalStop}
+          </Text>
+        </Box>
+        {confirm == 0.5 ? (
+          <HStack space={2} alignItems="center" justifyContent="center">
             <Button
-              style={styles.settingBtn}
               onPress={() => {
-                setShowModal(false);
-                const item = new Date().getTime();
-                setRunTime(true);
-                setStartTime(item);
-                setShowAppOptions(!showAppOptions);
-                start();
-              }}
-              onClick={() => {
-                setShowModal(false);
-                const item = new Date().getTime();
-                setRunTime(true);
-                setStartTime(item);
-                setShowAppOptions(!showAppOptions);
-                start();
+                if (startStop == null) {
+                  setStartStop(selectedStop.id);
+                } else if (finalStop == null && startStop != null) {
+                  setFinalStop(selectedStop.id);
+                  setConfirm(1);
+                } 
               }}
             >
-              <Text>Stop Trip</Text>
+              <Text> Confirm </Text>
             </Button>
-          
-</View>
-
-            ):(
-              <View>
-              <Text style={styles.appOptionsTitle}>Map Options</Text>
-          <Text style={styles.appOptionText}>Show/Hide routes</Text>
-          <Text>Choose Trip Route</Text>
-          <DropDownPicker
-            zIndex={2000}
-            open={open}
-            items={items}
-            setOpen={setOpen}
-            setValue={setValue}
-            setItems={setItems}
-            value={value}
-            style={{
-              height: 50,
-              width: 150,
-            }}
-          />
-          <Text>Choose First Stop</Text>
-          <DropDownPicker
-            zIndex={1000}
-            open={open2}
-            value={value2}
-            items={getStopsByRouteIdSelect(value)}
-            setOpen={setOpen2}
-            setValue={setValue2}
-            style={{
-              height: 50,
-              width: 150,
-            }}
-          />
-          <Text>Choose Final Stop</Text>
-          <DropDownPicker
-            zIndex={900}
-            open={open3}
-            value={value3}
-            items={getStopsByRouteIdSelect(value)}
-            setOpen={setOpen3}
-            setValue={setValue3}
-            style={{
-              height: 50,
-              width: 150,
-              marginBottom: 10,
-            }}
-          />
-          {value2 != null && value3 != null ? (
             <Button
-              style={styles.settingBtn}
               onPress={() => {
-                setShowModal(false);
-                const item = new Date().getTime();
-                setRunTime(true);
-                setStartTime(item);
-                setShowAppOptions(!showAppOptions);
-                start();
-              }}
-              onClick={() => {
-                setShowModal(false);
-                const item = new Date().getTime();
-                setRunTime(true);
-                setStartTime(item);
-                setShowAppOptions(!showAppOptions);
-                start();
+                setStartStop(null);
+                setFinalStop(null);
+                setConfirm(0);
               }}
             >
-              <Text>Start Trip</Text>
+              <Text> Cancel </Text>
             </Button>
-          ) : null}
-              </View>
-            )
-          }
-        </View>
-      ) : null}
-      
-      <View style={styles.circleButtonContainer}>
+          </HStack>
+        ) : null}
+        {
+          confirm == 1 ? (
+            <VStack space={2} alignItems="center" justifyContent="center">
+            <Button
+            style={{
+              backgroundColor: '#98c1d9',
+              borderRadius: 10,
+              width: '50%',
+              height: 50,
+              margin: 5,
+            }}
+              onPress={() => {
+                // setRunTime(true);
+                // setStartTime(new Date());
+                setConfirm(2);
+                start();
+              }}
+            > <Text >Clear</Text> </Button>
+            <Button
+            
+              onPress={() => {
+                // setRunTime(true);
+                // setStartTime(new Date());
+                setConfirm(2);
+                start();
+              }}
+            > <Text> Start Trip </Text> </Button>
+            </VStack>
+          ): null
+        }
+
+        {
+          confirm == 2 ? (
+            <Box Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card}>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            {minutes}:{seconds}
+          </Text>
+            
+            <Button
+             backgroundColor='#98c1d9'
+             m={2}
+             size='sm'
+             
+              onPress={() => {
+                // setRunTime(false);
+                setConfirm(3);
+                setStartStop(null);
+                setFinalStop(null);
+              }}
+            > <Text> End Trip </Text> </Button>
+            </Box>
+          ):null
+        }
+        {
+          confirm == 3 ? (
+            <Box Box style={{
+              backgroundColor: '#3d5a80',
+    width: '90%',
+    justifyContent: 'center',
+    borderRadius: 10,
+    padding: 5,
+    margin: 5,
+            }}>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            Trip Data
+          </Text>
+            
+            <Button
+             style={{
+              backgroundColor: '#98c1d9',
+              borderRadius: 10,
+              padding: 5,
+              margin: 5,
+            zIndex: 100,
+             }}
+              onPress={() => {
+                // setRunTime(false);
+                setConfirm(0);
+              }}
+            > <Text> Continue </Text> </Button>
+            </Box>
+          ):null
+        }
+
+      </VStack>
+
+      <View
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 10,
+          zIndex: 100,
+        }}
+      >
         <Button
-          style={styles.circleButton}
           onPress={() => {
-            setShowAppOptions(!showAppOptions);
+            _mapView.animateToRegion({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            });
           }}
-          onClick={() => {
-            setShowAppOptions(!showAppOptions);
+          style={{
+            backgroundColor: Colors.highlihgted,
           }}
         >
-          {showAppOptions ? (
-            <MaterialIcons name="close" size={38} color="#25292e" />
-          ) : (
-            <MaterialIcons name="commute" size={38} color="#25292e" />
-          )}
+          <MaterialIcons name="my-location" size={24} color="white" />
         </Button>
       </View>
-      
+      {/* Show all buses */}
+      <View
+        style={{
+          position: "absolute",
+          top: 10,
+          right: 70,
+          zIndex: 100,
+        }}
+      >
+        <Button
+          onPress={() => {
+            setShowAll(!showAll);
+          }}
+          style={{
+            backgroundColor: Colors.highlihgted,
+          }}
+        >
+          <MaterialCommunityIcons name="bus" size={24} color="white" />
+        </Button>
+      </View>
     </View>
   );
 };
@@ -695,8 +536,11 @@ const styles = StyleSheet.create({
   },
   stopListContainer: {
     padding: 10,
+    margin: 10,
     borderRadius: 10,
     width: Dimensions.get("window").width * 0.8,
+    maxHeight: Dimensions.get("window").height * 0.2,
+    backgroundColor: "white",
   },
   container: {
     flex: 1,

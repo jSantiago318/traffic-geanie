@@ -54,7 +54,7 @@ function FormC() {
             variant="outline"
             w={"100%"}
             placeholder="problem..."
-            onChangeText={(value) => setData({ ...formData, desc: value })}
+            onChangeText={(value) => setData({ ...formData, main: value })}
             style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
           />
 
@@ -97,7 +97,6 @@ function FormC() {
             await addDoc(collection(docRed, "feedback"), {
               location: isChecked,
               main: formData.main,
-              problem: formData.problem,
               desc: formData.desc,
               uid: id,
             });
@@ -150,6 +149,19 @@ const darkMode = StyleSheet.create({
   Card: {
     width: "100%",
     backgroundColor: "#8CCCF4",
+  }, Text:{
+    color: "#fff",
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  Input: {
+    backgroundColor: "#fff",
+    width: "90%",
+    padding: 5,
+  }, checkbox:{
+    backgroundColor: "#fff",
+    marginRight: 10,
+
   },
 });
 

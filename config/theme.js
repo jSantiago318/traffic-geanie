@@ -217,6 +217,14 @@ LoginBtn:{
 
 
 const lightMode = {
+  Card:{
+    backgroundColor: '#e0fbfc',
+    width: '90%',
+    justifyContent: 'center',
+    borderRadius: 10,
+    padding: 5,
+    margin: 5,
+  },
   View:{
     flex: 1,
       alignItems: 'center',
