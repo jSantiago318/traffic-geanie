@@ -8,6 +8,7 @@ import {
   Stack,
   Switch,
   Text,
+  TextArea,
 } from "native-base";
 import { StyleSheet, View } from "react-native";
 
@@ -38,7 +39,7 @@ export const TicketScreen = () => {
   const query1 = collection(database, "users/" + id + "/feedback");
   const [docs, loading, error] = useCollectionDataOnce(query);
   const [docs1, loading1, error1] = useCollectionDataOnce(query1);
-  
+
   return (
       <View
         style={{
@@ -112,9 +113,8 @@ export const TicketScreen = () => {
             renderItem={({ item , index }) => {
                 return (
                 <View
-                  style={{
+                style={{
                     backgroundColor: "white",
-                    width: "100%",
                     padding: 12,
                     borderRadius: 5,
                     marginVertical: 8,

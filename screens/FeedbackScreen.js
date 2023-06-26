@@ -1,43 +1,51 @@
+import * as Location from "expo-location";
+
 import {
   Button,
   Center,
-  CheckIcon,
-  Container,
-  FlatList,
   FormControl,
   HStack,
   Heading,
   Icon,
   Input,
-  Modal,
-  Select,
-  Stack,
-  Switch,
   Text,
   VStack,
   useColorMode,
   useTheme,
 } from "native-base";
 import { Colors, auth } from "../config";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
 import { addDoc, collection, doc } from "firebase/firestore";
 import { deleteUser, getAuth } from "firebase/auth";
 
 import Checkbox from "expo-checkbox";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
 import { database } from "../config/firebase";
 import { signOut } from "firebase/auth";
-import { useState } from "react";
 
 function FormC() {
   const [formData, setData] = React.useState({});
   const [errors, setErrors] = React.useState({});
   const colorScheme = useColorScheme();
-  const onSubmit = () => {
-    console.log("submit");
-  };
-  const [isChecked, setChecked] = useState(false);
+  const [isChecked, setChecked] = React.useState(false);
+  const [location, setLocation] = React.useState(null);
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+      });
+      setLocation(location);
+      
+    })();
+  }, [location]);
+  
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
       <FormControl
@@ -47,7 +55,7 @@ function FormC() {
       >
         <FormControl.Label>
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            Feedback
+            Title
           </Text>
         </FormControl.Label>
         <Input
@@ -95,9 +103,13 @@ function FormC() {
             const id = getAuth().currentUser?.uid;
             const docRed = doc(database, "users", id);
             await addDoc(collection(docRed, "feedback"), {
-              location: isChecked,
+              location: {
+                          lat: location.coords.latitude || 18.201025,
+                          lon: location.coords.longitude || -67.1318,
+                        },
               main: formData.main,
               desc: formData.desc,
+              time: new Date() ,
               uid: id,
             });
           } catch (e) {
@@ -118,10 +130,7 @@ export const FeedbackScreen = () => {
   const [showModal, setShowModal] = React.useState(false);
   const handleLogout = () => {
     signOut(auth).catch((error) => console.log("Error logging out: ", error));
-  };
-  const id = getAuth().currentUser?.uid;
-  const cUser = getAuth().currentUser;
-
+  }; 
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
       <Center flex={1}>

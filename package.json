@@ -1,6 +1,6 @@
 {
   "name": "mayabus",
-  "version": "1.8",
+  "version": "2.1",
   "keywords": [
     "react",
     "expo",
@@ -59,9 +59,9 @@
     "logrocket": "^4.0.2",
     "million": "^2.4.6-beta.2",
     "native-base": "^3.4.28",
-    "react": "^18.1.0",
-"react-dom": "^18.1.0",
-"react-redux": "^8.0.1",
+    "react": "18.2.0",
+    "react-dom": "^18.1.0",
+    "react-redux": "^8.0.1",
     "react-firebase-hooks": "^5.1.1",
     "react-icons": "^4.8.0",
     "react-native": "0.71.8",

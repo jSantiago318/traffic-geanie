@@ -1,8 +1,8 @@
 import * as Location from "expo-location";
 import * as MapVal from "../assets/map.json";
 
-import { Box, Button, HStack, Icon, Text, VStack } from "native-base";
-import { Colors, darkMode, lightMode } from "../config";
+import { Box, Button, HStack, Icon, Slider, Stack, Text, TextArea, VStack } from "native-base";
+import { Colors, darkMode, lightMode, } from "../config";
 import {
   Dimensions,
   Image,
@@ -31,6 +31,8 @@ import {
 } from "../assets/gtfs/stops";
 
 import { Pedometer } from "expo-sensors";
+import { database } from "../config/firebase";
+import {getAuth} from 'firebase/auth';
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
@@ -52,8 +54,33 @@ export const MapScreen = () => {
   const [userLocHistory, setUserLocHistory] = useState([]);
   const [startTime, setStartTime] = useState(null);
   const [runTime, setRunTime] = useState(false);
-
+  const [tripRating, setTripRating] = useState([0, 0, 0, 0, 0]);
   const memoStop = React.useMemo(() => getStops(), []);
+const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
+  const [pastStepCount, setPastStepCount] = useState(0);
+  const [currentStepCount, setCurrentStepCount] = useState(0);
+  const [onChangeValue, setOnChangeValue] = useState(0);
+  const [onChangeEndValue, setOnChangeEndValue] = useState(0);
+    const subscribe = async () => {
+    const isAvailable = await Pedometer.isAvailableAsync();
+    setIsPedometerAvailable(String(isAvailable));
+
+    if (isAvailable) {
+      const end = new Date();
+      const start = new Date();
+      start.setDate(end.getDate() - 1);
+
+      const pastStepCountResult = await Pedometer.getStepCountAsync(start, end);
+      if (pastStepCountResult) {
+        setPastStepCount(pastStepCountResult.steps);
+      }
+
+      return Pedometer.watchStepCount(result => {
+        setCurrentStepCount(result.steps);
+      });
+    }
+  };
+
 
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
@@ -74,6 +101,8 @@ export const MapScreen = () => {
         console.log("Yay! I have user permission to track data");
       }
 
+      const subscription = subscribe();
+
       const interval = setInterval(async () => {
         const loc = await Location.getCurrentPositionAsync({});
         setLocation(loc);
@@ -81,7 +110,10 @@ export const MapScreen = () => {
           setUserLocHistory([...userLocHistory, loc]);
         }
       }, 1000);
-      return () => clearInterval(interval);
+      return () => {
+        subscription && subscription.remove();
+        clearInterval(interval)
+      };
     })();
   }, [location]);
 
@@ -384,7 +416,6 @@ export const MapScreen = () => {
                 // setRunTime(true);
                 // setStartTime(new Date());
                 setConfirm(2);
-                start();
               }}
             > <Text >Clear</Text> </Button>
             <Button
@@ -411,14 +442,15 @@ export const MapScreen = () => {
         {
           confirm == 2 ? (
             
+            <Box  style={
+              colorScheme == "dark" ? darkMode.Card : lightMode.Card
+            } >
             <VStack space={2} alignItems="center" justifyContent="center">
-            <Box Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card}>
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            {minutes}:{seconds}
+            Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds}
           </Text>
-            
-            
-            </Box>
+          <Text>Current Steps: {currentStepCount}</Text>     
+          <Text>Past steps: {pastStepCount}</Text>
             <Button
               style={{
               backgroundColor: '#98c1d9',
@@ -432,27 +464,39 @@ export const MapScreen = () => {
               onPress={() => {
                 // setRunTime(false);
                 setConfirm(3);
-                setStartStop(null);
-                setFinalStop(null);
+                pause()
+                setOnChangeEndValue(currentStepCount)
               }}
             > <Text> End Trip </Text> </Button>
             </VStack>
+            </Box>
+            
           ):null
         }
         {
           confirm == 3 ? (
-            <Box Box style={{
+            <Box 
+            style={{
               backgroundColor: '#3d5a80',
-    width: '90%',
-    justifyContent: 'center',
-    borderRadius: 10,
-    padding: 5,
-    margin: 5,
-            }}>
+              borderRadius: 10,
+              width: '90%',
+              padding: 5,
+              margin: 5,
+              justifyContent: 'center',
+              alignItems: 'center',
+              
+            }}
+            >
+
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            Trip Data
+            Trip Rating 
           </Text>
-            
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds}
+          </Text>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            Total Steps: {onChangeEndValue}
+          </Text>
             <Button
               style={{
               backgroundColor: '#98c1d9',
@@ -463,9 +507,31 @@ export const MapScreen = () => {
               height: 50,
               margin: 5,
             }}
-              onPress={() => {
+              onPress={async () => {
                 // setRunTime(false);
-                setConfirm(0);
+                try {
+            const id = getAuth().currentUser?.uid;
+            const docRed = doc(database, "users", id);
+            await addDoc(collection(docRed, "trips"), {
+              stepCount: currentStepCount,
+              minutes: minutes ,
+              startStop: startStop,
+              finalStop: finalStop,
+              selectedRoute: selectedRoute,
+              timeframe: hours + ":" + minutes + ":" + seconds,
+                        location: {
+                          lat: location.coords.latitude || 18.201025,
+                          lon: location.coords.longitude || -67.1318,
+                        },            });
+          } catch (e) {
+            console.log(e);
+          }
+          setConfirm(0);
+          reset();
+          setStartStop(null);
+          setFinalStop(null);
+          setSelectedRoute(null);
+
               }}
             > <Text> Continue </Text> </Button>
             </Box>
