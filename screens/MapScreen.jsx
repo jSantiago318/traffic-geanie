@@ -1,12 +1,11 @@
 import * as Location from "expo-location";
 import * as MapVal from "../assets/map.json";
 
-import { Box, Button, HStack, Icon, Slider, Stack, Text, TextArea, VStack } from "native-base";
+import { Box, Button, HStack, Text, VStack } from "native-base";
 import { Colors, darkMode, lightMode, } from "../config";
 import {
   Dimensions,
   Image,
-  Pressable,
   StatusBar,
   StyleSheet,
   View,
@@ -15,25 +14,21 @@ import {
 import MapView, {
   Callout,
   Marker,
-  OverlayComponent,
   PROVIDER_GOOGLE,
   Polyline,
 } from "react-native-maps";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import React, { setTimeout, useEffect, useState } from "react";
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import React, { useEffect, useMemo, useState } from "react";
+import { addDoc, collection, doc } from "firebase/firestore";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
-import {
-  getStops,
-  getStopsByRouteId,
-  getStopsByRouteIdSelect,
-} from "../assets/gtfs/stops";
 
 import { Pedometer } from "expo-sensors";
 import { database } from "../config/firebase";
 import {getAuth} from 'firebase/auth';
-import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
+import {
+  getStops,
+} from "../assets/gtfs/stops";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
@@ -42,7 +37,6 @@ const Shapes = require("../assets/gtfs/shapes.json");
 export const MapScreen = () => {
   const colorScheme = useColorScheme();
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
   const navigation = useNavigation();
   const [confirm, setConfirm] = useState(0);
   const [selectedRoute, setSelectedRoute] = useState(null);
@@ -81,7 +75,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
     }
   };
 
-
+  
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
   useEffect(() => {
@@ -92,14 +86,14 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
         return;
       }
 
-      let location = await Location.getCurrentPositionAsync({
+      let loc = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.BestForNavigation,
       });
-      setLocation(location);
-      const { status2 } = await requestTrackingPermissionsAsync();
-      if (status2 === "granted") {
-        console.log("Yay! I have user permission to track data");
-      }
+      setLocation(loc);
+      // const { status2 } = await requestTrackingPermissionsAsync();
+      // if (status2 === "granted") {
+      //   console.log("Yay! I have user permission to track data");
+      // }
 
       const subscription = subscribe();
 
@@ -116,6 +110,31 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
       };
     })();
   }, [location]);
+
+  const MemoTime = React.useMemo(() => {
+    if(isRunning){
+       return (
+        <Text>
+
+        {minutes}:{seconds < 10 ? "0" + seconds : seconds}
+        </Text>
+      )
+    }
+  }, [isRunning])
+
+  const [tripTime, setTripTime] = useState([]);
+  const memo = useMemo(() => getTime(tripTime), [tripTime]);
+  async function getTime(url) {
+    if(runTime){
+      if (seconds < 10){
+        const tm = minutes+':0'+seconds
+        setTripTime(tm)
+      }else{
+        const tm = minutes+':'+seconds
+        setTripTime(tm)
+      }
+  }
+  }
 
 
   function getShapeByRouteId(routeId) {
@@ -176,6 +195,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
         {memoStop.map((stop, index) => {
           return (
             <Marker
+            zIndex={100}
               key={index}
               coordinate={{
                 latitude: stop.lat,
@@ -204,6 +224,8 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
               <Callout
                 style={{
                   width: 200,
+                  zIndex: 100,
+                  borderRadius: 10,
                 }}
               >
                 <Text>{stop.name}</Text>
@@ -214,7 +236,6 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
         })}
         {getPosition().map((device, index) => {
           const isOnline = getOnlineById(device.deviceId);
-
           if (showAll) {
             if (isOnline == "online") {
               return (
@@ -406,6 +427,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
             style={{
               backgroundColor: '#98c1d9',
               borderRadius: 10,
+              zIndex: 100,
               width: '30%',
               alignItems : 'center',
               justifyContent: 'center',
@@ -423,6 +445,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
               backgroundColor: '#98c1d9',
               borderRadius: 10,
               width: '30%',
+              zIndex: 100,
               alignItems : 'center',
               justifyContent: 'center',
               height: 50,
@@ -447,7 +470,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
             } >
             <VStack space={2} alignItems="center" justifyContent="center">
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds}
+            Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds }
           </Text>
           <Text>Current Steps: {currentStepCount}</Text>     
           <Text>Past steps: {pastStepCount}</Text>
@@ -460,6 +483,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
               justifyContent: 'center',
               height: 50,
               margin: 5,
+              zIndex: 100,
             }}
               onPress={() => {
                 // setRunTime(false);
@@ -506,6 +530,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
               justifyContent: 'center',
               height: 50,
               margin: 5,
+              zIndex: 100,
             }}
               onPress={async () => {
                 // setRunTime(false);
@@ -558,6 +583,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
             });
           }}
           style={{
+            zIndex: 100,
             backgroundColor: Colors.highlihgted,
           }}
         >
@@ -578,6 +604,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
             setShowAll(!showAll);
           }}
           style={{
+            zIndex: 100,
             backgroundColor: Colors.highlihgted,
           }}
         >

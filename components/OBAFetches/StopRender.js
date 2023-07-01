@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#93e1d8',
   }, timePred:{
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#049C64',
   }, card: {
@@ -160,9 +160,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
   }, timeSch: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
-    color: '#383838',
     }, 
   
 });

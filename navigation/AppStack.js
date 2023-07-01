@@ -3,14 +3,28 @@ import * as React from 'react';
 import { FeedbackScreen, HomeScreen, MapScreen, SettingsScreen, TicketScreen } from '../screens';
 
 import { Entypo } from '@expo/vector-icons';
+import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 import { createStackNavigator } from '@react-navigation/stack';
 import { getAuth } from 'firebase/auth';
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
-const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
+
+function MyDrawer() {
+  return (
+    <Drawer.Navigator>
+
+      <Drawer.Screen name='Map' component={MapScreen} />
+      <Drawer.Screen name='Home' component={HomeScreen}   />
+      <Drawer.Screen name='Ticket' component={TicketScreen} />
+      <Drawer.Screen name='Settings' component={SettingsScreen} />
+      <Drawer.Screen name='Feedback' component={FeedbackScreen} />
+
+    </Drawer.Navigator>
+  );
+}
 
 export const AppStack = () => {
   React.useEffect(() => {
@@ -24,8 +38,12 @@ export const AppStack = () => {
     )
    }, []);
   return (
+    // <NavigationContainer independent={true}>
+    //   <MyDrawer />
+    // </NavigationContainer>  
 
-    <Drawer.Navigator  >
+    <Drawer.Navigator>
+
       <Drawer.Screen name='Map' component={MapScreen} />
       <Drawer.Screen name='Home' component={HomeScreen}   />
       <Drawer.Screen name='Ticket' component={TicketScreen} />
@@ -33,6 +51,5 @@ export const AppStack = () => {
       <Drawer.Screen name='Feedback' component={FeedbackScreen} />
 
     </Drawer.Navigator>
-    
   );
 };

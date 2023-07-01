@@ -20,7 +20,6 @@ import { addDoc, collection, doc } from "firebase/firestore";
 import { deleteUser, getAuth } from "firebase/auth";
 
 import Checkbox from "expo-checkbox";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { database } from "../config/firebase";
 import { signOut } from "firebase/auth";
 
@@ -60,7 +59,6 @@ function FormC() {
         </FormControl.Label>
         <Input
             variant="outline"
-            w={"100%"}
             placeholder="problem..."
             onChangeText={(value) => setData({ ...formData, main: value })}
             style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
@@ -85,6 +83,7 @@ function FormC() {
           }}
         >
           <Checkbox
+            size={5}
             style={
               colorScheme == "dark" ? darkMode.checkbox : lightMode.checkbox
             }
@@ -170,7 +169,6 @@ const darkMode = StyleSheet.create({
   }, checkbox:{
     backgroundColor: "#fff",
     marginRight: 10,
-
   },
 });
 
@@ -183,8 +181,8 @@ const lightMode = StyleSheet.create({
     width: "100%",
   },
   CardView: {
-    width: "90%",
-    backgroundColor: "#8CCCF4",
+    width: "100%",
+    // backgroundColor: "#8CCCF4",
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
@@ -196,12 +194,19 @@ const lightMode = StyleSheet.create({
   },
   Input: {
     backgroundColor: "#fff",
-    width: "90%",
+    width: "100%",
     borderRadius: 10,
+    paddingBottom: 10,
     padding: 5,
   }, checkbox:{
     backgroundColor: "#fff",
     marginRight: 10,
-
-  },
+    
+  }, Text:{
+    color: "#000",
+    fontSize: 16,
+    marginBottom: 5,
+    
+  }
+  
 });

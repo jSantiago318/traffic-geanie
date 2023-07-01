@@ -6,7 +6,7 @@ export default {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '2.1',
+    version: '2.3',
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
@@ -25,7 +25,8 @@ export default {
     assetBundlePatterns: ['**/*'],
     "ios": {
       supportsTablet: true,
-      buildNumber: '2.1',
+
+      buildNumber: '2.3',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.MAPS_API_IOS
@@ -43,7 +44,7 @@ export default {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 21,
+      "versionCode": 22,
       "package": "com.josiba.mayatransit",
 
     },
@@ -77,6 +78,17 @@ export default {
       "expo-tracking-transparency",
       {
         "userTrackingPermission": "Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location"
+      }
+    ],
+    [
+      'expo-build-properties',
+      {
+        'ios':{
+          'flipper': true
+        },
+        'android':{
+          'flipper': true
+        }
       }
     ]
   ]

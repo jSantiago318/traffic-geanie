@@ -14,14 +14,6 @@ import {
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-  where,
-} from "firebase/firestore";
 // import {darkMode, lightMode} from '../config/theme'
 import {
   getOnlineActiveTripsCount,
@@ -29,11 +21,7 @@ import {
 } from "../components/URLFetcher";
 
 import { CheckIcon } from "native-base";
-import { Colors, } from "../config";
-import { DarkTheme } from "@react-navigation/native";
 import { RoutesList } from "../components/RoutesList.js";
-import { database } from "../config/firebase";
-import { getAuth } from "firebase/auth";
 
 export const HomeScreen = () => {
   const [selectedRoute, setSelectedRoute] = React.useState("TIM_RR105");
@@ -41,7 +29,6 @@ export const HomeScreen = () => {
   const [activeTripCount, setActiveTripCount] = React.useState(0);
   const colorScheme = useColorScheme();
   // show modal
-  const [alarmModalVisible, setAlarmModalVisible] = useState(false);
   setInterval(() => {
     setBusCount(getOnlineCount());
     setActiveTripCount(getOnlineActiveTripsCount());
@@ -57,9 +44,8 @@ export const HomeScreen = () => {
           <Text
             fontSize="xl"
             bold
-            style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
           >
-            Mayaguez Bus Tracker
+            Travel Transit Tracker
           </Text>
           <View
             style={
@@ -87,6 +73,7 @@ export const HomeScreen = () => {
               <Select
                 style={colorScheme == 'dark' ? darkMode.Select : lightMode.Select}
                 selectedValue={selectedRoute}
+                size={'lg'}
                 accessibilityLabel="Choose a route"
                 placeholder="Choose a route"
                 _selectedItem={{
@@ -110,7 +97,6 @@ export const HomeScreen = () => {
           </View>
         </Center>
       </View>
-          
       {selectedRoute.length > 0 ? (
         <RoutesList route={selectedRoute} />
       ) : (
@@ -132,7 +118,6 @@ const darkMode = StyleSheet.create({
   },
   CardView:{
     width:'90%',
-    backgroundColor: '#8CCCF4',
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
@@ -155,7 +140,6 @@ const lightMode = StyleSheet.create({
   },
   CardView:{
     width:'90%',
-    backgroundColor: '#8CCCF4',
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
