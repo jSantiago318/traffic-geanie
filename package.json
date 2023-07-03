@@ -51,7 +51,7 @@
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
     "expo-system-ui": "^2.2.1",
-    "expo-tracking-transparency": "^3.0.3",
+    "expo-tracking-transparency": "~3.0.3",
     "expo-updates": "~0.16.4",
     "firebase": "9.19.1",
     "formik": "2.2.9",

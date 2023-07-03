@@ -12,36 +12,11 @@ import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
 const Drawer = createDrawerNavigator();
 
-function MyDrawer() {
-  return (
-    <Drawer.Navigator>
 
-      <Drawer.Screen name='Map' component={MapScreen} />
-      <Drawer.Screen name='Home' component={HomeScreen}   />
-      <Drawer.Screen name='Ticket' component={TicketScreen} />
-      <Drawer.Screen name='Settings' component={SettingsScreen} />
-      <Drawer.Screen name='Feedback' component={FeedbackScreen} />
-
-    </Drawer.Navigator>
-  );
-}
 
 export const AppStack = () => {
-  React.useEffect(() => {
-    (
-      async () => {
-        const { status } = await requestTrackingPermissionsAsync();
-        if (status === 'authorized') {
-          console.log('Tracking permission granted');
-        }
-      }
-    )
-   }, []);
-  return (
-    // <NavigationContainer independent={true}>
-    //   <MyDrawer />
-    // </NavigationContainer>  
 
+  return (
     <Drawer.Navigator>
 
       <Drawer.Screen name='Map' component={MapScreen} />

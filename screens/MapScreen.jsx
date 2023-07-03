@@ -29,6 +29,8 @@ import {getAuth} from 'firebase/auth';
 import {
   getStops,
 } from "../assets/gtfs/stops";
+import {requestTrackingPermissionsAsync} from 'expo-tracking-transparency';
+import { set } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
@@ -78,38 +80,41 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
   
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
-  useEffect(() => {
+
+
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
+  try {
+    
+    let {status} = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
 
-      let loc = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.BestForNavigation,
-      });
-      setLocation(loc);
-      // const { status2 } = await requestTrackingPermissionsAsync();
-      // if (status2 === "granted") {
-      //   console.log("Yay! I have user permission to track data");
-      // }
+} catch (error) {
+  console.log(error)
+}
+})();
 
-      const subscription = subscribe();
+setInterval(async () => {
+  if (location == null) {
+    let loc = await Location.getCurrentPositionAsync({
+      enableHistory: true,
+      enableHighAccuracy: true,
+    })
+    setLocation(loc)
+  }
 
-      const interval = setInterval(async () => {
-        const loc = await Location.getCurrentPositionAsync({});
-        setLocation(loc);
-        if (isRunning) {
-          setUserLocHistory([...userLocHistory, loc]);
-        }
-      }, 1000);
-      return () => {
-        subscription && subscription.remove();
-        clearInterval(interval)
-      };
-    })();
-  }, [location]);
+}, 1000);
+
+useEffect(() => {
+  (async () => {
+    const { status } = await requestTrackingPermissionsAsync();
+    if (status === 'granted') {
+      console.log('Yay! I have user permission to track data');
+    }
+  })();
+}, []);
 
   const MemoTime = React.useMemo(() => {
     if(isRunning){
@@ -575,6 +580,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
       >
         <Button
           onPress={() => {
+            // console.log(location);
             _mapView.animateToRegion({
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,

@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: 'Bus Transit Tracker',
+    name: 'Travel Transit Tracker',
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
@@ -44,7 +44,7 @@ export default {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 22,
+      "versionCode": 23,
       "package": "com.josiba.mayatransit",
 
     },
@@ -77,8 +77,8 @@ export default {
     ],[
       "expo-tracking-transparency",
       {
-        "userTrackingPermission": "Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location"
-      }
+        "userTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+            }
     ],
     [
       'expo-build-properties',
@@ -86,9 +86,6 @@ export default {
         'ios':{
           'flipper': true
         },
-        'android':{
-          'flipper': true
-        }
       }
     ]
   ]

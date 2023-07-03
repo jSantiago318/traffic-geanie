@@ -8,6 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 export const AuthStack = () => {
+
   return (
     // <Stack.Navigator
     //   screenOptions={{ headerShown: false }}
@@ -18,11 +19,8 @@ export const AuthStack = () => {
     //   <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
     // </Stack.Navigator>
     <Drawer.Navigator  >
-    <Drawer.Screen 
-      headerShown={false}
-      headerMode={'none'}
-     name='Intro' component={IntroScreen} />
-    <Drawer.Screen name='Routes' component={HomeScreen}   />
+    <Drawer.Screen name='Home' component={HomeScreen}   />
+    <Drawer.Screen      name='About' component={IntroScreen} />
     <Drawer.Screen name='Feedback' component={FeedbackScreen} />
     {/* <Drawer.Screen name='Settings' component={SettingsScreen} /> */}
 

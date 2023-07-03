@@ -2,14 +2,13 @@ import { HStack, Icon, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, useColorScheme } from 'react-native';
 
-import {Colors} from '../../config/';
-
 export const StopRender = ({stop}) => {
   const [allStops, setAllStops] = useState([]);
   const [stopName, setStopName] = useState([]);
   const [predStop, setPredStop] = useState([]);
   const [currentTime, setCurrentTime] = useState([]);
   let counter = 0;
+  
   setInterval(() => {
     counter++;
   }, 2000);
@@ -24,23 +23,17 @@ export const StopRender = ({stop}) => {
           ".json?key=TEST"
           ).then((response) => response.json())
           .then((data) => {
-            setAllStops(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes)
-            const temp = stopName
-            temp.push(data.data.references.stops[0].name)
-            
-            setStopName(data.data.references.stops[0].name)
-            setCurrentTime(data.currentTime);
-            // console.log(data.data.references.stops[0].name)
+              setAllStops(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes)
+              const temp = stopName
+              temp.push(data.data.references.stops[0].name)
+              
+              setStopName(data.data.references.stops[0].name)
+              setCurrentTime(data.currentTime);
           });
           
           
           await fetch('https://proba.live/api/where/arrivals-and-departures-for-stop/'+stop+'.json?key=TEST').then((response) => response.json())
           .then((data) => {
-            //   console.log(data.data.entry.arrivalsAndDepartures[0].lastKnownLocation)
-            //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.nextStop)
-            //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.position)
-            //   console.log(data.data.entry.arrivalsAndDepartures[0].tripStatus.vehicleId)
-            //   setActiveBus(data.data.entry.arrivalsAndDepartures[0].tripStatus.vehicleId)
             if (data.data.entry.arrivalsAndDepartures.length > 0) {
               const temp = [
                 data.data.entry.arrivalsAndDepartures[0].predicted,
@@ -49,7 +42,6 @@ export const StopRender = ({stop}) => {
               ]
               setPredStop(temp)
             } 
-            // console.log(data.data.entry.arrivalsAndDepartures[0].scheduledArrivalTime)
           } );
           
           
@@ -71,7 +63,6 @@ function getNextStop(){
       return new Date(element.arrivalTime).toLocaleTimeString()
     }
     if(found === false && index === allStops.length-1){
-      // console.log( )
       return new Date(allStops[0].arrivalTime).toLocaleTimeString()
     }
     
@@ -104,7 +95,7 @@ const TimePred = () => {
     <View style={styles.card}>
     <HStack space={2} justifyContent={'space-between'}>
       {
-        stopName.length > 0 ? <Text> {stopName} </Text> :<Text> loading.. </Text>
+        stopName.length > 0 ? <Text> {stopName} </Text> :<Text> {stop} </Text>
       }
       {/* {
         allStops.length > 0 ? <Text> {new Date(getNextStop(allStops)).toLocaleTimeString()} </Text> :<Text> loading... </Text>
@@ -116,33 +107,6 @@ const TimePred = () => {
   </>
   );
 }
-
-// const darkMode = StyleSheet.create({
-//   timePred:{
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//     backgroundColor: '#0CAC59',
-//   },
-//   timeSch: {
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//     backgroundColor: '#0CAC59',
-//     },
-// })
-
-// const lightMode = StyleSheet.create({
-//   timePred:{
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//     color: 'green',
-//   },
-//   timeSch: {
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//     color: Colors.schText,
-//     },
-// })
-
 
 const styles = StyleSheet.create({
   container: {

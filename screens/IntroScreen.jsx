@@ -11,30 +11,16 @@ import {
   Stack,
   Text,
   VStack,
+  View,
 } from "native-base";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, useColorScheme } from "react-native";
+import { StyleSheet, useColorScheme } from "react-native";
+
 // import {darkMode, lightMode} from '../config/theme'
-import {
-  getOnlineActiveTripsCount,
-  getOnlineCount,
-} from "../components/URLFetcher";
 
-import { CheckIcon } from "native-base";
-import { RoutesList } from "../components/RoutesList.js";
+export const IntroScreen = async () => {
 
-export const IntroScreen = () => {
-  const [selectedRoute, setSelectedRoute] = React.useState("TIM_RR105");
-  const [busCount, setBusCount] = React.useState(0);
-  const [activeTripCount, setActiveTripCount] = React.useState(0);
   const colorScheme = useColorScheme();
-  // show modal
-  setInterval(() => {
-    setBusCount(getOnlineCount());
-    setActiveTripCount(getOnlineActiveTripsCount());
-  }, 1000);
-
-  
 
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
@@ -42,12 +28,45 @@ export const IntroScreen = () => {
       <Box
         style={colorScheme == "dark" ? darkMode.CardView : lightMode.CardView}
       >
-        <Text fontSize="xl" fontWeight="bold">
+        <Text fontSize="xl" fontWeight="bold" marginBottom={'4'} >
           Welcome to Travel Transit Tracker
         </Text>
-    </Box>
-      </Center>
+        <Text fontSize="md" marginBottom={'2'} >
+          This app is designed to help and research the public transportation system in Mayaguez, PR. 
+        </Text>
+        <Text fontSize="md" marginBottom={'2'} >
+          This app is designed for users near the Mayaguez area. But, any user from any region can use this app. This app is not limited by any company or organization. It is being developed by a group of researchers from the University of Puerto Rico at Mayaguez.
+        </Text>
+        <Text fontSize="md" fontWeight="bold" marginBottom={'2'} >
+        App usage 
+        </Text>
+        <Text fontSize="md" marginBottom={'1'} >
+        In order to use all the features provided by the app you have to be looged in. Such features include:   
+         </Text>
+          <Text fontSize="md" marginBottom={'0.5'} >
+          - Keep a travel trip history 
+          </Text>
+          <Text fontSize="md" marginBottom={'0.5'} >
+          - Provide feedback from a trip, bus stop, or routes
+          </Text>
+          <Text fontSize="md" marginBottom={'0.5'} >
+          - Get notifications about your trip
+          </Text>
+        
+        <Text fontSize="md" fontWeight="bold" marginBottom={'2'} >
+        Location and Privacy 
+        </Text>
+        <Text fontSize="md" marginBottom={'2'} >
+        Users are able to delete their accounts and the data associated with it. The data collected by the app is not shared with any third party. The data is only used for research purposes.
+        </Text>
 
+    </Box>
+    
+   
+      </Center>
+      <Text fontSize="md" marginBottom={'2'} >
+      Made with ❤️ in Puerto Rico 🇵🇷
+        </Text>
     </View>
   );
 };
