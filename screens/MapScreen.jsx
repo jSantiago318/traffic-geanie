@@ -107,14 +107,14 @@ setInterval(async () => {
 
 }, 1000);
 
-useEffect(() => {
-  (async () => {
-    const { status } = await requestTrackingPermissionsAsync();
-    if (status === 'granted') {
-      console.log('Yay! I have user permission to track data');
-    }
-  })();
-}, []);
+// useEffect(() => {
+//   (async () => {
+//     const { status } = await requestTrackingPermissionsAsync();
+//     if (status === 'granted') {
+//       console.log('Yay! I have user permission to track data');
+//     }
+//   })();
+// }, []);
 
   const MemoTime = React.useMemo(() => {
     if(isRunning){
