@@ -19,8 +19,8 @@ export const AuthStack = () => {
     //   <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
     // </Stack.Navigator>
     <Drawer.Navigator  >
-    <Drawer.Screen name='Home' component={HomeScreen}   />
     <Drawer.Screen      name='About' component={IntroScreen} />
+    <Drawer.Screen name='Home' component={HomeScreen}   />
     <Drawer.Screen name='Feedback' component={FeedbackScreen} />
     {/* <Drawer.Screen name='Settings' component={SettingsScreen} /> */}
 

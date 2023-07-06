@@ -1,14 +1,7 @@
 import {
   Box,
-  Button,
   Center,
-  FlatList,
-  FormControl,
-  HStack,
-  Input,
-  Modal,
-  Select,
-  Stack,
+  ScrollView,
   Text,
   VStack,
   View,
@@ -18,12 +11,14 @@ import { StyleSheet, useColorScheme } from "react-native";
 
 // import {darkMode, lightMode} from '../config/theme'
 
-export const IntroScreen = async () => {
+export const IntroScreen =  () => {
 
   const colorScheme = useColorScheme();
 
   return (
-    <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
+    <View  style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
+      
+    <ScrollView>
     <Center>
       <Box
         style={colorScheme == "dark" ? darkMode.CardView : lightMode.CardView}
@@ -43,13 +38,13 @@ export const IntroScreen = async () => {
         <Text fontSize="md" marginBottom={'1'} >
         In order to use all the features provided by the app you have to be looged in. Such features include:   
          </Text>
-          <Text fontSize="md" marginBottom={'0.5'} >
+          <Text fontSize="md" marginBottom={'1'} >
           - Keep a travel trip history 
           </Text>
-          <Text fontSize="md" marginBottom={'0.5'} >
+          <Text fontSize="md" marginBottom={'1'} >
           - Provide feedback from a trip, bus stop, or routes
           </Text>
-          <Text fontSize="md" marginBottom={'0.5'} >
+          <Text fontSize="md" marginBottom={'1'} >
           - Get notifications about your trip
           </Text>
         
@@ -67,6 +62,8 @@ export const IntroScreen = async () => {
       <Text fontSize="md" marginBottom={'2'} >
       Made with ❤️ in Puerto Rico 🇵🇷
         </Text>
+    </ScrollView>
+
     </View>
   );
 };

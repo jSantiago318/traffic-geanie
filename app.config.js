@@ -6,7 +6,7 @@ export default {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '2.4',
+    version: '2.7',
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
@@ -26,7 +26,7 @@ export default {
     "ios": {
       supportsTablet: true,
 
-      buildNumber: '2.4',
+      buildNumber: '2.7',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.MAPS_API_IOS
@@ -44,7 +44,7 @@ export default {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 24,
+      "versionCode": 27,
       "package": "com.josiba.mayatransit",
 
     },
@@ -69,15 +69,15 @@ export default {
     [
       'expo-location',
       {
-        'locationAlwaysAndWhenInUsePermission': 'Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location',
-        'locationAlwayPermission': 'Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location',
-        'isIosBackgroundLocationEnabled': 'Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location',
-        'isAndroidBackgroundLocationEnabledgit': 'Allow $(PRODUCT_NAME) to access location and provide bus tracking services to your location',
+        'locationAlwaysAndWhenInUsePermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
+        'locationAlwayPermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
+        'isIosBackgroundLocationEnabled': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
+        'isAndroidBackgroundLocationEnabledgit': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
       }
     ],[
       "expo-tracking-transparency",
       {
-        "userTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        "userTrackingPermission": "Your data will be used to deliver personalized ads for products that are most relevant to you."
             }
     ],
     [

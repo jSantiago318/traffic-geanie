@@ -8,7 +8,6 @@ import { AuthenticatedUserProvider } from './providers';
 // import '@fontsource/roboto/400.css';
 // import '@fontsource/roboto/500.css';
 // import '@fontsource/roboto/700.css';
-import LogRocket from '@logrocket/react-native';
 import { NativeBaseProvider } from 'native-base';
 import { RootNavigator } from './navigation/RootNavigator';
 import { SafeAreaProvider } from 'react-native-safe-area-context';

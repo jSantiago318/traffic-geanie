@@ -21,7 +21,7 @@ import {
 } from "../components/URLFetcher";
 
 import { CheckIcon } from "native-base";
-import { RoutesList } from "../components/RoutesList.js";
+import { RoutesList } from "../components/RoutesList";
 
 export const HomeScreen = () => {
   const [selectedRoute, setSelectedRoute] = React.useState("TIM_RR105");
