@@ -48,9 +48,7 @@ export const MapScreen = () => {
   const [finalStop, setFinalStop] = useState(null);
   const [selectedStop, setSelectedStop] = useState(null);
   const [userLocHistory, setUserLocHistory] = useState([]);
-  const [startTime, setStartTime] = useState(null);
   const [runTime, setRunTime] = useState(false);
-  const [tripRating, setTripRating] = useState([0, 0, 0, 0, 0]);
   const memoStop = React.useMemo(() => getStops(), []);
 const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
   const [pastStepCount, setPastStepCount] = useState(0);
@@ -103,18 +101,33 @@ setInterval(async () => {
       enableHighAccuracy: true,
     })
     setLocation(loc)
-  }
-
-}, 1000);
-
-useEffect(() => {
-  (async () => {
-    const { status } = await requestTrackingPermissionsAsync();
-    if (status === 'granted') {
-      console.log('Yay! I have user permission to track data');
+    if(confirm == 2){
+      const elem = {
+        lat: loc.coords.latitude,
+        lon: loc.coords.longitude,
+        timestamp: loc.timestamp,
+      }
+      setUserLocHistory([...userLocHistory, elem])
     }
-  })();
-}, []);
+  }
+  
+}, 1000);
+(async () => {
+  const { status } = await requestTrackingPermissionsAsync();
+  if (status === 'granted') {
+    console.log('Yay! I have user permission to track data');
+  }
+})();
+
+
+// useEffect(() => {
+  // (async () => {
+  //   const { status } = await requestTrackingPermissionsAsync();
+  //   if (status === 'granted') {
+  //     console.log('Yay! I have user permission to track data');
+  //   }
+  // })();
+// }, []);
 
   const MemoTime = React.useMemo(() => {
     if(isRunning){
@@ -356,23 +369,23 @@ useEffect(() => {
           alignContent: "center",
           alignItems: "center",
           justifyContent: "center",
-          bottom: "5%",
+          bottom: "10%",
           left: 0,
           width: "100%",
         }}
       >
         <Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card}>
-          <Text
-            style={{
+          < Text
+  style={{
               fontSize: 16,
               fontWeight: "bold",
               color:
                 colorScheme == "dark"
                   ? darkMode.Text.color
                   : lightMode.Text.color,
-            }}
-          >
-            Selected Route: {selectedRoute}
+            }}          >
+            Selected Route: 
+            {selectedRoute}
           </Text>
           <Text
             style={{
@@ -474,16 +487,20 @@ useEffect(() => {
               colorScheme == "dark" ? darkMode.Card : lightMode.Card
             } >
             <VStack space={2} alignItems="center" justifyContent="center">
-          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>
             Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds }
           </Text>
-          <Text>Current Steps: {currentStepCount}</Text>     
-          <Text>Past steps: {pastStepCount}</Text>
+          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>Current Steps: {currentStepCount}</Text>     
+          <HStack space={2} style={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            
+          }} >
             <Button
               style={{
               backgroundColor: '#98c1d9',
               borderRadius: 10,
-              width: '50%',
+              // width: '50%',
               alignItems : 'center',
               justifyContent: 'center',
               height: 50,
@@ -497,6 +514,25 @@ useEffect(() => {
                 setOnChangeEndValue(currentStepCount)
               }}
             > <Text> End Trip </Text> </Button>
+            <Button
+              style={{
+              backgroundColor: '#98c1d9',
+              borderRadius: 10,
+              // width: '50%',
+              alignItems : 'center',
+              justifyContent: 'center',
+              height: 50,
+              margin: 5,
+              zIndex: 100,
+            }}
+              onPress={() => {
+                // setRunTime(false);
+                setConfirm(3);
+                pause()
+                setOnChangeEndValue(currentStepCount)
+              }}
+            > <Text> Cancel </Text> </Button>
+            </HStack>
             </VStack>
             </Box>
             
@@ -547,6 +583,7 @@ useEffect(() => {
               minutes: minutes ,
               startStop: startStop,
               finalStop: finalStop,
+              loc: userLocHistory,
               selectedRoute: selectedRoute,
               timeframe: hours + ":" + minutes + ":" + seconds,
                         location: {
@@ -561,6 +598,8 @@ useEffect(() => {
           setStartStop(null);
           setFinalStop(null);
           setSelectedRoute(null);
+          setUserLocHistory([])
+
 
               }}
             > <Text> Continue </Text> </Button>

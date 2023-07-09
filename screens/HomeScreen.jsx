@@ -44,6 +44,9 @@ export const HomeScreen = () => {
           <Text
             fontSize="xl"
             bold
+            style={
+              colorScheme == "dark" ? darkMode.Text : lightMode.Text
+            }
           >
             Travel Transit Tracker
           </Text>
@@ -78,7 +81,7 @@ export const HomeScreen = () => {
                 placeholder="Choose a route"
                 _selectedItem={{
                   // bg: colorScheme == 'dark' ? 'blueGray.400' : 'blueGray.400',
-                  endIcon: <CheckIcon size="5"  />,
+                  endIcon: <CheckIcon size="5"   />,
                 }}
                 mt={1}
                 onValueChange={(itemValue) => {
@@ -116,6 +119,9 @@ const darkMode = StyleSheet.create({
       backgroundColor: '#293241',
       width:'100%',
   },
+  Select:{
+    backgroundColor: '#fff',
+  },
   CardView:{
     width:'90%',
     borderRadius: 10,
@@ -126,6 +132,9 @@ const darkMode = StyleSheet.create({
   Card:{
     width:'100%',
     backgroundColor: '#8CCCF4',
+  },
+  Text:{
+    color: '#fff',
   }
   
 })
@@ -137,6 +146,12 @@ const lightMode = StyleSheet.create({
       alignItems: 'center',
       backgroundColor: '#fff',
       width:'100%',
+  },
+  Text:{
+    color: 'black',
+  },
+  Select:{
+    backgroundColor: '#fff',
   },
   CardView:{
     width:'90%',

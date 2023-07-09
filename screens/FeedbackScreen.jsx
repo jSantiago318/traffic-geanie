@@ -22,8 +22,10 @@ import { deleteUser, getAuth } from "firebase/auth";
 import Checkbox from "expo-checkbox";
 import { database } from "../config/firebase";
 import { signOut } from "firebase/auth";
+import { useToast } from 'native-base';
 
 function FormC() {
+  const toast = useToast()
   const [formData, setData] = React.useState({});
   const [errors, setErrors] = React.useState({});
   const colorScheme = useColorScheme();
@@ -110,10 +112,17 @@ function FormC() {
               desc: formData.desc,
               time: new Date() ,
               uid: id,
-            });
+            }); 
+            toast.show({
+              title: "Feedback Submitted",
+              status: "success",
+              description: "Thank you for your feedback!",
+              placement: "bottom",
+            })
           } catch (e) {
             console.log(e);
           }
+          
         }}
         mt="5"
         colorScheme="blue"

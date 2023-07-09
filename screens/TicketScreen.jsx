@@ -1,14 +1,15 @@
 import {
+  Box,
   Button,
   Center,
   Container,
   FlatList,
   HStack,
-  Icon,
   Stack,
   Switch,
   Text,
   TextArea,
+  VStack,
 } from "native-base";
 import { StyleSheet, View } from "react-native";
 
@@ -44,21 +45,26 @@ export const TicketScreen = () => {
       <View
         style={{
           flex: 1,
-          // justifyContent: "center",
           alignItems: "center",
         }}
       >
+      <HStack space={2} alignItems="center" style={{ marginTop: 20, marginBottom: 20 }}>
+         
         <Button
               title="Show Trip History"
               onPress={() => setShowTripHistory(!showTripHistory)}
               variant={"outline"}
-              style={{
-                marginVertical: 20,
-                width: "70%",
-              }}
             >
               Show Trip History
             </Button>
+            <Button
+              title="Show Feedback History"
+              onPress={() => setShowFeedback(!showFeedback)}
+              variant={"outline"}
+            >
+              Show Feedback History
+            </Button>
+      </HStack>
          {showTripHistory ? (
         <>
           <FlatList
@@ -68,7 +74,7 @@ export const TicketScreen = () => {
               const stTime = new Date(item.startTime).toLocaleTimeString();
               const spTime = new Date(item.stopTime).toLocaleTimeString();
               return (
-                <View
+                <Box
                   style={{
                     backgroundColor: "white",
                     padding: 12,
@@ -78,15 +84,12 @@ export const TicketScreen = () => {
                   }}
                 >
                   <Text>
-                    # {index +1} | {dt}  | {stTime} - {spTime}
+                    {index +1} | {dt}  | {stTime} - {spTime}
                   </Text>
                   <Text>Route: {item.route} </Text>
                   <Text>Stop 1: {item.startStop} </Text>
                   <Text>Stop 2: {item.finalStop} </Text>
-                  <Text>
-                    User logs: {0} - Bus logs: {0}
-                  </Text>
-                </View>
+                </Box>
               );
             }}
           />
@@ -95,39 +98,31 @@ export const TicketScreen = () => {
        null
         
       )}
-      <Button
-              title="Show Feedback History"
-              onPress={() => setShowFeedback(!showFeedback)}
-              variant={"outline"}
-              style={{
-                marginVertical: 20,
-                width: "70%",
-              }}
-            >
-              Show Feedback History
-            </Button>
-         {showFeedback ? (
+            {showFeedback ? (
         <>
           <FlatList
             data={docs1}
+            style={{width: '80%'}}
             renderItem={({ item , index }) => {
                 return (
-                <View
+                <Box
                 style={{
-                    backgroundColor: "white",
-                    padding: 12,
-                    borderRadius: 5,
-                    marginVertical: 8,
-                    marginHorizontal: 16,
+                  backgroundColor: "white",
+                  padding: 12,
+                  borderRadius: 5,
+                  marginVertical: 8,
+                  marginHorizontal: 16,
+                  minHeight: 50
                   }}
                 >
-                <Text> # {index+1}</Text>
-                  <Text> {item.desc} </Text>
-                  <Text>{item.main} </Text>
-                 
-                </View>
+                <Text> {index+1} | 
+               <Text bold > {item.main}</Text>
+                </Text>
+                <Text>{item.desc}</Text>
+                </Box>
               );
-            }}          />
+            }}
+            />
         </>
       ) : (
        null

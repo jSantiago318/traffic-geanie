@@ -34,7 +34,7 @@ export const SettingsScreen = () => {
 
   return (
     <View style={colorScheme === "dark" ? darkMode.View : lightMode.View}>
-      <Center>
+      {/* <Center> */}
         <Container>
           <Heading
             style={
@@ -134,7 +134,7 @@ export const SettingsScreen = () => {
             Log Out
           </Button>
         </Container>
-      </Center>
+      {/* </Center> */}
     </View>
   );
 };
@@ -142,7 +142,8 @@ export const SettingsScreen = () => {
 const darkMode = StyleSheet.create({
   View:{
     flex: 1,
-      justifyContent: 'center',
+      // justifyContent: 'center',
+      paddingTop: 30,
       alignItems: 'center',
       backgroundColor: '#293241',
       width:'100%',

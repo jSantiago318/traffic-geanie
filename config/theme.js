@@ -149,6 +149,7 @@ const darkMode = {
       color: '#98c1d9',
   }, 
   Text :{
+    
     fontSize: 14,
     fontWeight: "normal",
     color: '#FBFCFF',
