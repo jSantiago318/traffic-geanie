@@ -25,7 +25,7 @@ export default {
     assetBundlePatterns: ['**/*'],
     "ios": {
       supportsTablet: true,
-
+      
       buildNumber: '2.8',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
