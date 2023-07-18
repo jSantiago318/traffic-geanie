@@ -52,14 +52,22 @@ export const TicketScreen = () => {
          
         <Button
               title="Show Trip History"
-              onPress={() => setShowTripHistory(!showTripHistory)}
+              onPress={() => {
+                setShowFeedback(false)
+                setShowTripHistory(!showTripHistory)
+              }}
               variant={"outline"}
             >
               Show Trip History
             </Button>
             <Button
               title="Show Feedback History"
-              onPress={() => setShowFeedback(!showFeedback)}
+              onPress={() => {
+                setShowTripHistory(false)
+                setShowFeedback(!showFeedback)
+              }
+              
+              }
               variant={"outline"}
             >
               Show Feedback History

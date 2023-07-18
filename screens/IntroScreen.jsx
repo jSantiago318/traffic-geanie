@@ -1,30 +1,93 @@
+// import {darkMode, lightMode} from '../config/theme'
+import * as Location from 'expo-location';
+
 import {
   Box,
+  Button,
   Center,
+  Checkbox,
+  HStack,
   ScrollView,
   Text,
   VStack,
   View,
 } from "native-base";
+import { Pressable, StyleSheet, useColorScheme } from "react-native";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, useColorScheme } from "react-native";
 
-// import {darkMode, lightMode} from '../config/theme'
+import { Pedometer } from 'expo-sensors';
 
 export const IntroScreen =  () => {
 
   const colorScheme = useColorScheme();
+  const [location, setLocation] = useState(null);
+
 
   return (
     <View  style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
-      
     <ScrollView>
     <Center>
       <Box
         style={colorScheme == "dark" ? darkMode.CardView : lightMode.CardView}
       >
+       
         <Text fontSize="xl" fontWeight="bold" marginBottom={'4'}  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
           Welcome to Travel Transit Tracker
+        </Text>
+
+        <Text fontSize="md" marginBottom={'2'}   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
+
+          App Permissions
+        </Text>
+        <Button variant="outline" marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}  onPress={
+             async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+        timeInterval: 1000,
+        distanceInterval: 1
+        
+      });
+      setLocation(location);
+      console.log(
+        "Location: " + location.coords.latitude + " " + location.coords.longitude
+      )
+            
+          }
+          } >
+          Allow Location
+        </Button>
+        <Button variant="outline" marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
+         onPress={
+             async () => {
+      let { status } = await Pedometer.requestPermissionsAsync();
+      if (status == 'granted') {
+        console.log('Permission to access location was accepted');
+        return;
+      }
+
+   
+            
+          }
+          }
+           >
+          Allow Notifications
+        </Button>
+        <Button variant="outline" marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
+          Allow Camera
+        </Button>
+        <Button variant="outline" marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
+          Allow Pedometer
+        </Button>
+
+
+        <Text fontSize="md" marginBottom={'2'}   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
+          For the app to work properly, you must allow the app the following permissions:
         </Text>
         <Text fontSize="md" marginBottom={'2'}   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
           This app is designed to help and research the public transportation system in Mayaguez, PR. 
@@ -55,9 +118,9 @@ export const IntroScreen =  () => {
         Users are able to delete their accounts and the data associated with it. The data collected by the app is not shared with any third party. The data is only used for research purposes.
         </Text>
 
-      <Text fontSize="md" marginBottom={'2'} bold   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+      {/* <Text fontSize="md" marginBottom={'2'} bold   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
       Made with ❤️ in Puerto Rico 🇵🇷
-        </Text>
+        </Text> */}
     </Box>
     
    

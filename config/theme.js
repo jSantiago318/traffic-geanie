@@ -16,7 +16,15 @@ const Colors = {
   predictionText: '#94EC94',
   ticketBackground: '#ffff',
   backgroundColor: '#ffff',
-
+  MapButton:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: '#ffff',
+    fontSize: 16,
+    margin: 2,
+    padding: 2,
+  },
 };
 
 
@@ -43,6 +51,14 @@ const darkMode = {
   icon:{
     color: '#98c1d9',
   },
+  Button:{
+    backgroundColor: '#3d5a80',
+    width: '90%',
+    justifyContent: 'center',
+    borderRadius: 10,
+    padding: 5,
+    margin: 5,
+  },
   Modal:{
     backgroundColor: '#293241',
     width: '90%',
@@ -59,7 +75,15 @@ const darkMode = {
     margin: 2,
     // padding: 2,
   },
-  
+  MapButton:{
+    alignItems : 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    backgroundColor: '#3d5a80',
+    fontSize: 16,
+    margin: 2,
+    padding: 2,
+  },
   Card:{
     backgroundColor: '#3d5a80',
     width: '90%',
@@ -218,6 +242,14 @@ LoginBtn:{
 
 
 const lightMode = {
+  Button:{
+    backgroundColor: '#e0fbfc',
+    width: '50%',
+    justifyContent: 'center',
+    borderRadius: 10,
+    padding: 5,
+    margin: 5,
+  },
   Card:{
     backgroundColor: '#e0fbfc',
     width: '90%',

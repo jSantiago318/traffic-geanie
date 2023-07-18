@@ -21,11 +21,11 @@ export const AuthStack = () => {
     <Drawer.Navigator  >
     <Drawer.Screen      name='About' component={IntroScreen} />
     <Drawer.Screen name='Home' component={HomeScreen}   />
-    <Drawer.Screen name='Feedback' component={FeedbackScreen} />
     {/* <Drawer.Screen name='Settings' component={SettingsScreen} /> */}
 
     <Drawer.Screen name='Login' component={LoginScreen} />
-      <Drawer.Screen name='Signup' component={SignupScreen} />
+      <Drawer.Screen name='Register' component={SignupScreen} />
+    <Drawer.Screen name='Feedback' component={FeedbackScreen} />
       {/* <Drawer.Screen name='ForgotPassword' component={ForgotPasswordScreen} /> */}
 
   </Drawer.Navigator>
