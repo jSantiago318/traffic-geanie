@@ -15,6 +15,7 @@ import {
 import { Pressable, StyleSheet, useColorScheme } from "react-native";
 import React, { useEffect, useState } from "react";
 
+import { Camera } from '@mui/icons-material';
 import { Pedometer } from 'expo-sensors';
 
 export const IntroScreen =  () => {
@@ -39,7 +40,7 @@ export const IntroScreen =  () => {
 
           App Permissions
         </Text>
-        <Button variant="outline" marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}  onPress={
+        <Button marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}  onPress={
              async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
@@ -62,26 +63,30 @@ export const IntroScreen =  () => {
           } >
           Allow Location
         </Button>
-        <Button variant="outline" marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
+        <Button  marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Button : lightMode.Button} 
+        onPress={
+             async () => {
+      let { status } = await Camera.requestPermissionsAsync;
+      if (status == 'granted') {
+        console.log('Permission to camera location was accepted');
+        return;
+      }
+          }
+          }
+         >
+          Allow Camera
+        </Button>
+        <Button marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
          onPress={
              async () => {
       let { status } = await Pedometer.requestPermissionsAsync();
       if (status == 'granted') {
-        console.log('Permission to access location was accepted');
+        console.log('Permission to camera location was accepted');
         return;
       }
-
-   
-            
           }
           }
-           >
-          Allow Notifications
-        </Button>
-        <Button variant="outline" marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
-          Allow Camera
-        </Button>
-        <Button variant="outline" marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
+         >
           Allow Pedometer
         </Button>
 
