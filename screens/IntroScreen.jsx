@@ -50,32 +50,16 @@ export const IntroScreen =  () => {
 
       let location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
-        timeInterval: 1000,
-        distanceInterval: 1
-        
       });
       setLocation(location);
       console.log(
         "Location: " + location.coords.latitude + " " + location.coords.longitude
       )
-            
           }
           } >
           Allow Location
         </Button>
-        <Button  marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Button : lightMode.Button} 
-        onPress={
-             async () => {
-      let { status } = await Camera.requestPermissionsAsync;
-      if (status == 'granted') {
-        console.log('Permission to camera location was accepted');
-        return;
-      }
-          }
-          }
-         >
-          Allow Camera
-        </Button>
+    
         <Button marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
          onPress={
              async () => {

@@ -321,7 +321,7 @@ setInterval(async () => {
       >
       {
         hideTrip ? true : (
-          <Button style={colorScheme == "dark" ? darkMode.MapButton : lightMode.MapButton}
+          <Button style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
        onPress={() => {
                 setConfirm(4);
                 start();
@@ -562,7 +562,7 @@ setInterval(async () => {
             const docRed = doc(database, "users", id);
             await addDoc(collection(docRed, "trips"), {
               stepCount: currentStepCount,
-              minutes: minutes ,
+              startTime: location.timestamp,
               startStop: startStop,
               travel: travelingBy,
               finalStop: finalStop,
@@ -689,7 +689,7 @@ setInterval(async () => {
             const docRed = doc(database, "users", id);
             await addDoc(collection(docRed, "trips"), {
               stepCount: currentStepCount,
-              minutes: minutes ,
+              minutes: location.timestamp ,
               startStop: time,
               finalStop: finalStop,
               travel: travelingBy,
