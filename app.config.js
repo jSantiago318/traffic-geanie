@@ -91,7 +91,7 @@ export default {
     ],[
       "expo-tracking-transparency",
       {
-        "userTrackingPermission": "Your data will be used to deliver personalized ads for products that are most relevant to you."
+        "userTrackingPermission": "Your data will be shared with third party companies, this will help us provide you with the best user expierence."
             }
     ],
     [
