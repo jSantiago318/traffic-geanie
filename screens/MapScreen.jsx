@@ -29,7 +29,6 @@ import {getAuth} from 'firebase/auth';
 import {
   getStops,
 } from "../assets/gtfs/stops";
-import {requestTrackingPermissionsAsync} from 'expo-tracking-transparency';
 import { set } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
@@ -116,14 +115,7 @@ setInterval(async () => {
   
 }, 1000);
 
-(async () => {
-  const { status } = await requestTrackingPermissionsAsync();
-  let count = 0 
-  if (status === 'granted' && count == 0) {
-    console.log('Yay! I have user permission to track data');
-    count = 1
-  }
-})();
+
 
 
 // useEffect(() => {

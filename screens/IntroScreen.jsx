@@ -12,18 +12,34 @@ import {
   VStack,
   View,
 } from "native-base";
+import { Camera, CameraType } from 'expo-camera';
 import { Pressable, StyleSheet, useColorScheme } from "react-native";
 import React, { useEffect, useState } from "react";
 
-import { Camera } from '@mui/icons-material';
 import { Pedometer } from 'expo-sensors';
+import {requestTrackingPermissionsAsync} from 'expo-tracking-transparency';
 
 export const IntroScreen =  () => {
-
+  const LOCATION_TASK_NAME = 'background-location-task';
+ 
   const colorScheme = useColorScheme();
   const [location, setLocation] = useState(null);
 
 
+
+  // TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+  //   if (error) {
+  //     // Error occurred - check `error.message` for more details.
+  //     return;
+  //   }
+  //   if (data) {
+  //     const { locations } = data;
+  //     // do something with the locations captured in the background
+  //   }
+  // });
+  
+  
+  const [permission, requestPermission] = Camera.useCameraPermissions();
   return (
     <View  style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
     <ScrollView>
@@ -65,7 +81,7 @@ export const IntroScreen =  () => {
              async () => {
       let { status } = await Pedometer.requestPermissionsAsync();
       if (status == 'granted') {
-        console.log('Permission to camera location was accepted');
+        console.log('Permission for activity tracking was accepted');
         return;
       }
           }
@@ -73,7 +89,32 @@ export const IntroScreen =  () => {
          >
           Allow Pedometer
         </Button>
-
+       
+        <Button marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
+         onPress={
+              async () => {
+      let { status } = await Camera.requestCameraPermissionsAsync();
+      if (status == 'granted') {
+        console.log('Permission to camera location was accepted');
+        return;
+      }
+              }
+         }
+         >
+          Enable Camera
+        </Button>
+        <Button marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
+          onPress={
+            async () => {
+      const { status } = await requestTrackingPermissionsAsync();
+      if (status === 'granted') {
+        console.log('Yay! I have user permission to track data');
+      }
+    }
+          }
+          >
+          Enable Tracking
+        </Button>
 
         <Text fontSize="md" marginBottom={'2'}   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
           For the app to work properly, you must allow the app the following permissions:
