@@ -56,6 +56,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
   const [hideTrip, setHideTrip] = useState(false);
   const [travelingBy, setTravelingBy] = useState('walk');
   const [hideSelectRoute, setHideSelectRoute] = useState(false);
+  const [backLoc, setBackLoc] = useState([]);
   const [onChangeEndValue, setOnChangeEndValue] = useState(0);
     const subscribe = async () => {
     const isAvailable = await Pedometer.isAvailableAsync();
@@ -82,19 +83,7 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
     useStopwatch({ autoStart: false });
 
 
-    (async () => {
-  try {
-    
-    let {status} = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      setErrorMsg('Permission to access location was denied');
-      return;
-    }
 
-} catch (error) {
-  console.log(error)
-}
-})();
 
 setInterval(async () => {
   if (location == null) {
@@ -110,10 +99,11 @@ setInterval(async () => {
         timestamp: loc.timestamp,
       }
       setUserLocHistory([...userLocHistory, elem])
+      setBackLoc([...backLoc, elem])
     }
   }
   
-}, 1000);
+}, 5000);
 
 
 
@@ -189,6 +179,26 @@ setInterval(async () => {
       );
     }
   }
+
+  let currentUserTrip = backLoc || [];
+  const MemoTrip = React.useMemo(() => {
+    if (currentUserTrip.length > 0 && (
+      confirm ==2 || confirm == 4
+    )) {
+      currentUserTrip.map((loc) => {
+        return (
+          <Marker
+            color="red"
+            coordinate={{
+              latitude: loc.lat,
+              longitude: loc.lon,
+            }}
+          />
+        )
+      })
+    }
+  }, [currentUserTrip])
+
 
   return (
     <View style={styles.container}>
@@ -283,6 +293,7 @@ setInterval(async () => {
               );
             }
         })}
+        {/* <MemoTrip /> */}
 
         {getRoutes().map((route, index) => {
           return (
@@ -702,7 +713,6 @@ setInterval(async () => {
           setSelectedRoute(null);
           setUserLocHistory([])
           setHideSelectRoute(false);
-
               }}
             > <Text> Continue </Text> </Button>
             </Box>
@@ -731,7 +741,7 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: Colors.highlihgted,
+            backgroundColor: 'blue',
           }}
         >
           <MaterialIcons name="my-location" size={24} color="white" />
@@ -752,7 +762,7 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: Colors.highlihgted,
+            backgroundColor: 'blue',
           }}
         >
           <MaterialCommunityIcons name={travelingBy} size={24} color="white" />
@@ -777,7 +787,7 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: Colors.highlihgted,
+            backgroundColor: 'blue',
           }}
         >
         <HStack space={2} alignItems="center" justifyContent="center">
@@ -793,7 +803,7 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: Colors.highlihgted,
+            backgroundColor: 'blue',
           }}
         >
         <HStack space={2} alignItems="center" justifyContent="center">
@@ -809,7 +819,7 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: Colors.highlihgted,
+            backgroundColor: 'blue',
           }}
         >
         <HStack space={2} alignItems="center" justifyContent="center">
@@ -825,7 +835,7 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: Colors.highlihgted,
+            backgroundColor: 'blue',
           }}
         >
         <HStack space={2} alignItems="center" justifyContent="center">
@@ -858,7 +868,7 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   tripContainer: {
-    backgroundColor: Colors.ticketBackground,
+    backgroundColor: 'blue',
     borderRadius: 10,
     width: Dimensions.get("window").width * 0.9,
     padding: 10,
@@ -917,7 +927,7 @@ const styles = StyleSheet.create({
     left: Dimensions.get("window").width * 0.1,
   },
   settingBtn: {
-    backgroundColor: Colors.highlihgted,
+    backgroundColor: 'green',
   },
   circleButtonContainer: {
     width: 84,

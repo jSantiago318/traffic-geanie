@@ -1,7 +1,7 @@
 import { Box, FlatList, HStack, Icon, Pressable, ScrollView, Text, VStack } from "native-base";
-import { Colors, darkMode, lightMode } from "../config";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
+import { darkMode, lightMode } from "../config";
 
 import { StopRender } from "./OBAFetches/StopRender";
 import { render } from "react-dom";

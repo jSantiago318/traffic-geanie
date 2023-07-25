@@ -1,8 +1,6 @@
+import { Pressable, StyleSheet, Text, useColorScheme } from 'react-native';
 import React, { useCallback } from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
-
-import { Colors } from '../config';
-
+import{ darkMode, lightMode } from '../config/theme'
 export const Button = ({
   children,
   onPress,
@@ -11,6 +9,7 @@ export const Button = ({
   title,
   style
 }) => {
+  const colorScheme = useColorScheme();
   const _style = useCallback(({ pressed }) => [
     style,
     { opacity: pressed ? activeOpacity : 1 }
@@ -19,7 +18,9 @@ export const Button = ({
   if (borderless) {
     return (
       <Pressable onPress={onPress} style={_style}>
-        <Text style={styles.borderlessButtonText}>{title}</Text>
+        <Text style={
+          colorScheme == "dark" ? darkMode.Text : lightMode.Text
+        }>{title}</Text>
       </Pressable>
     );
   }
@@ -30,10 +31,3 @@ export const Button = ({
     </Pressable>
   );
 };
-
-const styles = StyleSheet.create({
-  borderlessButtonText: {
-    fontSize: 16,
-    color: Colors.blue
-  }
-});

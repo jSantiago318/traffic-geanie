@@ -8,7 +8,7 @@ import {
   Modal,
   Text,
 } from "native-base";
-import { Colors, Images, auth, darkMode, lightMode, provider } from "../config";
+import { Images, auth, darkMode, lightMode, provider } from "../config";
 import React, { useState } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
 import { signInWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
@@ -36,7 +36,7 @@ export const LoginScreen = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
   const [checkbox, setCheckbox] = useState(false);
   return (
-    <View isSafe style={styles.View}>
+    <View isSafe style={ colorScheme == "dark" ? darkMode.View : lightMode.View }>
       <KeyboardAwareScrollView
         style={styles.keyboardView}
         enableOnAndroid={true}
@@ -87,7 +87,7 @@ export const LoginScreen = ({ navigation }) => {
                   keyboardType="email-address"
                   textContentType="emailAddress"
                   value={values.email}
-                  borderColor={Colors.lightGray}
+                  borderColor={'grey'}
                   onChangeText={handleChange("email")}
                   onBlur={handleBlur("email")}
                 />
@@ -222,13 +222,13 @@ export const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: 'white',
     justifyContent: "center",
     alignItems: "center",
   },
   input: {
     width: "100%",
-    borderColor: Colors.lightGray,
+    borderColor: 'grey',
   },
   keyView: {
     width: "100%",
@@ -243,13 +243,13 @@ const styles = StyleSheet.create({
   screenTitle: {
     fontSize: 30,
     fontWeight: "bold",
-    color: Colors.textMain,
+    color: 'black',
     textAlign: "center",
     marginBottom: 20,
     marginTop: 20,
   },
   button: {
-    backgroundColor: Colors.highlihgted,
+    backgroundColor: 'black',
     marginTop: 20,
     marginBottom: 20,
     width: "50%",
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonText: {
-    color: Colors.highlihgtedText,
+    color: 'black',
     fontSize: 16,
     fontWeight: "bold",
   },
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   footer: {
-    backgroundColor: Colors.highlihgted,
+    backgroundColor: 'black',
     padding: 20,
     alignItems: "center",
     justifyContent: "center",

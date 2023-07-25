@@ -1,33 +1,5 @@
 import { StyleSheet } from 'react-native';
 
-const Colors = {
-  orange: '#f57c00',
-  blue: '#039be5',
-  black: '#222222',
-  white: '#ffffff',
-  mediumGray: '#6e6869',
-  red: '#fc5c65',
-  highlihgted: '#039be5',
-  highlihgtedText: '#ffffff',
-  textMain: '#222222',
-  lightGray: '#f8f4f4',
-  secondary: '#8CCCF4',
-  schText: '#9C9C9C',
-  predictionText: '#94EC94',
-  ticketBackground: '#ffff',
-  backgroundColor: '#ffff',
-  MapButton:{
-    alignItems : 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    backgroundColor: '#ffff',
-    fontSize: 16,
-    margin: 2,
-    padding: 2,
-  },
-};
-
-
 const darkMode = {
   orange: '#f57c00',
   blue: '#039be5',
@@ -50,6 +22,18 @@ const darkMode = {
   subText: '#e0fbfc', 
   icon:{
     color: '#98c1d9',
+  },
+  TextInput:{
+    
+        backgroundColor: 'white',
+        borderRadius: 8,
+        flexDirection: 'row',
+        padding: 12,
+        marginVertical: 12,
+        width: '90%',
+        borderWidth: 1,
+        borderColor: 'grey'
+      
   },
   Button:{
     backgroundColor: '#3d5a80',
@@ -242,6 +226,18 @@ LoginBtn:{
 
 
 const lightMode = {
+  TextInput:{
+    
+        backgroundColor: 'white',
+        borderRadius: 8,
+        flexDirection: 'row',
+        padding: 12,
+        marginVertical: 12,
+        width: '90%',
+        borderWidth: 1,
+        borderColor: 'grey'
+      
+  },
   Button:{
     backgroundColor: '#e0fbfc',
     width: '50%',
@@ -403,4 +399,4 @@ const lightMode = {
 };
 
 
-export {Colors, darkMode, lightMode}
+export { darkMode, lightMode}

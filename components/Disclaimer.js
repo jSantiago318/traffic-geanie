@@ -9,9 +9,9 @@ import {
   Text,
   VStack,
 } from "native-base";
-import { Colors, darkMode, lightMode } from "../config";
 import { Pressable, StyleSheet, useColorScheme } from "react-native";
 import React, { useCallback, useState } from "react";
+import { darkMode, lightMode } from "../config";
 
 import { AntDesign } from "@expo/vector-icons";
 
@@ -37,7 +37,7 @@ value="one"
 
         <AntDesign
           name="infocirlceo"
-          style={{ marginRight: 10, color: Colors.blue }}
+          style={{ marginRight: 10, color: 'blue' }}
           size={12}
           onPress={() => setShowModal(true)}
         />

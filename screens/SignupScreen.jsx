@@ -1,6 +1,5 @@
 import { Button, FormErrorMessage, TextInput, View } from "../components";
 import { Center, Checkbox, HStack, Image, Modal, Text } from "native-base";
-import { Colors, darkMode, lightMode } from "../config";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -10,6 +9,7 @@ import React, { useState } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { auth, database } from "../config/firebase";
+import { darkMode, lightMode } from "../config";
 
 import { AntDesign } from '@expo/vector-icons';
 import { Formik } from "formik";
@@ -56,7 +56,7 @@ export const SignupScreen = ({ navigation }) => {
   };
 
   return (
-    <View isSafe style={ styles.View }>
+    <View isSafe style={ colorScheme == "dark" ? darkMode.View : lightMode.View }>
       <KeyboardAwareScrollView enableOnAndroid={true}  >
         {/* LogoContainer: consits app logo and screen title */}
         <View style={styles.logoContainer}>
@@ -244,7 +244,7 @@ export const SignupScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: 'white',
     alignItems: "center",
     height: '100%'
     // justifyContent: "center",
@@ -254,12 +254,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: "100%",
     height: 50,
-    backgroundColor: Colors.blue,
+    backgroundColor: 'blue',
     alignItems: "center",
     justifyContent: "center",
   },
   footerText: {
-    color: Colors.white,
+    color: 'white',
     fontSize: 12,
   },View:{
     flex: 1,
@@ -270,8 +270,8 @@ const styles = StyleSheet.create({
   },
   
   input:{
-    backgroundColor: Colors.white,
-    borderColor: Colors.highlihgted,
+    backgroundColor: 'white',
+    borderColor: 'black',
   },
   logoContainer: {
     alignItems: "center",
@@ -285,10 +285,10 @@ const styles = StyleSheet.create({
   screenTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    color: Colors.highlihgted,
+    color: 'black',
   },
   button: {
-    backgroundColor: Colors.highlihgted,
+    backgroundColor: 'black',
     marginTop: 5,
     marginBottom: 10,
     width: "100%",
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   buttonText: {
-    color: Colors.highlihgtedText,
+    color: 'black',
     fontWeight: "bold",
     fontSize: 16,
   },

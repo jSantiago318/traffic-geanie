@@ -15,12 +15,12 @@ import {
   useColorMode,
   useTheme,
 } from "native-base";
-import { Colors, auth } from "../config";
 import { StyleSheet, View, useColorScheme } from "react-native";
 import { deleteUser, getAuth } from "firebase/auth";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
+import { auth } from "../config";
 import { signOut } from "firebase/auth";
 
 export const SettingsScreen = () => {

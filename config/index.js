@@ -1,6 +1,6 @@
-import { Colors, darkMode, lightMode } from './theme';
 import { auth, database, uid } from './firebase';
+import { darkMode, lightMode } from './theme';
 
 import { Images } from './images';
 
-export { Images, Colors, auth, darkMode, lightMode };
+export { Images, auth, darkMode, lightMode };

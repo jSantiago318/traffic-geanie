@@ -1,11 +1,11 @@
+import { Button, FormErrorMessage, TextInput, View } from '../components';
 import React, { useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import { Formik } from 'formik';
-import { sendPasswordResetEmail } from 'firebase/auth';
 
+import { Formik } from 'formik';
+import { auth } from '../config';
 import { passwordResetSchema } from '../utils';
-import { Colors, auth } from '../config';
-import { View, TextInput, Button, FormErrorMessage } from '../components';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 export const ForgotPasswordScreen = ({ navigation }) => {
   const [errorState, setErrorState] = useState('');
@@ -78,7 +78,7 @@ export const ForgotPasswordScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: 'white',
     paddingHorizontal: 12
   },
   innercontainer: {
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   screenTitle: {
     fontSize: 32,
     fontWeight: '700',
-    color: Colors.black,
+    color: 'black',
     paddingTop: 20
   },
   button: {
@@ -95,13 +95,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
-    backgroundColor: Colors.orange,
+    backgroundColor: 'orange',
     padding: 10,
     borderRadius: 8
   },
   buttonText: {
     fontSize: 20,
-    color: Colors.white,
+    color: 'white',
     fontWeight: '700'
   },
   borderlessButtonContainer: {

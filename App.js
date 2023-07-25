@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, useColorScheme } from 'react-native';
 import AppIntroSlider from 'react-native-app-intro-slider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthenticatedUserProvider } from './providers';
+import { LogBox } from "react-native"
 // import '@fontsource/roboto/300.css';
 // import '@fontsource/roboto/400.css';
 // import '@fontsource/roboto/500.css';
@@ -15,7 +16,6 @@ import { createTheme } from '@mui/material/styles';
 import { enableScreens } from 'react-native-screens';
 
 enableScreens();
-
 const slides = [
   {
     key: 'one',
@@ -40,6 +40,7 @@ const slides = [
 ];
 const App = () => {
   const [mode, setMode] = React.useState('light');
+  LogBox.ignoreLogs([ 'In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.', ])
 
   
   const colorMode = React.useMemo(

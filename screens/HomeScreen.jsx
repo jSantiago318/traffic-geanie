@@ -59,13 +59,13 @@ export const HomeScreen = () => {
               <Stack>
                 <Text
                   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
-                  bold
+                  
                 >
                   Online Buses: {busCount}
                 </Text>
                 <Text
                   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
-                  bold
+                  
                 >
                   Connected Routes: {activeTripCount}
                 </Text>

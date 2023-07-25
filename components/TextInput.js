@@ -1,10 +1,10 @@
-import React from 'react';
-import { TextInput as RNTextInput } from 'react-native';
+import { TextInput as RNTextInput, useColorScheme } from 'react-native';
+import { darkMode, lightMode } from '../config';
 
-import { View } from './View';
-import { Icon } from './Icon';
 import { Button } from './Button';
-import { Colors } from '../config';
+import { Icon } from './Icon';
+import React from 'react';
+import { View } from './View';
 
 export const TextInput = ({
   width = '100%',
@@ -13,24 +13,16 @@ export const TextInput = ({
   handlePasswordVisibility,
   ...otherProps
 }) => {
+  const colorScheme = useColorScheme();
   return (
     <View
-      style={{
-        backgroundColor: Colors.white,
-        borderRadius: 8,
-        flexDirection: 'row',
-        padding: 12,
-        marginVertical: 12,
-        width,
-        borderWidth: 1,
-        borderColor: Colors.mediumGray
-      }}
+      style={colorScheme == 'dark' ? darkMode.TextInput : lightMode.TextInput}
     >
       {leftIconName ? (
         <Icon
           name={leftIconName}
           size={22}
-          color={Colors.mediumGray}
+          color={'grey'}
           style={{ marginRight: 10 }}
         />
       ) : null}
@@ -39,9 +31,9 @@ export const TextInput = ({
           flex: 1,
           width: '100%',
           fontSize: 18,
-          color: Colors.black
+          color: 'black'
         }}
-        placeholderTextColor={Colors.mediumGray}
+        placeholderTextColor={'grey'}
         {...otherProps}
       />
       {rightIcon ? (
@@ -49,7 +41,7 @@ export const TextInput = ({
           <Icon
             name={rightIcon}
             size={22}
-            color={Colors.mediumGray}
+            color={'grey'}
             style={{ marginRight: 10 }}
           />
         </Button>
