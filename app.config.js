@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: 'Travel Transit Tracker',
+    name: 'TravelTransitTracker',
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],

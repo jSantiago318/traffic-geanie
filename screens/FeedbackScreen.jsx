@@ -3,6 +3,7 @@ import * as Location from "expo-location";
 import {
   Button,
   Center,
+  Checkbox,
   FormControl,
   HStack,
   Heading,
@@ -18,7 +19,6 @@ import { StyleSheet, View, useColorScheme } from "react-native";
 import { addDoc, collection, doc } from "firebase/firestore";
 import { deleteUser, getAuth } from "firebase/auth";
 
-import Checkbox from "expo-checkbox";
 import { auth } from "../config";
 import { database } from "../config/firebase";
 import { signOut } from "firebase/auth";
