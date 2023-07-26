@@ -42,23 +42,6 @@ const App = () => {
   const [mode, setMode] = React.useState('light');
   LogBox.ignoreLogs([ 'In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.', ])
 
-  
-  const colorMode = React.useMemo(
-    () => ({
-      // The dark mode switch would invoke this method
-      toggleColorMode: () => {
-        setMode((prevMode) =>
-          prevMode === 'light' ? 'dark' : 'light',
-        );
-      },
-    }),
-    [],
-  );
-
-  // Update the theme only if the mode changes
-  // const theme = React.useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
-
-
   const storeData = async (value) => {
     try {
       await AsyncStorage.setItem('@firstTime', value)
