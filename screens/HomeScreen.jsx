@@ -1,3 +1,6 @@
+import * as Location from "expo-location";
+import * as TaskManager from 'expo-task-manager';
+
 import {
   Box,
   Button,
@@ -12,6 +15,7 @@ import {
   Text,
   VStack,
 } from "native-base";
+import {DeviceMotion, Pedometer} from "expo-sensors";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
 import { darkMode, lightMode } from "../config/theme";
@@ -23,7 +27,35 @@ import {
 
 import { CheckIcon } from "native-base";
 import { RoutesList } from "../components/RoutesList.js";
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
+const LOCATION_TASK_NAME = 'background-location-task';
+
+const requestPermissions = async () => {
+  const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
+  if (foregroundStatus === 'granted') {
+    const { status: backgroundStatus } = await Location.requestBackgroundPermissionsAsync();
+    if (backgroundStatus === 'granted') {
+      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
+        accuracy: Location.Accuracy.Balanced,
+      });
+      console.log("Location updates started!");
+    }
+  }
+};
+
+
+TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
+  if (error) {
+    // Error occurred - check `error.message` for more details.
+    return;
+  }
+  if (data) {
+    const { locations } = data;
+    console.log("locations", locations);
+    // do something with the locations captured in the background
+  }
+});
 export const HomeScreen = () => {
   const [selectedRoute, setSelectedRoute] = React.useState("TIM_RR105");
   const [busCount, setBusCount] = React.useState(0);
@@ -35,7 +67,40 @@ export const HomeScreen = () => {
     setActiveTripCount(getOnlineActiveTripsCount());
   }, 1000);
 
-  
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [status2, requestPermission2] = Location.useBackgroundPermissions();
+  const [status1, requestPermission1] = Location.useForegroundPermissions();
+  useEffect(() => {
+    (async () => {
+      const { status } = await requestTrackingPermissionsAsync();
+      if (status === 'granted') {
+        console.log('Yay! I have user permission to track data');
+      }
+      const { status1 } = await requestPermission1();
+      if (status1 === 'granted') {
+        console.log('Yay! I have user permission to track data');
+      }
+      const { status2 } = await requestPermission2();
+      if (status2 === 'granted') {
+        console.log('Yay! I have user permission to track data');
+      }
+      
+    })();
+
+    
+    (async () => {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
 
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>

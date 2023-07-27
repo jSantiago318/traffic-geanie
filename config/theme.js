@@ -123,6 +123,8 @@ const darkMode = {
       color: '#98c1d9',
   }, 
   Text :{
+    justifyContent: 'center',
+    alignItems: 'center',
     fontSize: 16,
     padding: 1,
     margin: 1,

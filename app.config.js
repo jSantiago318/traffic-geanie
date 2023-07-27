@@ -30,7 +30,19 @@ export default {
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.MAPS_API_IOS
-      }
+      },
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location",
+          "fetch"
+        ],
+        "CFBundleAllowMixedLocalizations": true,
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
+        "NSLocationAlwaysUsageDescription": "App requires geolocation to improve the quality of the service",
+        "NSLocationWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
+        "NSCameraUsageDescription": "The picture will be used to match your trip with the bus information"
+   
+    },
 
     },
     "android": {
@@ -80,13 +92,6 @@ export default {
         "userTrackingPermission": "This identifier will be used to deliver personalized ads to you."
             }
     ],
-    [
-      'expo-build-properties',
-      {
-        'ios':{
-          'flipper': true
-        },
-      }
-    ]
+  
   ]
 };

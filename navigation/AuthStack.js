@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { FeedbackScreen, ForgotPasswordScreen, HomeScreen, IntroScreen, LoginScreen, SignupScreen } from '../screens';
+import { FeedbackScreen, ForgotPasswordScreen, HomeScreen, LoginScreen, SignupScreen } from '../screens';
 
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -19,8 +19,7 @@ export const AuthStack = () => {
     //   <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
     // </Stack.Navigator>
     <Drawer.Navigator  >
-    <Drawer.Screen name='Home' component={HomeScreen}   />
-    <Drawer.Screen      name='About' component={IntroScreen} />
+     <Drawer.Screen name='Home' component={HomeScreen}   />
     <Drawer.Screen name='Feedback' component={FeedbackScreen} />
     {/* <Drawer.Screen name='Settings' component={SettingsScreen} /> */}
 
