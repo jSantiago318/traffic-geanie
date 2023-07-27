@@ -2,8 +2,8 @@ import { Box, FlatList, HStack, Icon, Text, VStack } from 'native-base';
 import React, { useEffect, useMemo, useState } from 'react';
 import { StyleSheet, View, useColorScheme } from 'react-native';
 
+import {Colors} from '../config/theme'
 import { StopRender } from './OBAFetches/StopRender';
-import { set } from 'react-native-reanimated';
 
 export const RoutesList = ({route}) => {
   const colorScheme = useColorScheme();
@@ -16,13 +16,7 @@ export const RoutesList = ({route}) => {
     setStp(stops)
     return stops;
   }
-  // const memo = useMemo(() => {getURL("https://proba.live/api/where/stops-for-route/"+route+".json?key=TEST")}, [route])
-  
-  // useEffect(() => {
-  //   if (memo) {
-  //     setStp(memo)
-  //   }
-  // }, [memo])
+
 
   const renderItem = ({ item, index }) => (
     <StopRender stop={item} />
@@ -36,7 +30,6 @@ export const RoutesList = ({route}) => {
   return (
   <Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card} >
 <FlatList
-      style={colorScheme == 'dark' ? darkMode.routeList : lightMode.routeList}
       data={stp}
       renderItem={renderItem} />
 </Box >
@@ -49,7 +42,7 @@ const darkMode = StyleSheet.create({
   Card:{
     width: '90%',
     // backgroundColor: '##046C1C',#046C1C
-    backgroundColor: '#8CCCF4',
+    backgroundColor: Colors.primaryDark,
     borderRadius: 10,
     margin: 10, 
     padding: 10,
@@ -61,7 +54,7 @@ const darkMode = StyleSheet.create({
 const lightMode = StyleSheet.create({
   Card:{
     width: '90%',
-    backgroundColor: '#8CCCF4',
+    backgroundColor: Colors.primaryLight,
     borderRadius: 10,
     margin: 10, 
     padding: 10,

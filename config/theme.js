@@ -1,50 +1,25 @@
 import { StyleSheet } from 'react-native';
 
 const Colors = {
-  orange: '#f57c00',
-  blue: '#039be5',
-  black: '#222222',
-  white: '#ffffff',
-  mediumGray: '#6e6869',
-  red: '#fc5c65',
-  highlihgted: '#039be5',
-  highlihgtedText: '#ffffff',
-  textMain: '#222222',
-  lightGray: '#f8f4f4',
-  secondary: '#8CCCF4',
-  schText: '#9C9C9C',
-  predictionText: '#94EC94',
-  ticketBackground: '#ffff',
-  backgroundColor: '#ffff',
-
+  textLight: '#050505',
+  backgroundLight: '#fafafa',
+  primaryLight: '#49b649',
+  secondaryLight: '#d8f8d3',
+  accentLight: '#996666',
+  textDark: '#000',
+  primaryDark: '#49b649',
+  backgroundDark: '#0d0202',
+  secondaryDark: '#0c2c07',
+  accentDark: '#996666',
 };
 
 
 const darkMode = {
-  orange: '#f57c00',
-  blue: '#039be5',
-  black: '#222222',
-  white: '#ffffff',
-  mediumGray: '#6e6869',
-  red: '#fc5c65',
-  highlihgted: '#039be5',
-  highlihgtedText: '#ffffff',
-  textMain: '#222222',
-  lightGray: '#f8f4f4',
-  secondary: '#8CCCF4',
-  schText: '#9C9C9C',
-  predictionText: '#94EC94',
-  ticketBackground: '#ffff',
-  backgroundColor: '#293241',
-  card: '#3d5a80',
-  textDisabled: '#ee6c4d',
-  text: '#98c1d9',
-  subText: '#e0fbfc', 
   icon:{
     color: '#98c1d9',
   },
   Modal:{
-    backgroundColor: '#293241',
+    backgroundColor:Colors.backgroundDark,
     width: '90%',
     justifyContent: 'center',
     borderRadius: 10,
@@ -60,16 +35,9 @@ const darkMode = {
     // padding: 2,
   },
   
-  Card:{
-    backgroundColor: '#3d5a80',
-    width: '90%',
-    justifyContent: 'center',
-    borderRadius: 10,
-    padding: 5,
-    margin: 5,
-  },
+ 
   Select:{
-    backgroundColor: '#3d5a80',
+    backgroundColor: Colors.secondaryDark,
     width: '90%',
     justifyContent: 'center',
     borderRadius: 10,
@@ -81,7 +49,7 @@ const darkMode = {
     // flex: 1,
     width:'90%',
     justifyContent: 'center',
-    backgroundColor: '#3d5a80',
+    backgroundColor: Colors.primaryDark,
     margin: 10,
     borderRadius: 10,
     padding: 5,
@@ -135,10 +103,9 @@ const darkMode = {
   View:{
     flex: 1,
       width:'100%',
-      // justifyContent: 'center',
       padding: 5,
       alignItems: 'center',
-      backgroundColor: '#293241',
+      backgroundColor: Colors.backgroundDark,
   }, 
   TicketView:{
     flex: 1,
@@ -149,12 +116,14 @@ const darkMode = {
       color: '#98c1d9',
   }, 
   Text :{
-    fontSize: 14,
+    fontSize: 16,
+    padding: 1,
+    margin: 1,
     fontWeight: "normal",
-    color: '#FBFCFF',
+    color: Colors.textDark,
   }, 
   disabled:{
-    backgroundColor: '#ee6c4d',
+    backgroundColor: Colors.accenDark,
     color: '#293241',
   }, 
   enabled:{
@@ -173,11 +142,11 @@ const darkMode = {
   },
 
 Title:{
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "bold",
     margin: 2,
     padding: 2,
-    color: '#98c1d9',
+    color: Colors.textDark,
     
 } , 
 routeList:{
@@ -185,8 +154,8 @@ routeList:{
   borderRadius: 10,
   padding: 5,
   margin: 5,
-  backgroundColor: '#3d5a80',
-  height: '40%',
+  maxHeight: '60%',
+  backgroundColor: Colors.primaryDark,
 }, 
 LoginBtn:{
   alignItems : 'center',
@@ -203,13 +172,13 @@ LoginBtn:{
       alignItems: "center",
       ...StyleSheet.absoluteFillObject,
   
-},loginBtn:{
+},Button:{
   alignItems : 'center',
   justifyContent: 'center',
   borderRadius: 10,
   width: '50%',
   height: 50,
-  backgroundColor: '#98c1d9',
+  backgroundColor: Colors.accentDark,
 },
 
   
@@ -217,157 +186,8 @@ LoginBtn:{
 
 
 const lightMode = {
-  Card:{
-    backgroundColor: '#e0fbfc',
-    width: '90%',
-    justifyContent: 'center',
-    borderRadius: 10,
-    padding: 5,
-    margin: 5,
-  },
-  View:{
-    flex: 1,
-      alignItems: 'center',
-      padding: 5,
-
-      backgroundColor: '#e0fbfc',
-      width:'100%',
-  },
-  Input:{
-    backgroundColor: '#e0fbfc',
-    width: '90%',
-    justifyContent: 'center',
-    borderRadius: 10,
-    padding: 5,
-    
-  },
-  card: '#3d5a80',
-
-  subtleBtn:{
-    alignItems : 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    backgroundColor: '#e0fbfc'
-    
-  }, 
-  horizontalBtn:{
-    alignItems : 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    backgroundColor: '#3d5a80',
-    marginRight: 2,
-    paddingRigth: 2,
-  },
-  Select:{
-    backgroundColor: '#e0fbfc',
-    width: '90%',
-    justifyContent: 'center',
-    borderRadius: 10,
-    padding: 5,
-    
-  },
-  loginBtn:{
-    alignItems : 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    width: '50%',
-    height: 50,
-    backgroundColor: '#3d5a80',
-    
-  },TicketView:{
-    flex: 1,
-      width:'100%',
-      justifyContent: 'center',
-      alignItems: 'center',
-  }, 
-  btnText:{
-    fontSize: 14,
-    fontWeight: "normal",
-    color: '#e0fbfc',
-    
-  },
-  settingBtn:{
-    alignItems : 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    backgroundColor: '#98c1d9',
-    marginRight: 10,
-    with: '50%',
-  },
-  routeList:{
-  width: '90%',
-  height: 'auto',
-  borderRadius: 10,
-  padding: 10,
-  margin: 10,
-  backgroundColor: '#3d5a80',
   
-},
-  Title:{
-    fontSize: 16,
-    fontWeight: "bold",
-    margin: 2,
-    padding: 2,
-    color: '#293241',
-    
-  },
-  LoginBtn:{
-    alignItems : 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    width: '50%',
-    height: 50,
-    backgroundColor: '#3d5a80',
-    
-  },
-  CarouselView:{
-    flex: 1,
-    width:'90%',
-    justifyContent: 'center',
-    backgroundColor: '#ffff',
-    margin: 10,                                             
-    borderRadius: 10,
-    padding: 10,
-  },
-  Text:{
-    fontSize: 14,
-    fontWeight: "normal",
-    color: '#293241',
-
-  }, carousel:{
-    position: "absolute",
-    alignContent: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    bottom: "10%",
-    left: 0,
-    width: "80%",
-    backgroundColor: "#fff",
-  }, Map:{
-    flex: 1,
-
-    justifyContent: "center",
-    alignItems: "center",
-    ...StyleSheet.absoluteFillObject,
-  },
-  orange: '#f57c00',
-  blue: '#039be5',
-  black: '#222222',
-  white: '#ffffff',
-  mediumGray: '#6e6869',
-  red: '#fc5c65',
-
-  highlihgted: '#039be5',
-  highlihgtedText: '#ffffff',
-  textMain: '#222222',
-  lightGray: '#f8f4f4',
-  secondary: '#8CCCF4',
-
-  schText: '#9C9C9C',
-  predictionText: '#94EC94',
-  ticketBackground: '#ffff',
-  backgroundColor: '#ffff',
-};
+}
 
 
-export {Colors, darkMode, lightMode}
+export {Colors, lightMode, darkMode}

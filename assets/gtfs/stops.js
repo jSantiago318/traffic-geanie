@@ -79,8 +79,16 @@ const stops = [
 {id:'RR349S12',name: 'SECTOR BERRIOS',lat:18.179414,lon:-67.089219},
 {id:'RR349S13',name: 'ESCUELA CROEM',lat:18.176595498000005,lon:-67.089561646}]
 
-export function getStops() {
-    return stops
+export function getStops(routes) {
+    if(routes.length > 0){
+      let arr = []
+      for (let index = 0; index < routes.length; index++) {
+        arr = arr.concat(stops.filter((s) => s.id.startsWith(routes[index].id)))
+      }
+      return arr
+    }else{
+      return stops
+    }
   }
   
   export function getStopById(id) {

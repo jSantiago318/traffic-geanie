@@ -1,7 +1,7 @@
 import * as Location from "expo-location";
 import * as MapVal from "../assets/map.json";
 
-import { Box, Button, HStack, Text, VStack } from "native-base";
+import { Box, Button, Checkbox, HStack, Icon, Text, VStack } from "native-base";
 import { Colors, darkMode, lightMode, } from "../config";
 import {
   Dimensions,
@@ -29,8 +29,6 @@ import {getAuth} from 'firebase/auth';
 import {
   getStops,
 } from "../assets/gtfs/stops";
-import {requestTrackingPermissionsAsync} from 'expo-tracking-transparency';
-import { set } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
@@ -41,21 +39,22 @@ export const MapScreen = () => {
   const [location, setLocation] = useState(null);
   const navigation = useNavigation();
   const [confirm, setConfirm] = useState(0);
-  const [selectedRoute, setSelectedRoute] = useState(null);
-  const [showAll, setShowAll] = useState(true);
-  const [showTrip, setShowTrip] = useState(true);
+  const [selectedRoute, setSelectedRoute] = useState(null); 
   const [startStop, setStartStop] = useState(null);
   const [finalStop, setFinalStop] = useState(null);
   const [selectedStop, setSelectedStop] = useState(null);
   const [userLocHistory, setUserLocHistory] = useState([]);
-  const [startTime, setStartTime] = useState(null);
   const [runTime, setRunTime] = useState(false);
-  const [tripRating, setTripRating] = useState([0, 0, 0, 0, 0]);
-  const memoStop = React.useMemo(() => getStops(), []);
-const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
-  const [pastStepCount, setPastStepCount] = useState(0);
+ const [selectTraveler, setSelectTraveler] = useState(false);
+ const [routeSelecter, setRouteSelecter] = useState(false);
+ const [excludedRoutes, setExcludedRoutes] = useState([]);
+  const memoStop = React.useMemo(() => getStops(excludedRoutes), []);
+const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking'); 
   const [currentStepCount, setCurrentStepCount] = useState(0);
-  const [onChangeValue, setOnChangeValue] = useState(0);
+  const [hideTrip, setHideTrip] = useState(false);
+  const [travelingBy, setTravelingBy] = useState('walk');
+  const [hideSelectRoute, setHideSelectRoute] = useState(false);
+  const [backLoc, setBackLoc] = useState([]);
   const [onChangeEndValue, setOnChangeEndValue] = useState(0);
     const subscribe = async () => {
     const isAvailable = await Pedometer.isAvailableAsync();
@@ -75,27 +74,9 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
         setCurrentStepCount(result.steps);
       });
     }
-  };
-
-  
+  }; 
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
-    useStopwatch({ autoStart: false });
-
-
-    (async () => {
-  try {
-    
-    let {status} = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      setErrorMsg('Permission to access location was denied');
-      return;
-    }
-
-} catch (error) {
-  console.log(error)
-}
-})();
-
+    useStopwatch({ autoStart: false }); 
 setInterval(async () => {
   if (location == null) {
     let loc = await Location.getCurrentPositionAsync({
@@ -103,33 +84,22 @@ setInterval(async () => {
       enableHighAccuracy: true,
     })
     setLocation(loc)
-  }
-
-}, 1000);
-
-// useEffect(() => {
-//   (async () => {
-//     const { status } = await requestTrackingPermissionsAsync();
-//     if (status === 'granted') {
-//       console.log('Yay! I have user permission to track data');
-//     }
-//   })();
-// }, []);
-
-  const MemoTime = React.useMemo(() => {
-    if(isRunning){
-       return (
-        <Text>
-
-        {minutes}:{seconds < 10 ? "0" + seconds : seconds}
-        </Text>
-      )
+    if(confirm == 2 || confirm == 4){
+      const elem = {
+        lat: loc.coords.latitude,
+        lon: loc.coords.longitude,
+        timestamp: loc.timestamp,
+      }
+      setUserLocHistory([...userLocHistory, elem])
+      setBackLoc([...backLoc, elem])
     }
-  }, [isRunning])
+  }
+  
+}, 5000); 
+   
 
   const [tripTime, setTripTime] = useState([]);
-  const memo = useMemo(() => getTime(tripTime), [tripTime]);
-  async function getTime(url) {
+   async function getTime(url) {
     if(runTime){
       if (seconds < 10){
         const tm = minutes+':0'+seconds
@@ -177,8 +147,7 @@ setInterval(async () => {
         />
       );
     }
-  }
-
+  } 
   return (
     <View style={styles.container}>
       <MapView
@@ -197,6 +166,21 @@ setInterval(async () => {
           longitudeDelta: 0.0421,
         }}
       >
+      {
+        confirm == 2 || confirm == 4 ? (
+          <Polyline
+            coordinates={userLocHistory}
+            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+            strokeColors={[
+              '#7F0000',
+              '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
+              '#B24112',
+              '#E5845C',
+              '#238C23']}
+            strokeWidth={6}
+          />
+        ) : null
+      }
         {memoStop.map((stop, index) => {
           return (
             <Marker
@@ -241,8 +225,7 @@ setInterval(async () => {
         })}
         {getPosition().map((device, index) => {
           const isOnline = getOnlineById(device.deviceId);
-          if (showAll) {
-            if (isOnline == "online") {
+          if (isOnline == "online") {
               return (
                 <Marker
                   key={index}
@@ -264,76 +247,13 @@ setInterval(async () => {
                     <Text>
                       Bus {device.deviceId} - {isOnline}
                     </Text>
-                    <Text> acc: {device.accuracy}</Text>
                     <Text> kmh: {device.speed}</Text>
-                    <Text> bat: {device.altitude}</Text>
-                    <Text> bat: {device.attributes.batteryLevel}</Text>
-                  </Callout>
-                </Marker>
-              );
-            } else if (isOnline == "offline") {
-              return (
-                <Marker
-                  key={index}
-                  coordinate={{
-                    latitude: device.latitude,
-                    longitude: device.longitude,
-                  }}
-                >
-                  <Image
-                    source={require("../assets/car-default.png")}
-                    style={{ height: 40, width: 40 }}
-                  />
-                  <Callout
-                    style={{
-                      width: 200,
-                      borderRadius: 10,
-                    }}
-                  >
-                    <Text>
-                      Bus {device.deviceId} - {isOnline}
-                    </Text>
-                    <Text> acc: {device.accuracy}</Text>
-                    <Text> kmh: {device.speed}</Text>
-                    <Text> bat: {device.altitude}</Text>
-                    <Text> bat: {device.attributes.batteryLevel}</Text>
                   </Callout>
                 </Marker>
               );
             }
-          } else {
-            if (isOnline == "online") {
-              return (
-                <Marker
-                  key={index}
-                  coordinate={{
-                    latitude: device.latitude,
-                    longitude: device.longitude,
-                  }}
-                >
-                  <Image
-                    source={require("../assets/car-online.png")}
-                    style={{ height: 40, width: 40 }}
-                  />
-                  <Callout
-                    style={{
-                      width: 200,
-                      borderRadius: 10,
-                    }}
-                  >
-                    <Text>
-                      Bus {device.deviceId} - {isOnline}
-                    </Text>
-                    <Text> acc: {device.accuracy}</Text>
-                    <Text> kmh: {device.speed}</Text>
-                    <Text> bat: {device.altitude}</Text>
-                    <Text> bat: {device.attributes.batteryLevel}</Text>
-                  </Callout>
-                </Marker>
-              );
-            }
-          }
         })}
+        {/* <MemoTrip /> */}
 
         {getRoutes().map((route, index) => {
           return (
@@ -356,68 +276,102 @@ setInterval(async () => {
           alignContent: "center",
           alignItems: "center",
           justifyContent: "center",
-          bottom: "5%",
+          bottom: "10%",
+          padding: 10,
           left: 0,
           width: "100%",
         }}
       >
-        <Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card}>
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "bold",
-              color:
-                colorScheme == "dark"
-                  ? darkMode.Text.color
-                  : lightMode.Text.color,
-            }}
-          >
-            Selected Route: {selectedRoute}
+      {
+        hideTrip ? true : (
+          <HStack  
+          py={2}
+          px={2}
+          space={2}
+          alignItems="center"
+          
+           >
+          <Button style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
+       onPress={() => {
+                setConfirm(4);
+                start();
+                setHideSelectRoute(true);
+              }}
+              >
+        <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
+        >
+         🚗 Start Trip 
+        </Text>
+      </Button> 
+
+        <Button
+          onPress={() => {
+            setSelectTraveler(!selectTraveler);
+          }}
+          style={{
+            zIndex: 100,
+            backgroundColor: colorScheme == "dark" ? Colors.secondaryDark : Colors.secondaryLight,
+          }}
+        >
+          <MaterialCommunityIcons name={travelingBy} size={24} color="white" />
+        </Button>
+        </HStack>
+         )
+      }
+      
+        {
+          hideSelectRoute ? true : (
+            <Box style={colorScheme == "dark" ? darkMode.CardView : lightMode.CardView}>
+          < Text
+          style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}       >
+            Selected Route: 
+            {selectedRoute}
           </Text>
           <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "bold",
-              color:
-                colorScheme == "dark"
-                  ? darkMode.Text.color
-                  : lightMode.Text.color,
-            }}
+           style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
           >
             First Stop: {startStop}
           </Text>
           <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "bold",
-              color:
-                colorScheme == "dark"
-                  ? darkMode.Text.color
-                  : lightMode.Text.color,
-            }}
+           style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
           >
             Final Stop: {finalStop}
           </Text>
         </Box>
+          ) 
+            
+        }
         {confirm == 0.5 ? (
           <HStack space={2} alignItems="center" justifyContent="center">
             <Button
+            style={
+              colorScheme == "dark" ? darkMode.Button : lightMode.Button
+            }
               onPress={() => {
                 if (startStop == null) {
                   setStartStop(selectedStop.id);
                 } else if (finalStop == null && startStop != null) {
                   setFinalStop(selectedStop.id);
                   setConfirm(1);
+                  setHideTrip(true);
                 } 
               }}
             >
               <Text> Confirm </Text>
             </Button>
             <Button
+            style={
+              colorScheme == "dark" ? darkMode.Button : lightMode.Button
+            }
               onPress={() => {
+         
+                // setRunTime(false);
+                setConfirm(0);
                 setStartStop(null);
                 setFinalStop(null);
-                setConfirm(0);
+                setSelectedRoute(null);
+                setUserLocHistory([])
+                setHideTrip(false);
               }}
             >
               <Text> Cancel </Text>
@@ -429,33 +383,19 @@ setInterval(async () => {
           confirm == 1 ? (
             <HStack space={2} alignItems="center" justifyContent="center">
             <Button
-            style={{
-              backgroundColor: '#98c1d9',
-              borderRadius: 10,
-              zIndex: 100,
-              width: '30%',
-              alignItems : 'center',
-              justifyContent: 'center',
-              height: 50,
-              margin: 5,
-            }}
+            style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
               onPress={() => {
-                // setRunTime(true);
-                // setStartTime(new Date());
-                setConfirm(2);
+                // setRunTime(false);
+                setConfirm(0);
+                setStartStop(null);
+                setFinalStop(null);
+                setSelectedRoute(null);
+                setUserLocHistory([])
+                setHideTrip(false);
               }}
             > <Text >Clear</Text> </Button>
             <Button
-              style={{
-              backgroundColor: '#98c1d9',
-              borderRadius: 10,
-              width: '30%',
-              zIndex: 100,
-              alignItems : 'center',
-              justifyContent: 'center',
-              height: 50,
-              margin: 5,
-            }}
+             style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
               onPress={() => {
                 // setRunTime(true);
                 // setStartTime(new Date());
@@ -471,25 +411,20 @@ setInterval(async () => {
           confirm == 2 ? (
             
             <Box  style={
-              colorScheme == "dark" ? darkMode.Card : lightMode.Card
+              colorScheme == "dark" ? darkMode.CardView : lightMode.CardView
             } >
             <VStack space={2} alignItems="center" justifyContent="center">
-          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>
             Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds }
           </Text>
-          <Text>Current Steps: {currentStepCount}</Text>     
-          <Text>Past steps: {pastStepCount}</Text>
+          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>Current Steps: {currentStepCount}</Text>     
+          <HStack space={2} style={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            
+          }} >
             <Button
-              style={{
-              backgroundColor: '#98c1d9',
-              borderRadius: 10,
-              width: '50%',
-              alignItems : 'center',
-              justifyContent: 'center',
-              height: 50,
-              margin: 5,
-              zIndex: 100,
-            }}
+              style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
               onPress={() => {
                 // setRunTime(false);
                 setConfirm(3);
@@ -497,6 +432,22 @@ setInterval(async () => {
                 setOnChangeEndValue(currentStepCount)
               }}
             > <Text> End Trip </Text> </Button>
+            <Button
+            style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
+              onPress={() => {
+                // setRunTime(false);
+                reset()
+                
+                // setRunTime(false);
+                setConfirm(0);
+                setStartStop(null);
+                setFinalStop(null);
+                setSelectedRoute(null);
+                setUserLocHistory([])
+                setHideTrip(false);
+              }}
+            > <Text> Cancel </Text> </Button>
+            </HStack>
             </VStack>
             </Box>
             
@@ -504,22 +455,15 @@ setInterval(async () => {
         }
         {
           confirm == 3 ? (
-            <Box 
-            style={{
-              backgroundColor: '#3d5a80',
-              borderRadius: 10,
-              width: '90%',
-              padding: 5,
-              margin: 5,
-              justifyContent: 'center',
-              alignItems: 'center',
-              
-            }}
-            >
+            <Box
+              alignContent={'center'}
+              alignItems={'center'}
+              justifyItems={'center'}
+              style={
+              colorScheme == "dark" ? darkMode.CardView : lightMode.CardView
+            } >
 
-          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            Trip Rating 
-          </Text>
+          
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds}
           </Text>
@@ -527,16 +471,7 @@ setInterval(async () => {
             Total Steps: {onChangeEndValue}
           </Text>
             <Button
-              style={{
-              backgroundColor: '#98c1d9',
-              borderRadius: 10,
-              width: '50%',
-              alignItems : 'center',
-              justifyContent: 'center',
-              height: 50,
-              margin: 5,
-              zIndex: 100,
-            }}
+              style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
               onPress={async () => {
                 // setRunTime(false);
                 try {
@@ -544,9 +479,11 @@ setInterval(async () => {
             const docRed = doc(database, "users", id);
             await addDoc(collection(docRed, "trips"), {
               stepCount: currentStepCount,
-              minutes: minutes ,
+              startTime: location.timestamp,
               startStop: startStop,
+              travel: travelingBy,
               finalStop: finalStop,
+              loc: userLocHistory,
               selectedRoute: selectedRoute,
               timeframe: hours + ":" + minutes + ":" + seconds,
                         location: {
@@ -561,7 +498,108 @@ setInterval(async () => {
           setStartStop(null);
           setFinalStop(null);
           setSelectedRoute(null);
+          setUserLocHistory([])
 
+          setHideTrip(false);
+              }}
+            > <Text> Continue </Text> </Button>
+            </Box>
+          ):null
+        }
+        {
+          confirm == 4 ? (
+            
+            <Box  style={
+              colorScheme == "dark" ? darkMode.CardView : lightMode.CardView
+            } >
+            <VStack space={2} alignItems="center" justifyContent="center">
+          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>
+            Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds }
+          </Text>
+          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>Travel: {travelingBy}</Text>
+
+          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>Current Steps: {currentStepCount}</Text>     
+          <HStack space={2} style={{
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            
+          }} >
+            <Button
+            style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
+              onPress={() => {
+                // setRunTime(false);
+                setConfirm(5);
+                pause()
+                setOnChangeEndValue(currentStepCount)
+              }}
+            > <Text> End Trip </Text> </Button>
+            <Button
+              style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
+              onPress={() => {
+                // setRunTime(false);
+                
+                reset()
+                // setRunTime(false);
+                setConfirm(0);
+                setStartStop(null);
+                setFinalStop(null);
+                setSelectedRoute(null);
+                setUserLocHistory([])
+                setHideSelectRoute(false);
+              }}
+            > <Text> Cancel </Text> </Button>
+            </HStack>
+            </VStack>
+            </Box>
+            
+          ):null
+        }
+        {
+          confirm == 5 ? (
+            <Box  style={
+              colorScheme == "dark" ? darkMode.CardView : lightMode.CardView
+            } >
+            
+
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            Trip Rating 
+          </Text>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds}
+          </Text>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            Total Steps: {onChangeEndValue}
+          </Text>
+            <Button
+              style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
+              onPress={async () => {
+                // setRunTime(false);
+                try {
+            const id = getAuth().currentUser?.uid;
+            const docRed = doc(database, "users", id);
+            await addDoc(collection(docRed, "trips"), {
+              stepCount: currentStepCount,
+              minutes: location.timestamp ,
+              startStop: time,
+              finalStop: finalStop,
+              travel: travelingBy,
+              loc: userLocHistory,
+              selectedRoute: selectedRoute,
+              timeframe: hours + ":" + minutes + ":" + seconds,
+                        location: {
+                          lat: location.coords.latitude || 18.201025,
+                          lon: location.coords.longitude || -67.1318,
+                        },            });
+          } catch (e) {
+            console.log(e);
+          }
+          setConfirm(0);
+          reset();
+          setStartStop(null);
+          setFinalStop(null);
+          setSelectedRoute(null);
+          setUserLocHistory([])
+          setHideSelectRoute(false);
               }}
             > <Text> Continue </Text> </Button>
             </Box>
@@ -588,35 +626,123 @@ setInterval(async () => {
               longitudeDelta: 0.0421,
             });
           }}
+
           style={{
             zIndex: 100,
-            backgroundColor: Colors.highlihgted,
+            backgroundColor: colorScheme == "dark" ? Colors.secondaryDark : Colors.secondaryLight,
           }}
         >
           <MaterialIcons name="my-location" size={24} color="white" />
         </Button>
       </View>
       {/* Show all buses */}
-      <View
+      
+      {/* <View
         style={{
           position: "absolute",
           top: 10,
-          right: 70,
+          right: 80,
           zIndex: 100,
         }}
       >
         <Button
           onPress={() => {
-            setShowAll(!showAll);
+            setRouteSelecter(!routeSelecter);
           }}
           style={{
             zIndex: 100,
-            backgroundColor: Colors.highlihgted,
+            backgroundColor: colorScheme == "dark" ? Colors.secondaryDark : Colors.secondaryLight,
           }}
         >
+          <MaterialCommunityIcons name={'traffic-cone'} size={24} color="white" />
+        </Button>
+      </View> */}
+
+     
+      
+      {
+        selectTraveler ?(
+          <View
+        style={{
+          position: "absolute",
+          top: '40%',
+          zIndex: 100,
+          width: '50%',
+          backgroundColor: colorScheme == "dark" ? Colors.primaryDark : Colors.primaryLight,
+          borderRadius: 10,
+          alignItems: 'flex-start',
+        }}
+      >
+        <Button
+          onPress={() => {
+            setTravelingBy('walk');
+          }}
+          style={{
+            zIndex: 100,
+            backgroundColor: 'transparent',
+          }}
+        >
+        <HStack space={2} alignItems="center" justifyContent="center">
+        <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
+          Walking
+        </Text>
+          <MaterialCommunityIcons name="walk" size={24} color="white" />
+          </HStack>
+        </Button>
+        <Button
+          onPress={() => {
+            setTravelingBy('bus');
+          }}
+          style={{
+            zIndex: 100,
+            backgroundColor: 'transparent',
+          }}
+        >
+        <HStack space={2} alignItems="center" justifyContent="center">
+        <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
+          Bus
+        </Text>
           <MaterialCommunityIcons name="bus" size={24} color="white" />
+          </HStack>
+        </Button>
+        <Button
+          onPress={() => {
+            setTravelingBy('scooter');
+          }}
+          style={{
+            zIndex: 100,
+            backgroundColor: 'transparent',
+          }}
+        >
+        <HStack space={2} alignItems="center" justifyContent="center">
+        <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
+          E-scooter
+        </Text>
+          <MaterialCommunityIcons name="scooter" size={24} color="white" />
+          </HStack>
+        </Button>
+        <Button
+          onPress={() => {
+            setTravelingBy('car');
+          }}
+          style={{
+            zIndex: 100,
+            backgroundColor: 'transparent',
+          }}
+        >
+        <HStack space={2} alignItems="center" justifyContent="center">
+        <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
+          Car
+        </Text>
+          <MaterialCommunityIcons name="car" size={24} color="white" />
+          </HStack>
         </Button>
       </View>
+        )  : null
+      }
+      
+     
+      
     </View>
   );
 };
@@ -636,7 +762,7 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   tripContainer: {
-    backgroundColor: Colors.ticketBackground,
+    backgroundColor: 'blue',
     borderRadius: 10,
     width: Dimensions.get("window").width * 0.9,
     padding: 10,
@@ -695,7 +821,7 @@ const styles = StyleSheet.create({
     left: Dimensions.get("window").width * 0.1,
   },
   settingBtn: {
-    backgroundColor: Colors.highlihgted,
+    backgroundColor: 'green',
   },
   circleButtonContainer: {
     width: 84,

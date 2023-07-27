@@ -86,7 +86,7 @@ const TimePred = () => {
   } else{
     // return (<Text> {new Date(getNextStop())} </Text>)
     const val = getNextStop()
-    return (<Text> {val} </Text>)
+    return (<Text style={styles.timereg}> {val} </Text>)
   }
 }
 
@@ -95,7 +95,7 @@ const TimePred = () => {
     <View style={styles.card}>
     <HStack space={2} justifyContent={'space-between'}>
       {
-        stopName.length > 0 ? <Text> {stopName} </Text> :<Text> {stop} </Text>
+        stopName.length > 0 ? <Text style={styles.timereg}> {stopName} </Text> :<Text style={styles.timereg}> {stop} </Text>
       }
       {/* {
         allStops.length > 0 ? <Text> {new Date(getNextStop(allStops)).toLocaleTimeString()} </Text> :<Text> loading... </Text>
@@ -117,8 +117,9 @@ const styles = StyleSheet.create({
   }, timePred:{
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#049C64',
-  }, card: {
+    color: 'grey'
+  }, 
+   card: {
     margin: 5,
     padding: 5,
     borderRadius: 10,
@@ -126,6 +127,10 @@ const styles = StyleSheet.create({
   }, timeSch: {
     fontSize: 14,
     fontWeight: 'bold',
+    color: 'grey'
     }, 
+    timereg:{
+      fontSize: 14,
+    }
   
 });

@@ -14,6 +14,7 @@ import {
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
+import { darkMode, lightMode } from "../config/theme";
 // import {darkMode, lightMode} from '../config/theme'
 import {
   getOnlineActiveTripsCount,
@@ -44,6 +45,7 @@ export const HomeScreen = () => {
           <Text
             fontSize="xl"
             bold
+            style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
           >
             Travel Transit Tracker
           </Text>
@@ -71,7 +73,7 @@ export const HomeScreen = () => {
             <Box >
               <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>Select Route: </Text>
               <Select
-                style={colorScheme == 'dark' ? darkMode.Select : lightMode.Select}
+                // style={colorScheme == 'dark' ? darkMode.Select : lightMode.Select}
                 selectedValue={selectedRoute}
                 size={'lg'}
                 accessibilityLabel="Choose a route"
@@ -85,12 +87,12 @@ export const HomeScreen = () => {
                   setSelectedRoute(itemValue);
                 }}
               >
-                <Select.Item label="Route 105" value="TIM_RR105" />
-                <Select.Item label="Route 102" value="TIM_RR102" />
-                <Select.Item label="Route 108" value="TIM_RR108" />
-                <Select.Item label="Route 106" value="TIM_RR106" />
-                <Select.Item label="Route 348" value="TIM_RR348" />
-                <Select.Item label="Route 349" value="TIM_RR349" />
+                <Select.Item   label="Route 105" value="TIM_RR105" />
+                <Select.Item  label="Route 102" value="TIM_RR102" />
+                <Select.Item  label="Route 108" value="TIM_RR108" />
+                <Select.Item  label="Route 106" value="TIM_RR106" />
+                <Select.Item  label="Route 348" value="TIM_RR348" />
+                <Select.Item  label="Route 349" value="TIM_RR349" />
               </Select>
             </Box>
 
@@ -108,45 +110,45 @@ export const HomeScreen = () => {
 };
 
 
-const darkMode = StyleSheet.create({
-  View:{
-    flex: 1,
-      // justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#293241',
-      width:'100%',
-  },
-  CardView:{
-    width:'90%',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-    marginTop: 20,
-  },
-  Card:{
-    width:'100%',
-    backgroundColor: '#8CCCF4',
-  }
+// const darkMode = StyleSheet.create({
+//   View:{
+//     flex: 1,
+//       // justifyContent: 'center',
+//       alignItems: 'center',
+//       backgroundColor: '#293241',
+//       width:'100%',
+//   },
+//   CardView:{
+//     width:'90%',
+//     borderRadius: 10,
+//     padding: 10,
+//     marginBottom: 10,
+//     marginTop: 20,
+//   },
+//   Card:{
+//     width:'100%',
+//     backgroundColor: '#8CCCF4',
+//   }
   
-})
+// })
 
-const lightMode = StyleSheet.create({
-  View:{
-    flex: 1,
-      // justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      width:'100%',
-  },
-  CardView:{
-    width:'90%',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-    marginTop: 20,
-  },
-  Card:{
-    width:'100%',
-    backgroundColor: '#8CCCF4',
-  }
-})
+// const lightMode = StyleSheet.create({
+//   View:{
+//     flex: 1,
+//       // justifyContent: 'center',
+//       alignItems: 'center',
+//       backgroundColor: '#fff',
+//       width:'100%',
+//   },
+//   CardView:{
+//     width:'90%',
+//     borderRadius: 10,
+//     padding: 10,
+//     marginBottom: 10,
+//     marginTop: 20,
+//   },
+//   Card:{
+//     width:'100%',
+//     backgroundColor: '#8CCCF4',
+//   }
+// })
