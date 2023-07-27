@@ -33,7 +33,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
 const Shapes = require("../assets/gtfs/shapes.json");
-
 export const MapScreen = () => {
   const colorScheme = useColorScheme();
   const [location, setLocation] = useState(null);
@@ -45,58 +44,63 @@ export const MapScreen = () => {
   const [selectedStop, setSelectedStop] = useState(null);
   const [userLocHistory, setUserLocHistory] = useState([]);
   const [runTime, setRunTime] = useState(false);
- const [selectTraveler, setSelectTraveler] = useState(false);
- const [routeSelecter, setRouteSelecter] = useState(false);
- const [excludedRoutes, setExcludedRoutes] = useState([]);
+  const [selectTraveler, setSelectTraveler] = useState(false);
+  const [routeSelecter, setRouteSelecter] = useState(false);
+  const [excludedRoutes, setExcludedRoutes] = useState([]);
   const memoStop = React.useMemo(() => getStops(excludedRoutes), []);
-const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking'); 
+  const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking'); 
   const [currentStepCount, setCurrentStepCount] = useState(0);
   const [hideTrip, setHideTrip] = useState(false);
   const [travelingBy, setTravelingBy] = useState('walk');
   const [hideSelectRoute, setHideSelectRoute] = useState(false);
   const [backLoc, setBackLoc] = useState([]);
   const [onChangeEndValue, setOnChangeEndValue] = useState(0);
-    const subscribe = async () => {
+  const subscribe = async () => {
     const isAvailable = await Pedometer.isAvailableAsync();
     setIsPedometerAvailable(String(isAvailable));
-
+    
     if (isAvailable) {
       const end = new Date();
       const start = new Date();
       start.setDate(end.getDate() - 1);
-
+      
       const pastStepCountResult = await Pedometer.getStepCountAsync(start, end);
       if (pastStepCountResult) {
         setPastStepCount(pastStepCountResult.steps);
       }
-
+      
       return Pedometer.watchStepCount(result => {
         setCurrentStepCount(result.steps);
       });
     }
   }; 
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
-    useStopwatch({ autoStart: false }); 
-setInterval(async () => {
-  if (location == null) {
-    let loc = await Location.getCurrentPositionAsync({
-      enableHistory: true,
-      enableHighAccuracy: true,
-    })
-    setLocation(loc)
-    if(confirm == 2 || confirm == 4){
-      const elem = {
-        lat: loc.coords.latitude,
-        lon: loc.coords.longitude,
-        timestamp: loc.timestamp,
-      }
-      setUserLocHistory([...userLocHistory, elem])
-      setBackLoc([...backLoc, elem])
-    }
-  }
+  useStopwatch({ autoStart: false }); 
   
-}, 5000); 
-   
+  useEffect(() => {
+    (async () => {
+      
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setErrorMsg('Permission to access location was denied');
+        return;
+      }
+  
+      let location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.BestForNavigation,
+        distanceInterval: 1,
+        enableHighAccuracy: true,
+      });
+      setLocation(location);
+      if(confirm == 2 || confirm == 4){
+        console.log(userLocHistory)
+        setUserLocHistory([...userLocHistory, [location.coords.latitude, location.coords.longitude, location.timestamp]])
+      }
+    })();
+  }, [location, userLocHistory]);
+  
+  
+  
 
   const [tripTime, setTripTime] = useState([]);
    async function getTime(url) {
@@ -173,10 +177,8 @@ setInterval(async () => {
             strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
             strokeColors={[
               '#7F0000',
-              '#00000000', // no color, creates a "long" gradient between the previous and next coordinate
-              '#B24112',
-              '#E5845C',
-              '#238C23']}
+               '#B24112',
+              '#E5845C', ]}
             strokeWidth={6}
           />
         ) : null
@@ -298,9 +300,9 @@ setInterval(async () => {
                 setHideSelectRoute(true);
               }}
               >
-        <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
+        <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
         >
-         🚗 Start Trip 
+          Start Trip 
         </Text>
       </Button> 
 
@@ -310,7 +312,7 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: colorScheme == "dark" ? Colors.secondaryDark : Colors.secondaryLight,
+            backgroundColor: colorScheme == "dark" ? Colors.accentDark : Colors.accentLight,
           }}
         >
           <MaterialCommunityIcons name={travelingBy} size={24} color="white" />
@@ -414,10 +416,11 @@ setInterval(async () => {
               colorScheme == "dark" ? darkMode.CardView : lightMode.CardView
             } >
             <VStack space={2} alignItems="center" justifyContent="center">
-          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds }
           </Text>
-          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>Current Steps: {currentStepCount}</Text>     
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>Current Steps: {currentStepCount}</Text>     
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>Current rec: {userLocHistory.length}</Text>     
           <HStack space={2} style={{
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -513,12 +516,12 @@ setInterval(async () => {
               colorScheme == "dark" ? darkMode.CardView : lightMode.CardView
             } >
             <VStack space={2} alignItems="center" justifyContent="center">
-          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds }
           </Text>
-          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>Travel: {travelingBy}</Text>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>Travel: {travelingBy}</Text>
 
-          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>Current Steps: {currentStepCount}</Text>     
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>Current Steps: {currentStepCount}</Text>     
           <HStack space={2} style={{
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -562,13 +565,16 @@ setInterval(async () => {
             
 
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-            Trip Rating 
+            Trip Ended
           </Text>
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             Trip Duration: {minutes}:{seconds < 10 ? "0" + seconds : seconds}
           </Text>
           <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             Total Steps: {onChangeEndValue}
+          </Text>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+            Location points: {userLocHistory.length}
           </Text>
             <Button
               style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
@@ -578,12 +584,14 @@ setInterval(async () => {
             const id = getAuth().currentUser?.uid;
             const docRed = doc(database, "users", id);
             await addDoc(collection(docRed, "trips"), {
+              tripId: Math.floor(Math.random() * 1000000000),
               stepCount: currentStepCount,
-              minutes: location.timestamp ,
-              startStop: time,
+              stopTripTime: location.timestamp ,
+              startStop: startStop,
               finalStop: finalStop,
               travel: travelingBy,
-              loc: userLocHistory,
+              loc: userLocHistory.length,
+
               selectedRoute: selectedRoute,
               timeframe: hours + ":" + minutes + ":" + seconds,
                         location: {
@@ -620,8 +628,8 @@ setInterval(async () => {
           onPress={() => {
             // console.log(location);
             _mapView.animateToRegion({
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
+              latitude: location.coords.latitude || 18.201025,
+              longitude: location.coords.longitude || -67.1318,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             });
@@ -635,29 +643,6 @@ setInterval(async () => {
           <MaterialIcons name="my-location" size={24} color="white" />
         </Button>
       </View>
-      {/* Show all buses */}
-      
-      {/* <View
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 80,
-          zIndex: 100,
-        }}
-      >
-        <Button
-          onPress={() => {
-            setRouteSelecter(!routeSelecter);
-          }}
-          style={{
-            zIndex: 100,
-            backgroundColor: colorScheme == "dark" ? Colors.secondaryDark : Colors.secondaryLight,
-          }}
-        >
-          <MaterialCommunityIcons name={'traffic-cone'} size={24} color="white" />
-        </Button>
-      </View> */}
-
      
       
       {
@@ -668,7 +653,7 @@ setInterval(async () => {
           top: '40%',
           zIndex: 100,
           width: '50%',
-          backgroundColor: colorScheme == "dark" ? Colors.primaryDark : Colors.primaryLight,
+          backgroundColor: colorScheme == "dark" ? Colors.accentDark : Colors.accentLight,
           borderRadius: 10,
           alignItems: 'flex-start',
         }}

@@ -136,8 +136,8 @@ export const Trip = () => {
                       stopTime: new Date().getTime(),
                       timeframe: hours + ":" + minutes + ":" + seconds,
                       location: {
-                        lat: location.coords.latitude,
-                        lon: location.coords.longitude,
+                        lat: location.coords.latitude || 0,
+                        lon: location.coords.longitude || 0,
                       },
                     });
 

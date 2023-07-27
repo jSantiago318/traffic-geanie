@@ -15,7 +15,7 @@ import {
   useColorMode,
   useTheme,
 } from "native-base";
-import { Colors, auth } from "../config";
+import { Colors, auth, darkMode, lightMode } from "../config";
 import { StyleSheet, View, useColorScheme } from "react-native";
 import { deleteUser, getAuth } from "firebase/auth";
 
@@ -35,12 +35,14 @@ export const SettingsScreen = () => {
   return (
     <View style={colorScheme === "dark" ? darkMode.View : lightMode.View}>
       <Center>
-        <Container>
+        <Container style={
+          colorScheme === "dark" ? darkMode.Container : lightMode.Container
+        } >
           <Heading
             style={
               colorScheme === "dark"
-                ? darkMode.TextHeading
-                : lightMode.TextHeading
+                ? darkMode.Title
+                : lightMode.Title
             }
           >
             Account
@@ -52,8 +54,8 @@ export const SettingsScreen = () => {
           <Heading
             style={
               colorScheme === "dark"
-                ? darkMode.TextHeading
-                : lightMode.TextHeading
+                ? darkMode.Title
+                : lightMode.Title
             }
           >
             Settings
@@ -67,7 +69,9 @@ export const SettingsScreen = () => {
             variant={"ghost"}
             onPress={() => setShowModal(true)}
           >
+          <Text style={colorScheme === "dark" ? darkMode.Text : lightMode.Text}>
             Delete Account
+          </Text>
           </Button>
           <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
             <Modal.Content maxWidth="70%">
@@ -118,85 +122,30 @@ export const SettingsScreen = () => {
               )
             }
           >
+                    <Text style={colorScheme === "dark" ? darkMode.Text : lightMode.Text}>
+
             Privacy Privacy
+          </Text>
           </Button>
 
           <Button
             style={
               colorScheme === "dark"
-                ? darkMode.outlineBtn
-                : lightMode.outlineBtn
+                ? darkMode.subtleBtn
+                : lightMode.subtleBtn
             }
+
             title="Log Out"
             variant={"ghost"}
             onPress={handleLogout}
           >
+                    <Text style={colorScheme === "dark" ? darkMode.Text : lightMode.Text}>
+
             Log Out
+          </Text>
           </Button>
         </Container>
       </Center>
     </View>
   );
 };
-
-const darkMode = StyleSheet.create({
-  View:{
-    flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#293241',
-      width:'100%',
-  },
-  Text: {
-    fontSize: 13,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  TextHeading: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#fff",
-  },
-  subtleBtn:{
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    padding: 5,
-
-  }, outlineBtn:{
-    borderRadius: 10,
-    padding: 5,
-
-  },
-  
-})
-
-const lightMode = StyleSheet.create({
-  View:{
-    flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      width:'100%',
-  },
-  Text: {
-    fontSize: 13,
-    fontWeight: "bold",
-    color: "#293241",
-  },
-  TextHeading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#293241",
-  },
-  subtleBtn:{
-    backgroundColor: 'transparent',
-    borderRadius: 10,
-    padding: 5,
-
-  }, outlineBtn:{
-    borderRadius: 10,
-    padding: 5,
-
-  },
-  
-})
