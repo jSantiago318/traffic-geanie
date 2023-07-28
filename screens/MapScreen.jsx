@@ -29,7 +29,6 @@ import {getAuth} from 'firebase/auth';
 import {
   getStops,
 } from "../assets/gtfs/stops";
-import { set } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
@@ -75,6 +74,7 @@ export const MapScreen = () => {
       });
     }
   }; 
+  const [startT, setStartT] = useState(0);
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
   useStopwatch({ autoStart: false }); 
   const [tripId, setTripId] = useState(0);
@@ -88,6 +88,7 @@ export const MapScreen = () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
         setLocation(location);
+       
         const background = await Location.requestBackgroundPermissionsAsync();
         if (background.status === "granted") {
           await Location.startLocationUpdatesAsync(TASK_FETCH_LOCATION, {
@@ -106,23 +107,21 @@ export const MapScreen = () => {
         }
       }
     })();
+    (async () => {
+    
+      if(location && (confirm == 2 || confirm == 4)){
+        // console.log(userLocHistory)
+        const userId = getAuth().currentUser.uid;
+        const url = "https://www.api.proba.live/genUserLoc?userId="+userId+"&tripId="+tripId+"&tripSequence=" +tripSeq+"&lat="+location.coords.latitude+"&lon="+location.coords.latitude+"&deviceTime=0&busId=0&routeId="+selectedRoute+"&stopId="+selectedStop+"&predictionTime=0&transportationBy="+travelingBy
+        setUserLocHistory([...userLocHistory, [location.coords.latitude, location.coords.longitude, location.timestamp]])
+        await fetch(url).then((response) => console.log('input'))
+      }
+    })();
     }, [
       location,
     ]);
 
-    
- setInterval(() => {
-  (async () => {
-    
-    if(location && (confirm == 2 || confirm == 4)){
-      // console.log(userLocHistory)
-      const userId = getAuth().currentUser.uid;
-      const url = "https://www.api.proba.live/genUserLoc?userId="+userId+"&tripId="+tripId+"&tripSequence=" +tripSeq+"&lat="+location.coords.latitude+"&lon="+location.coords.latitude+"&deviceTime=0&busId=0&routeId="+selectedRoute+"&stopId="+selectedStop+"&predictionTime=0&transportationBy="+travelingBy
-      // setUserLocHistory([...userLocHistory, [location.coords.latitude, location.coords.longitude, location.timestamp]])
-      await fetch(url)
-    }
-  })();
-  }, 2000);
+
   
   
 
@@ -200,7 +199,6 @@ export const MapScreen = () => {
             coordinates={userLocHistory}
             strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
             strokeColors={[
-              '#7F0000',
                '#B24112',
               '#E5845C', ]}
             strokeWidth={6}
@@ -321,6 +319,7 @@ export const MapScreen = () => {
        onPress={() => {
                 setConfirm(4);
                 start();
+                setStartT(new Date())
                 setHideSelectRoute(true);
               }}
               >
@@ -426,6 +425,7 @@ export const MapScreen = () => {
                 // setRunTime(true);
                 // setStartTime(new Date());
                 setConfirm(2);
+                setStartT(new Date());
                 start();
               }}
             > <Text> Start Trip </Text> </Button>
@@ -506,12 +506,13 @@ export const MapScreen = () => {
             const docRed = doc(database, "users", id);
             await addDoc(collection(docRed, "trips"), {
               stepCount: currentStepCount,
-              startTime: location.timestamp,
+              startTime: startT,
               startStop: startStop,
               travel: travelingBy,
               finalStop: finalStop,
               loc: userLocHistory,
               selectedRoute: selectedRoute,
+              stopTime: new Date(),
               timeframe: hours + ":" + minutes + ":" + seconds,
                         location: {
                           lat: location.coords.latitude || 18.201025,
@@ -610,14 +611,14 @@ export const MapScreen = () => {
             await addDoc(collection(docRed, "trips"), {
               tripId: Math.floor(Math.random() * 1000000000),
               stepCount: currentStepCount,
-              stopTripTime: location.timestamp ,
+              startTime: startT,
+              stopTime: new Date() ,
               startStop: startStop,
               finalStop: finalStop,
               travel: travelingBy,
-
               selectedRoute: selectedRoute,
               timeframe: hours + ":" + minutes + ":" + seconds,
-                        location: {
+                        locationEnd: {
                           lat: location.coords.latitude || 18.201025,
                           lon: location.coords.longitude || -67.1318,
                         },            });

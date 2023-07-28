@@ -6,7 +6,7 @@ export default {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '3.7',
+    version: '3.9',
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
@@ -25,18 +25,13 @@ export default {
     assetBundlePatterns: ['**/*'],
     "ios": {
       supportsTablet: true,
-
-      buildNumber: '3.7',
+      buildNumber: '3.9',
       bundleIdentifier: 'com.josiba.mayatransit',
-      config:{
-        googleMapsApiKey: process.env.MAPS_API_IOS
-      },
       "infoPlist": {
         "UIBackgroundModes": [
           "location",
           "fetch"
         ],
-        "CFBundleAllowMixedLocalizations": true,
         "NSLocationAlwaysAndWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
         "NSLocationAlwaysUsageDescription": "App requires geolocation to improve the quality of the service",
         "NSLocationWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
@@ -56,7 +51,7 @@ export default {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 37,
+      "versionCode": 39,
       "package": "com.josiba.mayatransit",
 
     },
