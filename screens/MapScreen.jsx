@@ -29,6 +29,7 @@ import {getAuth} from 'firebase/auth';
 import {
   getStops,
 } from "../assets/gtfs/stops";
+import { set } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
@@ -76,29 +77,52 @@ export const MapScreen = () => {
   }; 
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
   useStopwatch({ autoStart: false }); 
+  const [tripId, setTripId] = useState(0);
+  const [tripSeq, setTripSeq] = useState(0);
+  function genTripId(){
+    setTripId(Math.floor(Math.random() * 1000000000))
+  }
   
   useEffect(() => {
     (async () => {
-      
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-  
-      let location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.BestForNavigation,
-        distanceInterval: 1,
-        enableHighAccuracy: true,
-      });
-      setLocation(location);
-      if(confirm == 2 || confirm == 4){
-        console.log(userLocHistory)
-        setUserLocHistory([...userLocHistory, [location.coords.latitude, location.coords.longitude, location.timestamp]])
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status === "granted") {
+        setLocation(location);
+        const background = await Location.requestBackgroundPermissionsAsync();
+        if (background.status === "granted") {
+          await Location.startLocationUpdatesAsync(TASK_FETCH_LOCATION, {
+            activityType: Location.LocationActivityType.BestForNavigation,
+            showsBackgroundLocationIndicator: true,
+            accuracy: Location.Accuracy.BestForNavigation,
+            deferredUpdatesInterval: 3000,
+            deferredUpdatesDistance: 50,
+            showsBackgroundLocationIndicator: true,
+          }).then(() => {
+            
+            Alert.alert("Turn on", null, [
+              { text: "OK", onPress: () => console.log("listening gps") },
+            ]);
+          });
+        }
       }
     })();
-  }, [location, userLocHistory]);
-  
+    }, [
+      location,
+    ]);
+
+    
+ setInterval(() => {
+  (async () => {
+    
+    if(location && (confirm == 2 || confirm == 4)){
+      // console.log(userLocHistory)
+      const userId = getAuth().currentUser.uid;
+      const url = "https://www.api.proba.live/genUserLoc?userId="+userId+"&tripId="+tripId+"&tripSequence=" +tripSeq+"&lat="+location.coords.latitude+"&lon="+location.coords.latitude+"&deviceTime=0&busId=0&routeId="+selectedRoute+"&stopId="+selectedStop+"&predictionTime=0&transportationBy="+travelingBy
+      // setUserLocHistory([...userLocHistory, [location.coords.latitude, location.coords.longitude, location.timestamp]])
+      await fetch(url)
+    }
+  })();
+  }, 2000);
   
   
 
@@ -170,7 +194,7 @@ export const MapScreen = () => {
           longitudeDelta: 0.0421,
         }}
       >
-      {
+      { 
         confirm == 2 || confirm == 4 ? (
           <Polyline
             coordinates={userLocHistory}
@@ -590,7 +614,6 @@ export const MapScreen = () => {
               startStop: startStop,
               finalStop: finalStop,
               travel: travelingBy,
-              loc: userLocHistory.length,
 
               selectedRoute: selectedRoute,
               timeframe: hours + ":" + minutes + ":" + seconds,

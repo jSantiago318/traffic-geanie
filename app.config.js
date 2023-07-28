@@ -71,6 +71,9 @@ export default {
       appId: process.env.APP_ID
     },
   }, 
+  "permissions": [
+    "ACCESS_BACKGROUND_LOCATION"
+  ],
   'plugins':[
     [
       'expo-camera', 
@@ -94,4 +97,5 @@ export default {
     ],
   
   ]
+
 };

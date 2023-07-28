@@ -44,18 +44,7 @@ const requestPermissions = async () => {
   }
 };
 
-
-TaskManager.defineTask(LOCATION_TASK_NAME, ({ data, error }) => {
-  if (error) {
-    // Error occurred - check `error.message` for more details.
-    return;
-  }
-  if (data) {
-    const { locations } = data;
-    console.log("locations", locations);
-    // do something with the locations captured in the background
-  }
-});
+requestPermissions();
 export const HomeScreen = () => {
   const [selectedRoute, setSelectedRoute] = React.useState("TIM_RR105");
   const [busCount, setBusCount] = React.useState(0);
@@ -69,38 +58,24 @@ export const HomeScreen = () => {
 
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
-  const [status2, requestPermission2] = Location.useBackgroundPermissions();
-  const [status1, requestPermission1] = Location.useForegroundPermissions();
   useEffect(() => {
     (async () => {
       const { status } = await requestTrackingPermissionsAsync();
-      if (status === 'granted') {
-        console.log('Yay! I have user permission to track data');
+      if (status !== 'granted') {
+        console.log('Ni! I have ni user permission to track data');
       }
-      const { status1 } = await requestPermission1();
-      if (status1 === 'granted') {
-        console.log('Yay! I have user permission to track data');
-      }
-      const { status2 } = await requestPermission2();
-      if (status2 === 'granted') {
-        console.log('Yay! I have user permission to track data');
-      }
-      
     })();
-
-    
     (async () => {
       
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
+        console.log('Permission to access location was denied');
       }
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     })();
-  }, []);
+  }, [location]);
 
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>

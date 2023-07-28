@@ -5,7 +5,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "distribution": "internal",
+        "distribution": "internal"
         
       }
     },
@@ -36,8 +36,9 @@
       "ios": {
         "appleId" : "josant01@icloud.com",
         "ascAppId": "6448003556",
-        "appleTeamId": "4J5UC7PM43",
+        "appleTeamId": "4J5UC7PM43"
       }
-    }
+    },
+    
   }
 }
