@@ -29,22 +29,6 @@ import { CheckIcon } from "native-base";
 import { RoutesList } from "../components/RoutesList.js";
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
-const LOCATION_TASK_NAME = 'background-location-task';
-
-const requestPermissions = async () => {
-  const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
-  if (foregroundStatus === 'granted') {
-    const { status: backgroundStatus } = await Location.requestBackgroundPermissionsAsync();
-    if (backgroundStatus === 'granted') {
-      await Location.startLocationUpdatesAsync(LOCATION_TASK_NAME, {
-        accuracy: Location.Accuracy.Balanced,
-      });
-      console.log("Location updates started!");
-    }
-  }
-};
-
-requestPermissions();
 export const HomeScreen = () => {
   const [selectedRoute, setSelectedRoute] = React.useState("TIM_RR105");
   const [busCount, setBusCount] = React.useState(0);
@@ -75,8 +59,23 @@ export const HomeScreen = () => {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     })();
-  }, [location]);
+  //   (async () => {
 
+  //   const TASK_NAME = 'background-location-task';
+  //   await Location.startLocationUpdatesAsync(TASK_NAME, {
+  //     accuracy: Location.Accuracy.Highest,
+  //     timeInterval: 1000,
+  //     distanceInterval: 1,
+  //     showsBackgroundLocationIndicator: true,
+  //     foregroundService: {
+  //         notificationTitle: 'Using your location',
+  //         notificationBody: 'To turn off, go back to the app and switch something off.',
+  //     }
+  // });
+  // })();
+      
+  }, [location])
+  
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
     

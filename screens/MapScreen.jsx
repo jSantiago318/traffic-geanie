@@ -74,7 +74,7 @@ export const MapScreen = () => {
       });
     }
   }; 
-  const [startT, setStartT] = useState(0);
+  const [startTime, setStartTime] = useState(0);
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
   useStopwatch({ autoStart: false }); 
   const [tripId, setTripId] = useState(0);
@@ -82,49 +82,6 @@ export const MapScreen = () => {
   function genTripId(){
     setTripId(Math.floor(Math.random() * 1000000000))
   }
-  
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === "granted") {
-        setLocation(location);
-       
-        const background = await Location.requestBackgroundPermissionsAsync();
-        if (background.status === "granted") {
-          await Location.startLocationUpdatesAsync(TASK_FETCH_LOCATION, {
-            activityType: Location.LocationActivityType.BestForNavigation,
-            showsBackgroundLocationIndicator: true,
-            accuracy: Location.Accuracy.BestForNavigation,
-            deferredUpdatesInterval: 3000,
-            deferredUpdatesDistance: 50,
-            showsBackgroundLocationIndicator: true,
-          }).then(() => {
-            
-            Alert.alert("Turn on", null, [
-              { text: "OK", onPress: () => console.log("listening gps") },
-            ]);
-          });
-        }
-      }
-    })();
-    (async () => {
-    
-      if(location && (confirm == 2 || confirm == 4)){
-        // console.log(userLocHistory)
-        const userId = getAuth().currentUser.uid;
-        const url = "https://www.api.proba.live/genUserLoc?userId="+userId+"&tripId="+tripId+"&tripSequence=" +tripSeq+"&lat="+location.coords.latitude+"&lon="+location.coords.latitude+"&deviceTime=0&busId=0&routeId="+selectedRoute+"&stopId="+selectedStop+"&predictionTime=0&transportationBy="+travelingBy
-        setUserLocHistory([...userLocHistory, [location.coords.latitude, location.coords.longitude, location.timestamp]])
-        await fetch(url).then((response) => console.log('input'))
-      }
-    })();
-    }, [
-      location,
-    ]);
-
-
-  
-  
-
   const [tripTime, setTripTime] = useState([]);
    async function getTime(url) {
     if(runTime){
@@ -319,8 +276,8 @@ export const MapScreen = () => {
        onPress={() => {
                 setConfirm(4);
                 start();
-                setStartT(new Date())
                 setHideSelectRoute(true);
+                setStartTime(new Date());
               }}
               >
         <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
@@ -423,9 +380,8 @@ export const MapScreen = () => {
              style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
               onPress={() => {
                 // setRunTime(true);
-                // setStartTime(new Date());
+                setStartTime(new Date());
                 setConfirm(2);
-                setStartT(new Date());
                 start();
               }}
             > <Text> Start Trip </Text> </Button>
@@ -506,13 +462,13 @@ export const MapScreen = () => {
             const docRed = doc(database, "users", id);
             await addDoc(collection(docRed, "trips"), {
               stepCount: currentStepCount,
-              startTime: startT,
+              startTime: startTime,
+              stopTime: new Date(),
               startStop: startStop,
               travel: travelingBy,
               finalStop: finalStop,
               loc: userLocHistory,
               selectedRoute: selectedRoute,
-              stopTime: new Date(),
               timeframe: hours + ":" + minutes + ":" + seconds,
                         location: {
                           lat: location.coords.latitude || 18.201025,
@@ -611,7 +567,7 @@ export const MapScreen = () => {
             await addDoc(collection(docRed, "trips"), {
               tripId: Math.floor(Math.random() * 1000000000),
               stepCount: currentStepCount,
-              startTime: startT,
+              startTime: startTime,
               stopTime: new Date() ,
               startStop: startStop,
               finalStop: finalStop,
@@ -661,7 +617,7 @@ export const MapScreen = () => {
 
           style={{
             zIndex: 100,
-            backgroundColor: colorScheme == "dark" ? Colors.secondaryDark : Colors.secondaryLight,
+            backgroundColor: colorScheme == "dark" ? Colors.accentDark : Colors.accentLight,
           }}
         >
           <MaterialIcons name="my-location" size={24} color="white" />
