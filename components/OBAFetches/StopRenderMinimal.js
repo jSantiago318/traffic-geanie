@@ -26,7 +26,12 @@ export const StopRenderMinimal = ({stop}) => {
           ".json?key=TEST"
           ).then((response) => response.json())
           .then((data) => {
+            if(data.length == 0 || data.data.length == 0){
+              setPredStop("Route Not Active")
+          }
+          else {
             setAllStops(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes)
+          }
             const temp = stopName
             temp.push(data.data.references.stops[0].name)
             

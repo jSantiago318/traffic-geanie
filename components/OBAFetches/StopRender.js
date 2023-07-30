@@ -23,7 +23,12 @@ const timeMemo = React.useMemo(() =>  {
           ".json?key=TEST"
           ).then((response) => response.json())
           .then((data) => {
+            const day = new Date().getDay();
+            if (day === 0 || day === 6) {
+              setAllStops([])
+            } else {
               setAllStops(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes)
+            }
               const temp = stopName
               temp.push(data.data.references.stops[0].name)
               // console.log(1)
@@ -56,6 +61,11 @@ const timeMemo = React.useMemo(() =>  {
     
 function getNextStop(){
   let found = false
+  const day = new Date().getDay();
+
+  if (allStops.length === 0 &&(day === 0 || day === 6)) {
+    return "No bus"
+  }
   
   for (let index = 0; index < allStops.length; index++) {
     const element = allStops[index];
@@ -63,9 +73,10 @@ function getNextStop(){
       found = true
       return new Date(element.arrivalTime).toLocaleTimeString()
     }
-    if(found === false && index === allStops.length-1){
+     if(found === false && index === allStops.length-1){
       return new Date(allStops[0].arrivalTime).toLocaleTimeString()
-    }
+    } 
+    
     
   }
 }

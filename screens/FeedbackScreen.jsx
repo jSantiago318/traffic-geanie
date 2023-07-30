@@ -70,7 +70,7 @@ function FormC() {
         </Input>
 
         <FormControl.Label>
-          <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>
+          <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
             Description
           </Text>
         </FormControl.Label>
