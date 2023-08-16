@@ -81,8 +81,7 @@ export default {
     [
       'expo-location',
       {
-        "isIosBackgroundLocationEnabled": true,
-        "isAndroidBackgroundLocationEnabled": true,
+        'NSLocationWhenInUseUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'locationAlwaysAndWhenInUsePermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'locationAlwayPermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'isIosBackgroundLocationEnabled': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
@@ -94,13 +93,6 @@ export default {
         "userTrackingPermission": "Your data will be shared with third party companies, this will help us provide you with the best user expierence."
             }
     ],
-    [
-      'expo-build-properties',
-      {
-        'ios':{
-          'flipper': true
-        },
-      }
-    ]
+   
   ]
 };

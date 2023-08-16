@@ -29,7 +29,6 @@ import {getAuth} from 'firebase/auth';
 import {
   getStops,
 } from "../assets/gtfs/stops";
-import { set } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
@@ -85,26 +84,45 @@ const [isPedometerAvailable, setIsPedometerAvailable] = useState('checking');
 
 
 
-setInterval(async () => {
-  if (location == null) {
-    let loc = await Location.getCurrentPositionAsync({
-      enableHistory: true,
-      enableHighAccuracy: true,
-    })
-    setLocation(loc)
-    if(confirm == 2){
-      const elem = {
-        lat: loc.coords.latitude,
-        lon: loc.coords.longitude,
-        timestamp: loc.timestamp,
-      }
-      setUserLocHistory([...userLocHistory, elem])
-      setBackLoc([...backLoc, elem])
-    }
-  }
-  
-}, 5000);
+// setInterval(async () => {
+//   if (location == null) {
+//     let loc = await Location.getCurrentPositionAsync({
+//       enableHistory: true,
+//       enableHighAccuracy: true,
+//     })
+//     setLocation(loc)
+//     if(confirm == 2){
+//       const elem = {
+//         lat: loc.coords.latitude,
+//         lon: loc.coords.longitude,
+//         timestamp: loc.timestamp,
+//       }
+//       setUserLocHistory([...userLocHistory, elem])
+//       setBackLoc([...backLoc, elem])
+//     }
+//   }
+// }, 5000);
 
+useEffect(() => {
+  if (location == null) {
+    (async () => {
+      let loc = await Location.getCurrentPositionAsync({
+        enableHistory: true,
+        enableHighAccuracy: true,
+      })
+      setLocation(loc)
+      if(confirm == 2){
+        const elem = {
+          lat: loc.coords.latitude,
+          lon: loc.coords.longitude,
+          timestamp: loc.timestamp,
+        }
+        setUserLocHistory([...userLocHistory, elem])
+        setBackLoc([...backLoc, elem])
+      }
+    })();
+  }
+}, [location]);
 
 
 
@@ -733,15 +751,15 @@ setInterval(async () => {
           onPress={() => {
             // console.log(location);
             _mapView.animateToRegion({
-              latitude: location.coords.latitude,
-              longitude: location.coords.longitude,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
+              latitude: location.coords.latitude ,
+              longitude: location.coords.longitude ,
+              latitudeDelta: 0.0022,
+              longitudeDelta: 0.0021,
             });
           }}
           style={{
             zIndex: 100,
-            backgroundColor: 'blue',
+            backgroundColor: colorScheme == "dark" ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
           }}
         >
           <MaterialIcons name="my-location" size={24} color="white" />
@@ -762,7 +780,8 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: 'blue',
+            backgroundColor: colorScheme == "dark" ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
+
           }}
         >
           <MaterialCommunityIcons name={travelingBy} size={24} color="white" />
@@ -777,7 +796,8 @@ setInterval(async () => {
           right: 70,
           zIndex: 100,
           width: '50%',
-          backgroundColor: '#98c1d9',
+          backgroundColor: colorScheme == "dark" ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
+
           borderRadius: 10,
         }}
       >
@@ -787,11 +807,16 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: 'blue',
+            backgroundColor: colorScheme == "dark" ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
+
           }}
         >
         <HStack space={2} alignItems="center" justifyContent="center">
-        <Text>
+        <Text
+        color={
+          colorScheme == "dark" ? darkMode.Text.color : lightMode.Text.color
+        }
+        >
           Walking
         </Text>
           <MaterialCommunityIcons name="walk" size={24} color="white" />
@@ -803,11 +828,14 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: 'blue',
+            backgroundColor: colorScheme == "dark" ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
+
           }}
         >
         <HStack space={2} alignItems="center" justifyContent="center">
-        <Text>
+        <Text color={
+          colorScheme == "dark" ? darkMode.Text.color : lightMode.Text.color
+        }>
           Bus
         </Text>
           <MaterialCommunityIcons name="bus" size={24} color="white" />
@@ -819,11 +847,14 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: 'blue',
+            backgroundColor: colorScheme == "dark" ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
+
           }}
         >
         <HStack space={2} alignItems="center" justifyContent="center">
-        <Text>
+        <Text color={
+          colorScheme == "dark" ? darkMode.Text.color : lightMode.Text.color
+        }>
           E-scooter
         </Text>
           <MaterialCommunityIcons name="scooter" size={24} color="white" />
@@ -835,11 +866,14 @@ setInterval(async () => {
           }}
           style={{
             zIndex: 100,
-            backgroundColor: 'blue',
+            backgroundColor: colorScheme == "dark" ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
+
           }}
         >
         <HStack space={2} alignItems="center" justifyContent="center">
-        <Text>
+        <Text color={
+          colorScheme == "dark" ? darkMode.Text.color : lightMode.Text.color
+        }>
           Car
         </Text>
           <MaterialCommunityIcons name="car" size={24} color="white" />
