@@ -349,8 +349,7 @@ useEffect(() => {
                 setHideSelectRoute(true);
               }}
               >
-        <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
-        >
+        <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}>
          🚗 Start Trip 
         </Text>
       </Button>
@@ -504,7 +503,6 @@ useEffect(() => {
               style={{
               backgroundColor: '#98c1d9',
               borderRadius: 10,
-              // width: '50%',
               alignItems : 'center',
               justifyContent: 'center',
               height: 50,

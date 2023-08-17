@@ -48,7 +48,7 @@ export const LoginScreen = ({ navigation }) => {
               alt="Logo"
               size="md"
               resizeMode="contain"
-              style={{ width: 150, height: 150 }}
+              style={{ width: 125, height: 125 }}
             />
           </View>
 
@@ -75,7 +75,7 @@ export const LoginScreen = ({ navigation }) => {
                     colorScheme == "dark" ? darkMode.Title : lightMode.Title
                   }
                 >
-                  Mayaguez Transit Tracker{" "}
+                  Mayaguez Transit Tracker
                 </Text>
 
                 {/* Input fields */}

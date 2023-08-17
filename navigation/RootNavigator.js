@@ -13,7 +13,6 @@ export const RootNavigator = () => {
   const { user, setUser } = useContext(AuthenticatedUserContext);
   const [isLoading, setIsLoading] = useState(true);
   const theme = useColorScheme();
-  const appearance = useColorScheme();
 
   useEffect(() => {
     

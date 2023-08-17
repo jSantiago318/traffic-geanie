@@ -146,6 +146,7 @@ const darkMode = {
       // justifyContent: 'center',
       padding: 5,
       alignItems: 'center',
+
       backgroundColor: '#293241',
   }, 
   TicketView:{
@@ -184,9 +185,9 @@ const darkMode = {
 Title:{
     fontSize: 16,
     fontWeight: "bold",
-    margin: 2,
-    padding: 2,
-    color: '#98c1d9',
+    margin: 1,
+    padding: 1,
+    color: 'white',
     
 } , 
 routeList:{
@@ -204,8 +205,6 @@ LoginBtn:{
   width: '50%',
   height: 50,
   backgroundColor: '#3d5a80',
-
-
 } ,Map:{
   flex: 1,
       justifyContent: "center",
@@ -337,7 +336,7 @@ const lightMode = {
     fontWeight: "bold",
     margin: 2,
     padding: 2,
-    color: '#293241',
+    color: 'black',
     
   },
   LoginBtn:{

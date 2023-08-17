@@ -1,10 +1,5 @@
 import { Button, FormErrorMessage, TextInput, View } from "../components";
 import { Center, Checkbox, HStack, Image, Modal, Text } from "native-base";
-import {
-  GoogleAuthProvider,
-  createUserWithEmailAndPassword,
-  getAuth,
-} from "firebase/auth";
 import React, { useState } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
 import { addDoc, collection, doc, setDoc } from "firebase/firestore";
@@ -16,158 +11,135 @@ import { Formik } from "formik";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { PrivacyPolicy } from "../assets/PrivacyPolicy";
 import { getCurrentTime } from "../utils";
+import { loginValidationSchema } from "../utils";
 import logo from "../assets/car-blue.png";
 import { signupValidationSchema } from "../utils";
 import { useTogglePasswordVisibility } from "../hooks";
+import { useState, useEffect } from 'react'
+import { createClient } from '@supabase/supabase-js'
+import { Auth } from '@supabase/auth-ui-react'
+import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 export const SignupScreen = ({ navigation }) => {
   const [errorState, setErrorState] = useState("");
+  const { passwordVisibility, handlePasswordVisibility, rightIcon } =
+    useTogglePasswordVisibility();
+    const supabase = createClient('https://<project>.supabase.co', '<your-anon-key>')
+  const handleLogin = (values) => {
+    const { email, password } = values;
+    signInWithEmailAndPassword(auth, email, password).catch((error) =>
+      setErrorState(error.message)
+    );
+  };
+  const colorScheme = useColorScheme();
   const [showModal, setShowModal] = useState(false);
   const [checkbox, setCheckbox] = useState(false);
-  const colorScheme = useColorScheme();
-  const {
-    passwordVisibility,
-    handlePasswordVisibility,
-    rightIcon,
-    handleConfirmPasswordVisibility,
-    confirmPasswordIcon,
-    confirmPasswordVisibility,
-  } = useTogglePasswordVisibility();
-
-  const handleSignup = async (values) => {
-    const { email, password, phone } = values;
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then(async (userCredential) => {
-        // Signed in
-        try {
-          const id = getAuth().currentUser.uid;
-          const userRef = doc(database, "users", id);
-          setDoc(userRef, {
-            email: email,
-            phone: phone,
-          });
-        } catch (e) {
-          console.error("Error adding document: ", e);
-        }
-      })
-
-      .catch((error) => setErrorState(error.message));
-  };
-
   return (
     <View isSafe style={ colorScheme == "dark" ? darkMode.View : lightMode.View }>
-      <KeyboardAwareScrollView enableOnAndroid={true}  >
-        {/* LogoContainer: consits app logo and screen title */}
-        <View style={styles.logoContainer}>
+      <KeyboardAwareScrollView
+        style={styles.keyboardView}
+        enableOnAndroid={true}
+      >
+        <View style={styles.keyView}>
+          <View style={styles.logoContainer}>
             <Image
               source={logo}
               alt="Logo"
               size="md"
               resizeMode="contain"
-              style={{ width: 150, height: 150 }}
+              style={{ width: 125, height: 125 }}
             />
           </View>
-        {/* Formik Wrapper */}
-        <Formik
-          initialValues={{
-            email: "",
-            phone: "",
-            password: "",
-            confirmPassword: "",
-          }}
-          validationSchema={signupValidationSchema}
-          style={styles.form}
-          onSubmit={(values) => handleSignup(values)}
-        >
-          {({
-            values,
-            touched,
-            errors,
-            handleChange,
-            handleSubmit,
-            handleBlur,
-          }) => (
-            <>
-              {/* Input fields */}
-          <Text style={colorScheme == 'dark'? darkMode.Title:lightMode.Title }>Creating Account</Text>
-              <TextInput
-                name="email"
-                leftIconName="email"
-                placeholder="Enter email"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                autoFocus={true}
-                value={values.email}
-                onChangeText={handleChange("email")}
-                onBlur={handleBlur("email")}
-              />
-              <TextInput
-                name="phone"
-                leftIconName="phone"
-                placeholder="Enter phone"
-                autoCapitalize="none"
-                keyboardType="number-pad"
-                textContentType="telephoneNumber"
-                value={values.phone}
-                onChangeText={handleChange("phone")}
-                onBlur={handleBlur("phone")}
-              />
-              <FormErrorMessage error={errors.email} visible={touched.email} />
-              <TextInput
-                name="password"
-                leftIconName="key-variant"
-                placeholder="Enter password"
-                autoCapitalize="none"
-                autoCorrect={false}
-                secureTextEntry={passwordVisibility}
-                textContentType="newPassword"
-                rightIcon={rightIcon}
-                handlePasswordVisibility={handlePasswordVisibility}
-                value={values.password}
-                onChangeText={handleChange("password")}
-                onBlur={handleBlur("password")}
-              />
-              <FormErrorMessage
-                error={errors.password}
-                visible={touched.password}
-              />
-              <TextInput
-                name="confirmPassword"
-                leftIconName="key-variant"
-                placeholder="Enter password"
-                autoCapitalize="none"
-                autoCorrect={false}
-                secureTextEntry={confirmPasswordVisibility}
-                textContentType="password"
-                rightIcon={confirmPasswordIcon}
-                handlePasswordVisibility={handleConfirmPasswordVisibility}
-                value={values.confirmPassword}
-                onChangeText={handleChange("confirmPassword")}
-                onBlur={handleBlur("confirmPassword")}
-              />
-              <FormErrorMessage
-                error={errors.confirmPassword}
-                visible={touched.confirmPassword}
-              />
-              {/* Display Screen Error Mesages */}
-              {errorState !== "" ? (
-                <FormErrorMessage error={errorState} visible={true} />
-              ) : null}
-              {/* Signup button */}
-              <Button style={styles.button} onPress={
-                checkbox ? handleSubmit : () => {
-                  alert("Please agree to the terms and conditions")
-                }
-              }>
-                <Text style={styles.buttonText}>Sign Up</Text>
-              </Button>
-            </>
-          )}
-        </Formik>
-        <Center>
-        <HStack
+
+          <Formik
+            initialValues={{
+              email: "",
+              password: "",
+            }}
+            validationSchema={loginValidationSchema}
+            onSubmit={(values) => handleLogin(values)}
+            width="100%"
+          >
+            {({
+              values,
+              touched,
+              errors,
+              handleChange,
+              handleSubmit,
+              handleBlur,
+            }) => (
+              <>
+                <Text
+                  style={
+                    colorScheme == "dark" ? darkMode.Title : lightMode.Title
+                  }
+                >
+                  Mayaguez Transit Tracker
+                </Text>
+
+                {/* Input fields */}
+                <TextInput
+                  name="email"
+                  leftIconName="email"
+                  placeholder="Enter email"
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
+                  value={values.email}
+                  borderColor={'grey'}
+                  onChangeText={handleChange("email")}
+                  onBlur={handleBlur("email")}
+                />
+                <FormErrorMessage
+                  error={errors.email}
+                  visible={touched.email}
+                />
+                <TextInput
+                  name="password"
+                  leftIconName="key-variant"
+                  placeholder="Enter password"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  secureTextEntry={passwordVisibility}
+                  textContentType="newPassword"
+                  rightIcon={rightIcon}
+                  handlePasswordVisibility={handlePasswordVisibility}
+                  value={values.password}
+                  onChangeText={handleChange("password")}
+                  onBlur={handleBlur("password")}
+                />
+
+                <FormErrorMessage
+                  error={errors.password}
+                  visible={touched.password}
+                />
+                {/* Display Screen Error Mesages */}
+                {errorState !== "" ? (
+                  <FormErrorMessage error={errorState} visible={true} />
+                ) : null}
+                {/* Login button */}
+                <Button
+                  onPress={
+                    checkbox
+                      ? handleSubmit
+                      : () => {
+                          alert("Please accept terms and read conditions");
+                        }
+                  }
+                  style={
+                    colorScheme == "dark"
+                      ? darkMode.LoginBtn
+                      : lightMode.LoginBtn
+                  }
+                >
+                  <Text>Login</Text>
+                </Button>
+              </>
+            )}
+          </Formik>
+          {/* Button to navigate to SignupScreen to create a new account */}
+          <Center>
+            <HStack
               alignItems="center"
               justifyContent="space-between"
               style={{ marginTop: 5 }}
@@ -202,7 +174,7 @@ export const SignupScreen = ({ navigation }) => {
                 onPress={() => setShowModal(true)}
               />
             </HStack>
-      <Modal
+            <Modal
               isOpen={showModal}
               onClose={() => setShowModal(false)}
               size="lg"
@@ -226,17 +198,22 @@ export const SignupScreen = ({ navigation }) => {
                 </Modal.Footer>
               </Modal.Content>
             </Modal>
-    </Center>
-        {/* Button to navigate to Login screen */}
-        <Button
-          style={styles.borderlessButtonContainer}
-          borderless
-          title={"Already have an account?"}
-          onPress={() => navigation.navigate("Login")}
-        />
+          </Center>
+          <Button
+            style={styles.borderlessButtonContainer}
+            borderless 
+            
+            title={"Create a new account?"}
+            onPress={() => navigation.navigate("Signup")}
+          />
+          <Button
+            style={styles.borderlessButtonContainer}
+            borderless
+            title={"Forgot Password"}
+            onPress={() => navigation.navigate("ForgotPassword")}
+          />
+        </View>
       </KeyboardAwareScrollView>
-      
-     
     </View>
   );
 };
@@ -245,75 +222,67 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+    justifyContent: "center",
     alignItems: "center",
-    height: '100%'
-    // justifyContent: "center",
   },
-  footer: {
-    position: "absolute",
-    bottom: 0,
+  input: {
     width: "100%",
-    height: 50,
-    backgroundColor: 'blue',
+    borderColor: 'grey',
+  },
+  keyView: {
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
-  },
-  footerText: {
-    color: 'white',
-    fontSize: 12,
-  },View:{
-    flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#ffff',
-      width:'100%',
-  },
-  
-  input:{
-    backgroundColor: 'white',
-    borderColor: 'black',
+    padding: 20,
   },
   logoContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10  },
-
-  logo: {
-    width: 200,
-    height: 200,
   },
   screenTitle: {
-    fontSize: 16,
+    fontSize: 30,
     fontWeight: "bold",
     color: 'black',
+    textAlign: "center",
+    marginBottom: 20,
+    marginTop: 20,
   },
   button: {
     backgroundColor: 'black',
-    marginTop: 5,
-    marginBottom: 10,
-    width: "100%",
-    height: 40,
+    marginTop: 20,
+    marginBottom: 20,
+    width: "50%",
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 5,
   },
   buttonText: {
     color: 'black',
-    fontWeight: "bold",
     fontSize: 16,
+    fontWeight: "bold",
   },
   borderlessButtonContainer: {
+    marginTop: 10,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 5,
   },
+  footer: {
+    backgroundColor: 'black',
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   keyboardView: {
     width: "100%",
-    paddingLeft: 10,
-    paddingRight: 10,
   },
-  
+  View:{
+    flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#ffff',
+      width:'100%',
+  },
 });
-
-

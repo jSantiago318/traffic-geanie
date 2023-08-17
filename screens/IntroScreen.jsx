@@ -5,19 +5,16 @@ import {
   Box,
   Button,
   Center,
-  Checkbox,
-  HStack,
   ScrollView,
   Text,
   VStack,
   View,
 } from "native-base";
-import { Camera, CameraType } from 'expo-camera';
 import { Pressable, StyleSheet, useColorScheme } from "react-native";
 import React, { useEffect, useState } from "react";
 
+import { Camera } from 'expo-camera';
 import { Pedometer } from 'expo-sensors';
-import {requestTrackingPermissionsAsync} from 'expo-tracking-transparency';
 
 export const IntroScreen =  () => {
   const LOCATION_TASK_NAME = 'background-location-task';
@@ -103,18 +100,6 @@ export const IntroScreen =  () => {
          >
           Enable Camera
         </Button>
-        <Button marginBottom={'2'}  style={colorScheme == "dark" ? darkMode.Button : lightMode.Button}
-          onPress={
-            async () => {
-      const { status } = await requestTrackingPermissionsAsync();
-      if (status === 'granted') {
-        console.log('Yay! I have user permission to track data');
-      }
-    }
-          }
-          >
-          Enable Tracking
-        </Button>
 
         <Text fontSize="md" marginBottom={'2'}   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text} >
           For the app to work properly, you must allow the app the following permissions:
@@ -148,9 +133,9 @@ export const IntroScreen =  () => {
         Users are able to delete their accounts and the data associated with it. The data collected by the app is not shared with any third party. The data is only used for research purposes.
         </Text>
 
-      {/* <Text fontSize="md" marginBottom={'2'} bold   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
-      Made with ❤️ in Puerto Rico 🇵🇷
-        </Text> */}
+      <Text fontSize="md" marginBottom={'2'} bold   style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+      Made with ❤️ in 🇵🇷
+        </Text>
     </Box>
     
    
