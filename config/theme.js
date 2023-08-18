@@ -24,15 +24,13 @@ const darkMode = {
     color: '#98c1d9',
   },
   TextInput:{
-    
         backgroundColor: 'white',
         borderRadius: 8,
         flexDirection: 'row',
-        padding: 12,
-        marginVertical: 12,
+        padding: 2,
+        margin: 2,
+        marginVertical: 8,
         width: '90%',
-        borderWidth: 1,
-        borderColor: 'grey'
       
   },
   Button:{
@@ -203,6 +201,8 @@ LoginBtn:{
   justifyContent: 'center',
   borderRadius: 10,
   width: '50%',
+  padding: 5,
+  margin: 5,
   height: 50,
   backgroundColor: '#3d5a80',
 } ,Map:{

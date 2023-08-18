@@ -1,15 +1,19 @@
-import { Button, FormErrorMessage, TextInput, View } from "../components";
+import { Alert, View } from 'react-native'
+// import { Button, FormErrorMessage, TextInput, View } from "../components";
 import {
+  Button,
   Center,
   Checkbox,
   HStack,
   Heading,
   Image,
+  Input,
   Modal,
   Text,
 } from "native-base";
+import { FormErrorMessage, TextInput } from "../components";
 import { Images, auth, darkMode, lightMode, provider } from "../config";
-import React, { useState } from "react";
+import React, { useState } from 'react'
 import { StyleSheet, useColorScheme } from "react-native";
 import { signInWithEmailAndPassword, signInWithRedirect } from "firebase/auth";
 
@@ -19,6 +23,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import {PrivacyPolicy} from "../assets/PrivacyPolicy";
 import { loginValidationSchema } from "../utils";
 import logo from "../assets/car-blue.png";
+import { supabase } from '../utils/supabase'
 import { useTogglePasswordVisibility } from "../hooks";
 
 export const LoginScreen = ({ navigation }) => {
@@ -26,15 +31,26 @@ export const LoginScreen = ({ navigation }) => {
   const { passwordVisibility, handlePasswordVisibility, rightIcon } =
     useTogglePasswordVisibility();
 
-  const handleLogin = (values) => {
-    const { email, password } = values;
-    signInWithEmailAndPassword(auth, email, password).catch((error) =>
-      setErrorState(error.message)
-    );
-  };
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+  
   const colorScheme = useColorScheme();
   const [showModal, setShowModal] = useState(false);
   const [checkbox, setCheckbox] = useState(false);
+  const [loading, setLoading] = useState(false)
+
+  async function signInWithEmail() {
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
+
+    if (error) Alert.alert(error.message)
+    setLoading(false)
+  }
+
+  
   return (
     <View isSafe style={ colorScheme == "dark" ? darkMode.View : lightMode.View }>
       <KeyboardAwareScrollView
@@ -75,7 +91,7 @@ export const LoginScreen = ({ navigation }) => {
                     colorScheme == "dark" ? darkMode.Title : lightMode.Title
                   }
                 >
-                  Mayaguez Transit Tracker
+                  Mayaguez Transit Tracker{" "}
                 </Text>
 
                 {/* Input fields */}
@@ -122,18 +138,27 @@ export const LoginScreen = ({ navigation }) => {
                 <Button
                   onPress={
                     checkbox
-                      ? handleSubmit
+                      ? signInWithEmail
                       : () => {
                           alert("Please accept terms and read conditions");
                         }
                   }
                   style={
-                    colorScheme == "dark"
-                      ? darkMode.LoginBtn
-                      : lightMode.LoginBtn
-                  }
+              colorScheme == "dark"
+                ? darkMode.LoginBtn
+                : lightMode.LoginBtn
+                
+            }
+
                 >
-                  <Text>Login</Text>
+                  <Text
+                  style={
+              colorScheme == "dark"
+                ? darkMode.Text
+                : lightMode.Text
+                
+            }
+                  >Login</Text>
                 </Button>
               </>
             )}
@@ -192,7 +217,7 @@ export const LoginScreen = ({ navigation }) => {
                     onPress={() => {
                       setShowModal(false);
                     }}
-                    style={useColorScheme == 'dark'? darkMode.subtleBtn : lightMode.subtleBtn}
+                    style={useColorScheme == 'dark'? darkMode.textMain : lightMode.textMain}
                   >
                     <Text>Continue</Text>
                   </Button>
@@ -201,23 +226,106 @@ export const LoginScreen = ({ navigation }) => {
             </Modal>
           </Center>
           <Button
-            style={styles.borderlessButtonContainer}
+            style={
+              colorScheme == "dark"
+                ? darkMode.LoginBtn
+                : lightMode.LoginBtn
+            }
             borderless 
             
             title={"Create a new account?"}
             onPress={() => navigation.navigate("Signup")}
-          />
+          >
+           <Text
+              style={ colorScheme == "dark" ? darkMode.Text : lightMode.Text }
+            > New Acount
+            </Text>
+          </Button>
           <Button
-            style={styles.borderlessButtonContainer}
+            style={
+              colorScheme == "dark"
+                ? darkMode.LoginBtn
+                : lightMode.LoginBtn
+                
+            }
             borderless
             title={"Forgot Password"}
             onPress={() => navigation.navigate("ForgotPassword")}
-          />
+          >
+            <Text
+              style={ colorScheme == "dark" ? darkMode.Text : lightMode.Text }
+            > Forgot Password
+            </Text>
+          </Button>
         </View>
       </KeyboardAwareScrollView>
     </View>
   );
 };
+
+
+
+// export const LoginScreen = ({ navigation }) => {
+//   const [email, setEmail] = useState('')
+//   const [password, setPassword] = useState('')
+//   const [loading, setLoading] = useState(false)
+
+//   async function signInWithEmail() {
+//     setLoading(true)
+//     const { error } = await supabase.auth.signInWithPassword({
+//       email: email,
+//       password: password,
+//     })
+
+//     if (error) Alert.alert(error.message)
+//     setLoading(false)
+//   }
+
+//   async function signUpWithEmail() {
+//     setLoading(true)
+//     const { error } = await supabase.auth.signUp({
+//       email: email,
+//       password: password,
+//     })
+
+//     if (error) Alert.alert(error.message)
+//     setLoading(false)
+//   }
+
+//   return (
+//     <View style={styles.container}>
+//       <View style={
+//         styles.input
+//       }>
+//         <Input
+//           label="Email"
+//           leftIcon={{ type: 'font-awesome', name: 'envelope' }}
+//           onChangeText={(text) => setEmail(text)}
+//           value={email}
+//           placeholder="email@address.com"
+//           autoCapitalize={'none'}
+//         />
+//       </View>
+//       <View style={styles.verticallySpaced}>
+//         <Input
+//           label="Password"
+//           leftIcon={{ type: 'font-awesome', name: 'lock' }}
+//           onChangeText={(text) => setPassword(text)}
+//           value={password}
+//           secureTextEntry={true}
+//           placeholder="Password"
+//           autoCapitalize={'none'}
+//         />
+//       </View>
+//       <View style={[styles.verticallySpaced, styles.mt20]}>
+//         <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
+//       </View>
+//       <View style={styles.verticallySpaced}>
+//         <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
+//       </View>
+//     </View>
+//   )
+// }
 
 const styles = StyleSheet.create({
   container: {

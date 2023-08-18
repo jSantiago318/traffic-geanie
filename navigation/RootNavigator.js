@@ -2,41 +2,40 @@ import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/
 import React, { useContext, useEffect, useState } from 'react';
 
 import { AppStack } from './AppStack';
+import { Auth } from '../screens';
 import { AuthStack } from './AuthStack';
 import { AuthenticatedUserContext } from '../providers';
 import { LoadingIndicator } from '../components';
-import { auth } from '../config';
-import { onAuthStateChanged } from 'firebase/auth';
+// import { onAuthStateChanged } from 'firebase/auth';
+// supabase auth
+import { Session } from '@supabase/supabase-js';
+import {supabase} from '../utils/supabase'
 import { useColorScheme } from 'react-native';
 
 export const RootNavigator = () => {
-  const { user, setUser } = useContext(AuthenticatedUserContext);
+  // const { user, setUser } = useContext(AuthenticatedUserContext);
+  const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
   const theme = useColorScheme();
+  const [session, setSession] = useState<Session | null>(null)
 
   useEffect(() => {
-    
-  
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
 
-    const unsubscribeAuthStateChanged = onAuthStateChanged(
-      auth,
-      authenticatedUser => {
-        authenticatedUser ? setUser(authenticatedUser) : setUser(null);
-        setIsLoading(false);
-      }
-    );
-
-    // unsubscribe auth listener on unmount
-    return unsubscribeAuthStateChanged;
-  }, [user]);
-
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+    setIsLoading(false);
+  }, [])
   if (isLoading) {
     return <LoadingIndicator />;
   }
 
   return (
     <NavigationContainer  theme={theme === 'dark' ? DarkTheme : DefaultTheme } >
-      {user ? <AppStack /> : <AuthStack />}
+      {session && session.user ? <Account key={session.user.id} session={session} /> : <Auth />}
     </NavigationContainer>
   );
 };

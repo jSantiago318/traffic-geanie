@@ -19,3 +19,4 @@ export const passwordResetSchema = Yup.object().shape({
     .label('Email')
     .email('Enter a valid email')
 });
+

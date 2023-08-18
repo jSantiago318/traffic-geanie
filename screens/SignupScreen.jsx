@@ -1,36 +1,42 @@
 import { Button, FormErrorMessage, TextInput, View } from "../components";
 import { Center, Checkbox, HStack, Image, Modal, Text } from "native-base";
-import React, { useState } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
-import { auth, database } from "../config/firebase";
 import { darkMode, lightMode } from "../config";
+import { useEffect, useState } from 'react'
 
 import { AntDesign } from '@expo/vector-icons';
 import { Formik } from "formik";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { PrivacyPolicy } from "../assets/PrivacyPolicy";
-import { getCurrentTime } from "../utils";
+import React from "react";
 import { loginValidationSchema } from "../utils";
 import logo from "../assets/car-blue.png";
-import { signupValidationSchema } from "../utils";
+import {supabase} from "../utils/supabase";
 import { useTogglePasswordVisibility } from "../hooks";
-import { useState, useEffect } from 'react'
-import { createClient } from '@supabase/supabase-js'
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
 
 export const SignupScreen = ({ navigation }) => {
   const [errorState, setErrorState] = useState("");
   const { passwordVisibility, handlePasswordVisibility, rightIcon } =
     useTogglePasswordVisibility();
-    const supabase = createClient('https://<project>.supabase.co', '<your-anon-key>')
-  const handleLogin = (values) => {
+
+
+  const handleLogin = async (values) => {
     const { email, password } = values;
-    signInWithEmailAndPassword(auth, email, password).catch((error) =>
-      setErrorState(error.message)
-    );
-  };
+
+    try {
+       const { user, session, error } = await supabase.auth.signUp({
+        email,
+        password,
+      })
+      
+      if (error) throw error
+      alert('Signed in!')
+      
+    } catch (error) {
+      alert(error.error_description || error.message)
+    }  
+  }
+
   const colorScheme = useColorScheme();
   const [showModal, setShowModal] = useState(false);
   const [checkbox, setCheckbox] = useState(false);

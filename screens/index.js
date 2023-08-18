@@ -1,3 +1,4 @@
+import { Auth } from './Auth';
 import {FeedbackScreen} from './FeedbackScreen';
 import { ForgotPasswordScreen } from './ForgotPasswordScreen';
 import { HomeScreen } from './HomeScreen';
@@ -7,4 +8,4 @@ import { MapScreen } from './MapScreen';
 import {SettingsScreen} from './SettingsScreen';
 import { SignupScreen } from './SignupScreen';
 import { TicketScreen } from './TicketScreen';
-export { LoginScreen, SignupScreen, HomeScreen,TicketScreen,FeedbackScreen, IntroScreen, ForgotPasswordScreen, MapScreen , SettingsScreen};
+export { LoginScreen, SignupScreen, HomeScreen,TicketScreen,FeedbackScreen, IntroScreen, ForgotPasswordScreen, MapScreen, Auth , SettingsScreen};
