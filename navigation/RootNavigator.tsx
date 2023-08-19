@@ -17,7 +17,7 @@ export const RootNavigator = () => {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true);
   const theme = useColorScheme();
-  const [session, setSession] = useState<Session | null>(null)
+  const [session, setSession] = useState(null)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -35,7 +35,10 @@ export const RootNavigator = () => {
 
   return (
     <NavigationContainer  theme={theme === 'dark' ? DarkTheme : DefaultTheme } >
-      {session && session.user ? <Account key={session.user.id} session={session} /> : <Auth />}
+      {session && session.user ?
+        <AppStack />
+        : <AuthStack />
+      }
     </NavigationContainer>
   );
 };
