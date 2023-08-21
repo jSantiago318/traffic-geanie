@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import Auth from '../screens/Auth';
-import HomeScreen from '../screens/HomeScreen';
+import {Auth} from '../screens/Auth';
+import {HomeScreen} from '../screens/HomeScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 

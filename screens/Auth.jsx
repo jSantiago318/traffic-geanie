@@ -1,5 +1,5 @@
 import { Alert, StyleSheet } from 'react-native'
-import { Button, Input, View } from 'native-base'
+import { Button, Input, Text, View } from 'native-base'
 import React, { useState } from 'react'
 
 import { supabase } from '../utils/supabase'
@@ -51,10 +51,14 @@ export const Auth = () => {
         />
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Button disabled={loading} onPress={() => signInWithEmail()} />
+        <Button disabled={loading} onPress={() => signInWithEmail()} >
+          <Text style={{ color: 'white' }}>Sign In</Text>
+        </Button>
       </View>
       <View style={styles.verticallySpaced}>
-        <Button disabled={loading} onPress={() => signUpWithEmail()} />
+        <Button disabled={loading} onPress={() => signUpWithEmail()} >
+          <Text style={{ color: 'white' }}>Sign Up</Text>
+        </Button>
       </View>
     </View>
   )
