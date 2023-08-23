@@ -83,6 +83,16 @@ export function getStops() {
     return stops
   }
   
+  export function getStopByIdOnline(id) {
+    async function getURL(url) {
+      const response = await fetch("https://proba.live/api/where/stops-for-route/"+url+".json?key=TEST");
+      const data = await response.json();
+      const stops = data.data.entry.stopGroupings[0].stopGroups[0].stopIds
+      return stops;
+    } 
+    return getURL(id)
+  }
+
   export function getStopById(id) {
     return stops.find((s) => s.id === id)
   }

@@ -71,7 +71,7 @@ const darkMode = {
     width: '90%',
     justifyContent: 'center',
     borderRadius: 10,
-    padding: 5,
+    padding: 10,
     margin: 5,
   },
   Select:{

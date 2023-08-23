@@ -2,7 +2,7 @@ import { HStack, Icon, Text } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, useColorScheme } from 'react-native';
 
-export const StopRender = ({stop}) => {
+export const StopRender = ({stop, index}) => {
   const [allStops, setAllStops] = useState([]);
   const [stopName, setStopName] = useState([]);
   const [predStop, setPredStop] = useState([]);
@@ -95,7 +95,7 @@ const TimePred = () => {
     <View style={styles.card}>
     <HStack space={2} justifyContent={'space-between'}>
       {
-        stopName.length > 0 ? <Text> {stopName} </Text> :<Text> {stop} </Text>
+        stopName.length > 0 ? <Text> #{index +1} {stopName} </Text> :<Text> {stop} </Text>
       }
       {/* {
         allStops.length > 0 ? <Text> {new Date(getNextStop(allStops)).toLocaleTimeString()} </Text> :<Text> loading... </Text>
