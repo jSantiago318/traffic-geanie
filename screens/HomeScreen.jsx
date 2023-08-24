@@ -24,13 +24,32 @@ export const HomeScreen = () => {
   const [busCount, setBusCount] = React.useState(0);
   const [activeTripCount, setActiveTripCount] = React.useState(0);
   const colorScheme = useColorScheme();
+  const [location, setLocation] = useState(null);
   // show modal
   setInterval(() => {
     setBusCount(getOnlineCount());
     setActiveTripCount(getOnlineActiveTripsCount());
   }, 1000);
 
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+            let loc = await Location.getCurrentPositionAsync({
+        enableHistory: true,
+        enableHighAccuracy: true,
+      })
+      setLocation(loc)
+      if (location.coords.latitude != lat && location.coords.longitude != lon) {
+        setBackLoc([...backLoc, {lat: location.coords.latitude, lon: location.coords.longitude}])
+      }
+
+
+
+      let adsAccess = await 
+    })();
   
+
+}, [location]);
 
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
