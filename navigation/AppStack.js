@@ -15,8 +15,8 @@ export const AppStack = () => {
     <Drawer.Navigator>
 
       <Drawer.Screen name='Map' component={MapScreen} />
-      <Drawer.Screen name='Home' component={HomeScreen}   />
       <Drawer.Screen name='Settings' component={SettingsScreen} />
+      <Drawer.Screen name='Home' component={HomeScreen}   />
 
     </Drawer.Navigator>
   );

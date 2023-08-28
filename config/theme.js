@@ -219,15 +219,30 @@ LoginBtn:{
   height: 50,
   backgroundColor: '#98c1d9',
 },
+Input:{
+  borderRadius: 8,
+  padding: 12,
+  margin: 2,
+  marginVertical: 8,
+  width: '90%',
+ },
 
   
 };
 
 
 const lightMode = {
-  TextInput:{
+  ModalBody:{
+    width: '90%',
+    justifyContent: 'center',
+    alignContent: 'center',
+    borderRadius: 10,
+    padding: 5,
+    margin: 5,
     
-        backgroundColor: 'white',
+  },
+  TextInput:{
+        backgroundColor: '#e0fbfc',
         borderRadius: 8,
         flexDirection: 'row',
         padding: 12,
@@ -238,7 +253,7 @@ const lightMode = {
       
   },
   Button:{
-    backgroundColor: '#e0fbfc',
+    backgroundColor: '#98c1d9',
     width: '50%',
     justifyContent: 'center',
     borderRadius: 10,
@@ -262,13 +277,13 @@ const lightMode = {
       width:'100%',
   },
   Input:{
-    backgroundColor: '#e0fbfc',
+    borderRadius: 8,
+    padding: 12,
+    margin: 2,
+    marginVertical: 8,
     width: '90%',
-    justifyContent: 'center',
-    borderRadius: 10,
-    padding: 5,
-    
-  },
+   },
+  
   card: '#3d5a80',
 
   subtleBtn:{

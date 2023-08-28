@@ -1,3 +1,7 @@
+// import {darkMode, lightMode} from '../config/theme'
+import * as Location from "expo-location";
+import * as TaskManager from "expo-task-manager";
+
 import {
   Box,
   Button,
@@ -10,7 +14,6 @@ import {
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
-// import {darkMode, lightMode} from '../config/theme'
 import {
   getOnlineActiveTripsCount,
   getOnlineCount,
@@ -25,6 +28,7 @@ export const HomeScreen = () => {
   const [activeTripCount, setActiveTripCount] = React.useState(0);
   const colorScheme = useColorScheme();
   const [location, setLocation] = useState(null);
+  const [session, setSession] = useState(null);
   // show modal
   setInterval(() => {
     setBusCount(getOnlineCount());
@@ -34,26 +38,25 @@ export const HomeScreen = () => {
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-            let loc = await Location.getCurrentPositionAsync({
-        enableHistory: true,
-        enableHighAccuracy: true,
-      })
-      setLocation(loc)
-      if (location.coords.latitude != lat && location.coords.longitude != lon) {
-        setBackLoc([...backLoc, {lat: location.coords.latitude, lon: location.coords.longitude}])
+      // console.log(status);
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
       }
-
-
-
-      let adsAccess = await 
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+      let backPerm = await Location.requestBackgroundPermissionsAsync();
+      console.log(backPerm);
+      // console.log(location);
     })();
+    
+  }, []);
+
   
 
-}, [location]);
 
   return (
     <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
-    
       <View style={colorScheme == "dark" ? darkMode.CardView : lightMode.CardView}>
         <Center>
           <Text
@@ -178,5 +181,6 @@ const lightMode = StyleSheet.create({
   Card:{
     width:'100%',
     backgroundColor: '#8CCCF4',
-  }
+  },
+  
 })

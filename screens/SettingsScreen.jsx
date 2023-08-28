@@ -15,138 +15,233 @@ import {
   useColorMode,
   useTheme,
 } from "native-base";
+import React, { useEffect } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
-import { deleteUser, getAuth } from "firebase/auth";
 
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
-import { auth } from "../config";
-import { signOut } from "firebase/auth";
+import { supabase } from "../utils/supabase";
 
 export const SettingsScreen = () => {
   const colorScheme = useColorScheme();
   const [showModal, setShowModal] = React.useState(false);
-  const handleLogout = () => {
-    signOut(auth).catch((error) => console.log("Error logging out: ", error));
+  const [dbSession, setDbSession] = React.useState(null);
+  const [email, setEmail] = React.useState(null);
+  const [uid, setuid] = React.useState(null);
+  const [verify, setVerify] = React.useState(false);
+
+  const deleteUser = async () => {
+    const { error } = await supabase.rpc("delete_user");
+    const { errors } = await supabase.auth.signOut();
+
+    if (error) {
+      console.log(error);
+    }
   };
-  const id = getAuth().currentUser?.uid;
-  const cUser = getAuth().currentUser;
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+  };
+
+  const checkProfile = async () => {
+    const { data , error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("email", email);
+    
+    if (error) {
+      console.log(error);
+    }
+    if(data.length == 0){
+      const { data, error } = await supabase
+      .from("profiles")
+      .insert([{ email: email, username: email, exp: 10, user_id: uid }]);
+      setDbSession(0);
+    }
+    else{
+      setDbSession(0);
+    }
+
+    // if (error == null) { 
+    //   const { data, error } = await supabase
+    //     .from("profiles")
+    //     .insert([{ email: email, username: email, exp: 10, user_id: uid }]);
+    //     setDbSession(0);
+       
+    // } 
+  };
+
+  useEffect(() => {
+    (async () => {
+      if (email == null) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        setEmail(user.email);
+        setuid(user.id);
+      }
+      if(
+        dbSession == null
+      ){
+        const { data , error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("email", email)
+        console.log(data)
+        if (error) {
+          console.log(error);
+        }
+      }
+
+    
+    })();
+  }, [email, dbSession]);
 
   return (
     <View style={colorScheme === "dark" ? darkMode.View : lightMode.View}>
       {/* <Center> */}
-        <Container>
-          <Heading
-            style={
-              colorScheme === "dark"
-                ? darkMode.TextHeading
-                : lightMode.TextHeading
-            }
-          >
-            Account
-          </Heading>
+      <Container>
+        <Heading
+          style={
+            colorScheme === "dark"
+              ? darkMode.TextHeading
+              : lightMode.TextHeading
+          }
+        >
+          Account
+        </Heading>
 
-          <Text style={colorScheme === "dark" ? darkMode.Text : lightMode.Text}>
-            Email: {getAuth().currentUser?.email}
-          </Text>
-          <Heading
-            style={
-              colorScheme === "dark"
-                ? darkMode.TextHeading
-                : lightMode.TextHeading
-            }
-          >
-            Settings
-          </Heading>
-
+        <Text style={colorScheme === "dark" ? darkMode.Text : lightMode.Text}>
+          {email}
+        </Text>
+        {dbSession == 0 ? (
+          <Text>✅ Verified User</Text>
+        ) : (
           <Button
-            style={
-              colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
-            }
-            title="Delete Account"
-            variant={"ghost"}
-            onPress={() => setShowModal(true)}
+            style={colorScheme === "dark" ? darkMode.Button : lightMode.Button}
+            onPress={checkProfile}
           >
-            Delete Account
+            Verify User
           </Button>
-          <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-            <Modal.Content maxWidth="70%">
-              <Modal.CloseButton />
-              <Modal.Header>Delete Account</Modal.Header>
-              <Modal.Body>
-                <FormControl>
-                  <FormControl.Label>
-                    Data is non recoverable. Are you sure you want to delete
-                    your account?
-                  </FormControl.Label>
-                </FormControl>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button.Group space={2}>
-                  <Button
-                    variant="ghost"
-                    colorScheme="blueGray"
-                    onPress={() => {
-                      setShowModal(false);
-                    }}
-                  >
-                    No
-                  </Button>
-                  <Button
-                    onPress={() => {
-                      deleteUser(cUser).then(() => {
-                        setShowModal  (false);
-                      })
-                    }}
-                  >
-                    Yes
-                  </Button>
-                </Button.Group>
-              </Modal.Footer>
-            </Modal.Content>
-          </Modal>
+        )}
+        <Button
+          style={
+            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
+          }
+          variant={"ghost"}
+        >
+          Change Account Data
+        </Button>
+        <Button
+          style={
+            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
+          }
+          variant={"ghost"}
+        >
+          View Trips
+        </Button>
+        <Button
+          style={
+            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
+          }
+          variant={"ghost"}
+          onPress={() => setShowModal(true)}
+        >
+          View Alarms
+        </Button>
+        <Heading
+          style={
+            colorScheme === "dark"
+              ? darkMode.TextHeading
+              : lightMode.TextHeading
+          }
+        >
+          Profile
+        </Heading>
+        
+        <Button
+          style={
+            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
+          }
+          variant={"ghost"}
+          onPress={() => setShowModal(true)}
+        >
+          Delete Account
+        </Button>
 
-          <Button
-            style={
-              colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
-            }
-            title="Privacy"
-            variant={"ghost"}
-            onPress={() =>
-              console.log(
-                "https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7"
-              )
-            }
-          >
-            Privacy Privacy
-          </Button>
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+          <Modal.Content maxWidth="70%">
+            <Modal.CloseButton />
+            <Modal.Header>Delete Account</Modal.Header>
+            <Modal.Body>
+              <FormControl>
+                <FormControl.Label>
+                  Data is non recoverable. Are you sure you want to delete your
+                  account?
+                </FormControl.Label>
+              </FormControl>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="ghost"
+                  colorScheme="blueGray"
+                  onPress={() => {
+                    setShowModal(false);
+                  }}
+                >
+                  No
+                </Button>
+                <Button
+                  onPress={() => {
+                    deleteUser();
+                  }}
+                >
+                  Yes
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
 
-          <Button
-            style={
-              colorScheme === "dark"
-                ? darkMode.outlineBtn
-                : lightMode.outlineBtn
-            }
-            title="Log Out"
-            variant={"ghost"}
-            onPress={handleLogout}
-          >
-            Log Out
-          </Button>
-        </Container>
+        <Button
+          style={
+            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
+          }
+          title="Privacy"
+          variant={"ghost"}
+          onPress={() =>
+            console.log(
+              "https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7"
+            )
+          }
+        >
+          Privacy Privacy
+        </Button>
+
+        <Button
+          style={
+            colorScheme === "dark" ? darkMode.outlineBtn : lightMode.outlineBtn
+          }
+          title="Log Out"
+          variant={"ghost"}
+          onPress={handleLogout}
+        >
+          Log Out
+        </Button>
+      </Container>
       {/* </Center> */}
     </View>
   );
 };
 
 const darkMode = StyleSheet.create({
-  View:{
+  View: {
     flex: 1,
-      // justifyContent: 'center',
-      paddingTop: 30,
-      alignItems: 'center',
-      backgroundColor: '#293241',
-      width:'100%',
+    // justifyContent: 'center',
+    paddingTop: 30,
+    alignItems: "center",
+    backgroundColor: "#293241",
+    width: "100%",
   },
   Text: {
     fontSize: 13,
@@ -158,26 +253,24 @@ const darkMode = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
   },
-  subtleBtn:{
-    backgroundColor: 'transparent',
+  subtleBtn: {
+    backgroundColor: "transparent",
     borderRadius: 10,
     padding: 5,
-
-  }, outlineBtn:{
-    borderRadius: 10,
-    padding: 5,
-
   },
-  
-})
+  outlineBtn: {
+    borderRadius: 10,
+    padding: 5,
+  },
+});
 
 const lightMode = StyleSheet.create({
-  View:{
+  View: {
     flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      width:'100%',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    width: "100%",
   },
   Text: {
     fontSize: 13,
@@ -189,15 +282,13 @@ const lightMode = StyleSheet.create({
     fontWeight: "bold",
     color: "#293241",
   },
-  subtleBtn:{
-    backgroundColor: 'transparent',
+  subtleBtn: {
+    backgroundColor: "transparent",
     borderRadius: 10,
     padding: 5,
-
-  }, outlineBtn:{
-    borderRadius: 10,
-    padding: 5,
-
   },
-  
-})
+  outlineBtn: {
+    borderRadius: 10,
+    padding: 5,
+  },
+});

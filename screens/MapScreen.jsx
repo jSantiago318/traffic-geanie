@@ -14,7 +14,6 @@ import {
   Text,
   VStack,
 } from "native-base";
-import { Colors, darkMode, lightMode } from "../config";
 import {
   Dimensions,
   Image,
@@ -31,16 +30,20 @@ import MapView, {
 } from "react-native-maps";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useState } from "react";
+import { darkMode, lightMode } from "../config";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import { getStopById, getStopByIdOnline, getStops } from "../assets/gtfs/stops";
 
 import { Pedometer } from "expo-sensors";
+import { Session } from '@supabase/supabase-js'
+import Shapes from "../assets/gtfs/shapes.json";
+import { supabase } from "../utils/supabase";
 import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
-const Shapes = require("../assets/gtfs/shapes.json");
-export const MapScreen = () => {
+export const MapScreen = (
+) => {
   const colorScheme = useColorScheme();
   const [location, setLocation] = useState(null);
   const routeStops = useState();
@@ -59,8 +62,9 @@ export const MapScreen = () => {
   const [runTime, setRunTime] = useState(false);
   const [stp, setStp] = useState([]);
   const [stp1, setStp1] = useState([]);
-  const [selectTraveler, setSelectTraveler] = useState(true);
+  const [selectTraveler, setSelectTraveler] = useState(false);
   const memoStop = React.useMemo(() => getStops(), []);
+  const memoRt = React.useMemo(() => Shapes, []);
   const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
   const [pastStepCount, setPastStepCount] = useState(0);
   const [currentStepCount, setCurrentStepCount] = useState(0);
@@ -71,86 +75,8 @@ export const MapScreen = () => {
   const [markers, setMarkers] = useState(null);
   const [nobusDestination, setNoBusDestination] = useState(false);
   const TASK_FETCH_LOCATION = 'TASK_FETCH_LOCATION';
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      let loc = await Location.getCurrentPositionAsync({
-        enableHistory: true,
-        enableHighAccuracy: true,
-        accuracy: Location.Accuracy.BestForNavigation,
-        timeInterval: 3000,
-      });
-      setLocation(loc);
-      if (runTime) {
-        console.log(
-        backLoc
-        );
-        setBackLoc([
-          ...backLoc,
-          {
-            latitude: location?.coords.latitude,
-            longitude: location?.coords.longitude,
-          },
-        ]);
-      }
-    })();
-  }, [location]);
-  
-
-  // 1 define the task passing its name and a callback that will be called whenever the location changes
-TaskManager.defineTask(TASK_FETCH_LOCATION, async ({ data: { locations }, error }) => {
-  if (error) {
-    console.error(error);
-    return;
-  }
-  const [location] = locations;
-  try {
-    const url = `https://<your-api-endpoint>`;
-    await axios.post(url, { location }); // you should use post instead of get to persist data on the backend
-  } catch (err) {
-    console.error(err);
-  }
-});
-
-// 2 start the task
-Location.startLocationUpdatesAsync(TASK_FETCH_LOCATION, {
-  accuracy: Location.Accuracy.Highest,
-  distanceInterval: 1, // minimum change (in meters) betweens updates
-  deferredUpdatesInterval: 1000, // minimum interval (in milliseconds) between updates
-  // foregroundService is how you get the task to be updated as often as would be if the app was open
-  foregroundService: {
-    notificationTitle: 'Using your location',
-    notificationBody: 'To turn off, go back to the app and switch something off.',
-  },
-});
-
-// 3 when you're done, stop it
-Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
-  if (value) {
-    Location.stopLocationUpdatesAsync(TASK_FETCH_LOCATION);
-  }
-});
-
-
-  const subscribe = async () => {
-    const isAvailable = await Pedometer.isAvailableAsync();
-    setIsPedometerAvailable(String(isAvailable));
-
-    if (isAvailable) {
-      const end = new Date();
-      const start = new Date();
-      start.setDate(end.getDate() - 1);
-
-      const pastStepCountResult = await Pedometer.getStepCountAsync(start, end);
-      if (pastStepCountResult) {
-        setPastStepCount(pastStepCountResult.steps);
-      }
-
-      return Pedometer.watchStepCount((result) => {
-        setCurrentStepCount(result.steps);
-      });
-    }
-  };
+  const [uid, setUid] = useState(null);
+  const [tripId, setTripId] = useState(null);
 
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
@@ -161,19 +87,121 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
     if (runTime) {
       if (seconds < 10) {
         const tm = minutes + ":0" + seconds;
-        setTripTime(tm);
         return tm;
       } else {
         const tm = minutes + ":" + seconds;
-        setTripTime(tm);
         return tm;
       }
     }
   }
 
+  useEffect(() => {
+    (async () => {
+      if(uid == null){
+        const {
+          data: { user, error },
+        } = await supabase.auth.getUser();       
+         if (error) {
+          console.log(error);
+        }
+        if (user) {
+          setUid(user.email);
+        }
+      }
+      if (location == null|| runTime == true) {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Permission to access location was denied",
+          )
+          return;
+        }
+        let location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.BestForNavigation,
+          timeInterval: 1000,
+          distanceInterval: 10,
+        });
+        setLocation(location);
+        console.log(location);
+      }
+    })();
+  }, [uid, location]);
+
+  async function submitTripSupa(){
+
+  }
+
+  async function startTripSupa(){
+                if (travelingBy == "bus") {
+                  if (startStop && finalStop) {
+                    setConfirmSelect(true);
+                    setRunTime(true);
+                    start();
+                    setConfirm(2);
+                     const { data , error } = await supabase
+      .from("trips")
+      .insert([
+        {location_start: {
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude,
+          startStop: startStop,
+        }, 
+        travel:[ {
+          travelingBy: travelingBy,
+        }],
+        email: uid,
+        seq: 0,
+        trip_status: 'started'
+        }
+      ])
+                  }
+                } else {
+                     
+                  if (seconds == 0) {
+                    start();
+                    setRunTime(true);
+                    setConfirm(1);
+                        const { data , error } = await supabase
+      .from("trips")
+      .insert([
+        {location_start: {
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude,
+          startStop: startStop,
+        }, 
+        travel:[ {
+          travelingBy: travelingBy,
+          time: getTimeRef(),
+        }],
+        email: uid,
+        seq: 0,
+        trip_status: 'started'
+        }
+      ])
+                    if(location){
+                      _mapView.animateToRegion({
+                      latitude: location?.coords.latitude,
+                      longitude: location?.coords.longitude,
+                      latitudeDelta: 0.0022,
+                      longitudeDelta: 0.0022,
+                    });
+                    }
+                   
+                  }
+                  
+                }
+              }
+
+  function getTimeRef(){
+    const h = hours > 9 ? hours : "0" + hours;
+    const m = minutes > 9 ? minutes : "0" + minutes;
+    const s = seconds > 9 ? seconds : "0" + seconds;
+    return h + ":" + m + ":" + s
+  }
+
   function getShapeByRouteId(routeId) {
     let coord = [];
-    Shapes.map((shape) => {
+    memoRt.map((shape) => {
       if (shape.shape_id.includes(routeId)) {
         coord.push({
           latitude: shape.shape_pt_lat,
@@ -183,6 +211,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
     });
     return coord;
   }
+  
   function returnStop(stopId) {
     if (stopId == startStop) {
       return (
@@ -207,30 +236,12 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
       );
     }
   }
-
-  let currentUserTrip = backLoc || [];
-  const MemoTrip = React.useMemo(() => {
-    if (currentUserTrip.length > 0 && (confirm == 2 || confirm == 4)) {
-      currentUserTrip.map((loc) => {
-        return (
-          <Marker
-            color="red"
-            coordinate={{
-              latitude: location?.coords.latitude,
-              longitude: location?.coords.longitude,
-            }}
-          />
-        );
-      });
-    }
-  }, [currentUserTrip]);
-
+ 
   var _mapView;
 
   return (
     <View style={styles.container}>
       <MapView
-        userLocationUpdateInterval={1000}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
         showsUserLocation={true}
@@ -250,8 +261,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
         <Marker
           draggable
           coordinate={markers}
-          onPress={()=>
-            console.log(markers)}
+          
         />:null}
         {memoStop.map((stop, index) => {
           return (
@@ -268,13 +278,13 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
                   const rt = stop.id.slice(0, 5);
                   setSelectedRoute(rt);
                 } else {
-                  setSelectedRoute(stop.id);}
+                  setSelectedRoute(stop.id);
+                  }
                 setSelectedStop(stop.id);
                 setSelectedStopName(stop.name);
               }}
             >
               {returnStop(stop.id)}
-
               <Callout
                 style={{
                   width: 200,
@@ -289,6 +299,44 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
           );
         })}
 
+{
+  memoStop.map((stop, index) => {
+    return (
+      <Marker
+        zIndex={100}
+        key={index}
+        coordinate={{
+          latitude: stop.lat,
+          longitude: stop.lon,
+        }}
+        pinColor={getRouteColor(stop.id)}
+        onPress={() => {
+          if (stop.id.length >= 4) {
+            const rt = stop.id.slice(0, 5);
+            setSelectedRoute(rt);
+          } else {
+            setSelectedRoute(stop.id);
+            }
+          setSelectedStop(stop.id);
+          setSelectedStopName(stop.name);
+        }}
+      >
+        {returnStop(stop.id)}
+        <Callout
+          style={{
+            width: 200,
+            zIndex: 100,
+            borderRadius: 10,
+          }}
+        >
+          <Text>{stop.name}</Text>
+          <Text>{stop.id}</Text>
+        </Callout>
+      </Marker>
+    );
+  })
+
+}
         {getPosition().map((device, index) => {
           const isOnline = getOnlineById(device.deviceId);
           if (isOnline == "online") {
@@ -329,14 +377,21 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
 '#D7F0C0']}
             strokeWidth={6}
         /> */}
-        {backLoc.length > 0 ? (
+       {
+         backLoc.length > 0 ? (
           <Polyline
-            coordinates={backLoc}
-            strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
-            strokeColors={["#2EB62C", "#57C84D", "#83D475", "#ABE098"]}
-            strokeWidth={6}
-          />
-        ) : null}
+          coordinates={backLoc}
+          strokeColor="#000" // fallback for when `strokeColors` is not supported by the map-provider
+          strokeColors={ ['#2EB62C',
+'#57C84D',
+'#83D475',
+'#ABE098',
+'#D7F0C0']}
+          strokeWidth={5}
+      />
+          ):null
+          
+       }
 
         {getRoutes().map((route, index) => {
           return (
@@ -423,14 +478,10 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
                 }
               }}
             >
-              <MaterialCommunityIcons
+            <MaterialCommunityIcons 
                 name="check"
                 size={18}
-                color={
-                  colorScheme == "dark"
-                    ? darkMode.Button.backgroundColor
-                    : lightMode.Button.backgroundColor
-                }
+                color={'white'}
               />
             </Button>
             <Button
@@ -455,17 +506,14 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
                 backgroundColor: "#D93729",
                 marginLeft: 5,
                 marginRight: 5,
-                padding: 0,
+                padding: 0, 
               }}
             >
-              <MaterialCommunityIcons
+              {/* material icons white */}
+              <MaterialCommunityIcons 
                 name="cancel"
                 size={18}
-                color={
-                  colorScheme == "dark"
-                    ? darkMode.Button.backgroundColor
-                    : lightMode.Button.backgroundColor
-                }
+                color={'white'}
               />
             </Button>
           </HStack>
@@ -542,11 +590,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
               <MaterialCommunityIcons
                 name="check"
                 size={18}
-                color={
-                  colorScheme == "dark"
-                    ? darkMode.Button.backgroundColor
-                    : lightMode.Button.backgroundColor
-                }
+                color={'white' }
               />
             </Button>
             <Button
@@ -566,11 +610,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
               <MaterialCommunityIcons
                 name="cancel"
                 size={18}
-                color={
-                  colorScheme == "dark"
-                    ? darkMode.Button.backgroundColor
-                    : lightMode.Button.backgroundColor
-                }
+                color={'white'}
               />
             </Button>
           </HStack>
@@ -605,7 +645,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
               size={24}
               color={
                 colorScheme == "dark"
-                  ? lightMode.Button.backgroundColor
+                  ? 'white'
                   : darkMode.Button.backgroundColor
               }
             />
@@ -669,6 +709,9 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
                     colorScheme == "dark" ? darkMode.Title : lightMode.Title
                   }
                 >
+                {
+                  hours > 9 ? hours : "0" + hours
+                }:
                   {minutes > 9 ? minutes : "0" + minutes}:
                   {seconds > 9 ? seconds : "0" + seconds}
                 </Text>
@@ -684,6 +727,18 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
                 }}
               >
                 Steps: {currentStepCount}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color:
+                    colorScheme == "dark"
+                      ? darkMode.Text.color
+                      : lightMode.Text.color,
+                }}
+              >
+                Tracking: {backLoc.length}
               </Text>
             </>
           )}
@@ -702,28 +757,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
 
                 margin: 5,
               }}
-              onPress={() => {
-                if (travelingBy == "bus") {
-                  if (startStop && finalStop) {
-                    setConfirmSelect(true);
-                    setRunTime(true);
-                    start();
-                    setConfirm(2);
-                  }
-                } else {
-                  if (seconds == 0) {
-                    start();
-                    setRunTime(true);
-                    setConfirm(1);
-                    _mapView.animateToRegion({
-                      latitude: location?.coords.latitude,
-                      longitude: location?.coords.longitude,
-                      latitudeDelta: 0.0022,
-                      longitudeDelta: 0.0022,
-                    });
-                  }
-                }
-              }}
+              onPress={async () => startTripSupa()}
             >
               <Text
                 style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
@@ -742,34 +776,29 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
                   borderRadius: 10,
                   padding: 10,
                   margin: 5,
+                  zIndex: 100,
                 }}
-                onPress={() => {
-                  if (travelingBy == "bus") {
-                    if (startStop && finalStop) {
-                      setConfirmSelect(true);
-                      setRunTime(true);
-                      pause();
-                      reset();
-                      setConfirm(2);
-                    }
-                  } else if(nobusDestination == true){
-                    setConfirmSelect(true);
-                    setRunTime(true);
-                    pause();
-                    reset();
-                    setConfirm(1);
-                  } 
-                }}
+
+                onPress={
+                  () => submitTripSupa()
+                }
               >
                 <Text
                   style={
                     colorScheme == "dark" ? darkMode.Title : lightMode.Title
                   }
                 >
-                  Sumbit Trip
+                  Submit Trip
                 </Text>
               </Button>
-              <Button
+              
+            </>
+          )}
+{
+  (
+    startStop != null || finalStop != null || markers != null
+  )? (
+    <Button
                 style={{
                   backgroundColor:
                     colorScheme == "dark"
@@ -780,13 +809,9 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
                   margin: 5,
                 }}
                 onPress={() => {
-                  reset();
-                  pause();
-                  setRunTime(false);
-                  setStartStop(null);
-                  setFinalStop(null);
-                  setConfirm(0);
-                  setNoBusDestination(false);
+                  setStartStop(null)
+                  setFinalStop(null)
+                  setMarkers(null)
                 }}
               >
                 <Text
@@ -797,9 +822,8 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
                   Clear
                 </Text>
               </Button>
-            </>
-          )}
-
+  ): null
+}
           <Button
             onPress={() => {
               setSelectTraveler(!selectTraveler);
@@ -852,7 +876,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
         >
           <Text
             style={
-              colorScheme == "dark" ? darkMode.Text.color : lightMode.Text.color
+              colorScheme == "dark" ? darkMode.Text : lightMode.Text
             }
           >
             {" "}
@@ -871,12 +895,14 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
         <Button
           onPress={() => {
             // console.log(location);
+           if(location){
             _mapView.animateToRegion({
               latitude: location?.coords.latitude,
               longitude: location?.coords.longitude,
               latitudeDelta: 0.0042,
               longitudeDelta: 0.0041,
             });
+           }
           }}
           style={{
             zIndex: 100,
@@ -900,8 +926,6 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
       {/* Show all buses */}
 
       {selectTraveler ? (
-        true
-      ) : (
         <View
           style={{
             position: "absolute",
@@ -921,6 +945,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
           <Button
             onPress={() => {
               setTravelingBy("walk");
+              setSelectTraveler(false);
             }}
             style={{
               zIndex: 100,
@@ -954,6 +979,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
           <Button
             onPress={() => {
               setTravelingBy("bus");
+              setSelectTraveler(false);
             }}
             style={{
               zIndex: 100,
@@ -987,6 +1013,8 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
           <Button
             onPress={() => {
               setTravelingBy("scooter");
+              setSelectTraveler(false);
+
             }}
             style={{
               zIndex: 100,
@@ -1020,6 +1048,8 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
           <Button
             onPress={() => {
               setTravelingBy("car");
+              setSelectTraveler(false);
+
             }}
             style={{
               zIndex: 100,
@@ -1051,7 +1081,7 @@ Location.hasStartedLocationUpdatesAsync(TASK_FETCH_LOCATION).then((value) => {
             </HStack>
           </Button>
         </View>
-      )}
+      ): null}
     </View>
   );
 };

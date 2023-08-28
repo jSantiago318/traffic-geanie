@@ -20,14 +20,15 @@ export const RootNavigator = () => {
   const [session, setSession] = useState(null)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
-
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
+      setIsLoading(false);
     })
-    setIsLoading(false);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+      setIsLoading(false);
+    })
+
   }, [])
   if (isLoading) {
     return <LoadingIndicator />;

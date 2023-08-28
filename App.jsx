@@ -1,3 +1,5 @@
+import * as TaskManager from 'expo-task-manager';
+
 import { AuthenticatedUserProvider } from './providers';
 // import '@fontsource/roboto/300.css';
 // import '@fontsource/roboto/400.css';
@@ -11,6 +13,7 @@ import { enableScreens } from 'react-native-screens';
 
 enableScreens(); 
 const App = () => {
+  
       return (
         <AuthenticatedUserProvider>
           <SafeAreaProvider>

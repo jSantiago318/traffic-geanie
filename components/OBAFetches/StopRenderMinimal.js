@@ -26,11 +26,17 @@ export const StopRenderMinimal = ({stop}) => {
           ".json?key=TEST"
           ).then((response) => response.json())
           .then((data) => {
-            setAllStops(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes)
-            const temp = stopName
-            temp.push(data.data.references.stops[0].name)
-            
-            setStopName(data.data.references.stops[0].name)
+            {
+              const temp = stopName
+              temp.push(data.data.references.stops[0].name)
+              
+              setStopName(data.data.references.stops[0].name)
+              setCurrentTime(data.currentTime);
+              if(data.data.entry.stopRouteSchedules[0] != undefined){
+  
+                setAllStops(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes)
+              }
+            }
             setCurrentTime(data.currentTime);
             // console.log(data.data.references.stops[0].name)
           });

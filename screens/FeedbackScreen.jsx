@@ -20,7 +20,6 @@ import { addDoc, collection, doc } from "firebase/firestore";
 import { deleteUser, getAuth } from "firebase/auth";
 
 import { auth } from "../config";
-import { database } from "../config/firebase";
 import { signOut } from "firebase/auth";
 import { useToast } from 'native-base';
 

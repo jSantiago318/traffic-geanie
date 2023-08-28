@@ -53,10 +53,13 @@ export const LoginScreen = ({ navigation }) => {
   
   return (
     <View isSafe style={ colorScheme == "dark" ? darkMode.View : lightMode.View }>
+
       <KeyboardAwareScrollView
         style={styles.keyboardView}
         enableOnAndroid={true}
       >
+      {/* Image  */}
+      
         <View style={styles.keyView}>
           <View style={styles.logoContainer}>
             <Image
