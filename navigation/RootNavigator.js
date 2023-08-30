@@ -2,9 +2,7 @@ import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/
 import React, { useContext, useEffect, useState } from 'react';
 
 import { AppStack } from './AppStack';
-import { Auth } from '../screens';
 import { AuthStack } from './AuthStack';
-import { AuthenticatedUserContext } from '../providers';
 import { LoadingIndicator } from '../components';
 // import { onAuthStateChanged } from 'firebase/auth';
 // supabase auth

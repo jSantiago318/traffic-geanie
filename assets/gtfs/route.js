@@ -7,28 +7,30 @@ const route =[
 {id:'RR349',name:'Ruta Rural 349',cat:'Ruta Rural',color:'#fc06da', lat:'18.189579999999992', lon:'-67.120728', latD:'0.0722', lonD:'0.0721'}
 ]
 
-export function getRoutes() {
+ function getRoutes() {
     return route
     } 
-export function getRoutesCat(){
+ function getRoutesCat(){
     return route.map(m => m.cat);
 }
 
-export function getRouteById(id) {
+ function getRouteById(id) {
     return route.find(m => m.id === id);
     }
-export function getRouteByRoute(route) {
+ function getRouteByRoute(route) {
     return route.find(m => m.route === route);
     }
-export function getRouteByCat(cat) {
+ function getRouteByCat(cat) {
     return route.find(m => m.cat === cat);
     }
     
-export function getRouteColor(id) {
+ function getRouteColor(id) {
     for (let index = 0; index < route.length; index++) {
-        if (   id.toString().includes(route[index].id)) {
+        if (`${id}`.includes(route[index].id)) {
             return route[index].color
         }
     }
     return '#B6B6B6'
     }
+
+export {getRoutes,getRoutesCat,getRouteById,getRouteByRoute,getRouteByCat,getRouteColor}

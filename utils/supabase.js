@@ -7,13 +7,13 @@ import {SUPABASE_KEY} from "@env"
 import { createClient } from '@supabase/supabase-js'
 
 const ExpoSecureStoreAdapter = {
-  getItem: (key: string) => {
+  getItem: (key) => {
     return SecureStore.getItemAsync(key)
   },
-  setItem: (key: string, value: string) => {
+  setItem: (key, value) => {
     SecureStore.setItemAsync(key, value)
   },
-  removeItem: (key: string) => {
+  removeItem: (key) => {
     SecureStore.deleteItemAsync(key)
   },
 }
@@ -23,7 +23,7 @@ const supabaseAnonKey = SUPABASE_KEY
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storage: ExpoSecureStoreAdapter as any,
+    storage: ExpoSecureStoreAdapter ,
     // storage: AsyncStorage as any,
     autoRefreshToken: true,
     persistSession: true,
