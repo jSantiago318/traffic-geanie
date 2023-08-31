@@ -6,7 +6,7 @@ const config = {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '4.1',
+    version: '4.5',
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
@@ -23,7 +23,7 @@ const config = {
     assetBundlePatterns: ['**/*'],
     "ios": {
       supportsTablet: true,
-      buildNumber: '4.1',
+      buildNumber: '4.5',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.MAPS_API_IOS
@@ -51,7 +51,7 @@ const config = {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 41,
+      "versionCode": 45,
       "package": "com.josiba.mayatransit",
       "permissions":["ACCESS_COARSE_LOCATION","ACCESS_FINE_LOCATION","ACCESS_BACKGROUND_LOCATION"]
     },
