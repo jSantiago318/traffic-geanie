@@ -10,7 +10,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "start": "expo start ",
+    "start": "expo start --dev-client",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
@@ -60,7 +60,7 @@
     "million": "^2.6.0-beta.10",
     "native-base": "^3.4.28",
     "patch-package": "^7.0.2",
-    "react": "^18.2.0",
+    "react": "18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
     "react-native": "0.71.8",

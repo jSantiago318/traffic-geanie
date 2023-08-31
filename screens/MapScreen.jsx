@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Divider,
-  FlatList,
   HStack,
   Icon,
   Stack,
@@ -18,6 +17,7 @@ import {
 import { Callout, Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import {
   Dimensions,
+  FlatList,
   Image,
   StyleSheet,
   View,
@@ -42,6 +42,7 @@ import { useStopwatch } from "react-timer-hook";
 
 export const MapScreen = () => {
   const colorScheme = useColorScheme();
+  const [seq, setSeq] = useState(1)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [selectedStop, setSelectedStop] = useState(null);
@@ -63,53 +64,56 @@ export const MapScreen = () => {
   const [uid, setUid] = useState(null);
   const [email, setEmail] = useState(null);
   const [confirm, setConfirm] = useState(null);
+  const [backLoc, setBackLoc] = useState([]);
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
   const [tripTime, setTripTime] = useState(0);
+  const [travelingByHistory, setTravelingByHistory] = useState([]);
   const memo = useMemo(() => getTime(), [hours, minutes, seconds]);
   async function getTime() {
     const h = hours > 9 ? hours : "0" + hours;
     const m = minutes > 9 ? minutes : "0" + minutes;
     const s = seconds > 9 ? seconds : "0" + seconds;
     setTripTime(h + ":" + m + ":" + s);
-
     return h + ":" + m + ":" + s;
   }
-  const [backLoc, setBackLoc] = useState([]);
-  const userLocMemo = useMemo(() => backLoc, [backLoc]);
+ 
 
   useEffect(() => {
     (async () => {
-      if (uid == null) {
+      if(uid == null){
         const {
           data: { user, error },
-        } = await supabase.auth.getUser();
-        if (error) {
+        } = await supabase.auth.getUser();       
+         if (error) {
           console.log(error);
         }
         if (user) {
           setUid(user.email);
         }
       }
-      if (location == null || runTime == true) {
+      if (location == null|| runTime == true) {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          Alert.alert("Permission to access location was denied");
+          Alert.alert(
+            "Permission to access location was denied",
+          )
           return;
         }
         let location = await Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.BestForNavigation,
           timeInterval: 1000,
-          distanceInterval: 10,
         });
         setLocation(location);
-        console.log(location);
-        if (runTime) {
-          setBackLoc((backLoc) => [...backLoc, location.coords]);
-        }
+      }
+      if(isRunning||runTime){
+        setBackLoc((backLoc) => [...backLoc, location.coords]);
       }
     })();
   }, [uid, location]);
+
+
+
   function returnStop(stopId) {
     if (stopId == startStop) {
       return (
@@ -147,48 +151,38 @@ export const MapScreen = () => {
     return coord;
   }
 
-
-
-  // const MarkerItem = block(
-  //   function Row({ stop, index }) {
-  //     return (
-  //       <Marker
-  //       zIndex={10}
-  //       key={index}
-  //       coordinate={{
-  //         latitude: stop.lat,
-  //         longitude: stop.lon,
-  //       }}
-  //       pinColor={getRouteColor(stop.id)}
-  //       onPress={() => {
-  //         if (stop.id.length >= 4) {
-  //           const rt = stop.id.slice(0, 5);
-  //           setSelectedRoute(rt);
-  //         } else {
-  //           setSelectedRoute(stop.id);
-  //         }
-  //         setSelectedStop(stop.id);
-  //         setSelectedStopName(stop.name);
-  //       }}
-  //     >
-  //       {returnStop(stop.id)}
-  //       <Callout
-  //         style={{
-  //           width: 200,
-  //           zIndex: 100,
-  //           borderRadius: 10,
-  //         }}
-  //       >
-  //         <Text>{stop.name}</Text>
-  //         <Text>{stop.id}</Text>
-  //       </Callout>
-  //     </Marker>
-  //     );
-  //   }
-  // );
-
-
-
+  async function continueTripSupa() {
+    const { data, error } = await supabase.from("trips").insert([
+      {
+        location_start: {
+          latitude: startStop?.coords.latitude,
+          longitude: startStop?.coords.longitude,
+          startStop: startStopName,
+        },
+        location_end:{
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude,
+        },
+        end_time: new  Date(location?.timestamp).toLocaleTimeString(),
+        travel: travelingBy,
+        trip_duration: tripTime,
+        email: uid, //email
+        polyline: [location],
+        seq: seq,
+        trip_status: "continued",
+      },
+    ]).then(
+      () =>{
+        const a = seq
+        setSeq(a+1)
+      }
+    )
+    if(error){
+      console.log(error)
+    }
+   
+  }
+ 
   async function submitTripSupa() {
     const { data, error } = await supabase.from("trips").insert([
       {
@@ -197,22 +191,18 @@ export const MapScreen = () => {
           longitude: startLocData?.coords.longitude,
           startStop: startStop,
         },
-        start_time: new Date(startLocData?.timestamp).toLocaleString(),
-        end_time: new Date(location?.timestamp).toLocaleString(),
+        start_time: new  Date(startLocData?.timestamp).toLocaleTimeString(),
+        end_time: new  Date(location?.timestamp).toLocaleTimeString(),
         location_end: {
           latitude: location?.coords.latitude,
           longitude: location?.coords.longitude,
           finalStop: finalStop,
         },
-        travel: [
-          {
-            travelingBy: travelingBy,
-          },
-        ],
-        trip_duration: getTime(),
-        email: email,
+        travel: travelingBy,
+        trip_duration: tripTime,
+        email: uid, //email
         polyline: backLoc,
-        seq: 1,
+        seq: seq,
         trip_status: "ended",
       },
     ]);
@@ -225,9 +215,41 @@ export const MapScreen = () => {
       setFinalStop(null);
       setSelectTraveler(false);
       setBackLoc([]);
+      pause();
       reset();
       pause();
     }
+  }
+  const _mapRef = useRef();
+
+  async function addCycle({travel, timestamp}) {
+    requestAnimationFrame(async () => {
+{
+        const { data, error } = await supabase.from("trips").insert([
+      {
+        location_start: {
+          latitude: startLocData?.coords.latitude,
+          longitude: startLocData?.coords.longitude,
+          startStop: startStop,
+        },
+        start_time:  Date(startLocData?.timestamp).toLocaleString(),
+        end_time:  Date(location?.timestamp).toLocaleString(),
+        location_end: {
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude,
+          finalStop: finalStop,
+        },
+        travel: travelingByHistory,
+        trip_duration: getTime() ,
+        email: email,
+        polyline: backLoc,
+        seq: 1,
+        trip_status: "ended",
+      },
+    ]);
+    
+}
+    });
   }
 
   async function startTripSupa() {
@@ -236,68 +258,48 @@ export const MapScreen = () => {
         if (travelingBy == "bus") {
           if (startStop && finalStop) {
             setRunTime(true);
+            reset()
             start();
             setConfirm(0);
             setStartLocData(location);
-            //                const { data , error } = await supabase
-            // .from("trips")
-            // .insert([
-            //   {location_start: {
-            //     latitude: location?.coords.latitude,
-            //     longitude: location?.coords.longitude,
-            //     startStop: startStop,
-            //   },
-            //   travel:[ {
-            //     travelingBy: travelingBy,
-            //   }],
-            //   email: uid,
-            //   seq: 0,
-            //   trip_status: 'started'
-            //   }
-            // ])
           }
         } else {
+          reset()
           start();
           setRunTime(true);
           setConfirm(1);
           setStartLocData(location);
           setConfirm(true);
-          if (location) {
-            MapView.animateToRegion({
-              latitude: location?.coords.latitude,
-              longitude: location?.coords.longitude,
-              latitudeDelta: 0.0052,
-              longitudeDelta: 0.0052,
-            });
-          }
+        
         }
       }
     });
   }
 
-  const _mapRef = useRef();
+  
 
   const animateToRegion = () => {
     let region = {
       latitude: 18.201025,
       longitude: -67.13183,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
+      latitudeDelta: 0.0092,
+      longitudeDelta: 0.0091,
     };
 
     _mapRef.current.animateToRegion(region, 1000);
   };
   const INITIAL_REGION = {
-    latitude: 18.201025,
-    longitude: -67.13183,
-    latitudeDelta: 0.0322,
-    longitudeDelta: 0.0321,
+    latitude: 18.205289, 
+    longitude: -67.13153,
+    latitudeDelta: 0.0292,
+    longitudeDelta: 0.0292,
   };
 
   return (
     <View style={styles.container}>
       <MapView
         minPoints={3}
+        nodeSize={2}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
         showsUserLocation={true}
@@ -305,8 +307,8 @@ export const MapScreen = () => {
         style={styles.map}
         initialRegion={INITIAL_REGION}
         ref={_mapRef}
+        // onMapReady={animateToRegion}
       >
-        <BusArrivalInformation trip={tripD} />
         {getRoutes().map((route, index) => {
           return (
             <Polyline
@@ -348,7 +350,7 @@ export const MapScreen = () => {
             );
           }
         })}
-        {getStops().map((stop, index) => {
+        {memoStop.map((stop, index) => {
           return (
             <Marker
               zIndex={10}
@@ -384,55 +386,59 @@ export const MapScreen = () => {
           );
         })}
 
-        {/* <For each={memoStop} memo>
-        {
-          (stop, index) => 
-          <MarkerItem stop={stop} index={index} />
-        }
-        </For> */}
+      {backLoc ? (
+        <Polyline
+          coordinates={backLoc}
+          strokeColors={["#f4ca", "#adfc", "#4f44"]}
+          strokeWidth={6}
+        />
+      ) : null}
       </MapView>
+
+      <View
+        style={{
+          position: "absolute",
+          alignContent: "center",
+          alignItems: "center",
+          justifyContent: "center",
+          top: "13%",
+          padding: 1,
+          left: 0,
+          width: "100%",
+        }}
+      >
+      <FlatList horizontal 
+        data={getRoutes()}
+      
+      />
+      </View>
       <VStack
         style={{
           position: "absolute",
           alignContent: "center",
           alignItems: "center",
           justifyContent: "center",
-          bottom: "5%",
-          padding: 10,
+          bottom: "13%",
+          padding: 1,
           left: 0,
           width: "100%",
         }}
       >
         {/* selected stop info */}
-        {selectTraveler == false ? (
-          <Button
-            onPress={() => {
-              setSelectTraveler(!selectTraveler);
-            }}
-            style={{
-              zIndex: 100,
-              margin: 3,
-              padding: 2,
-              backgroundColor:
-                colorScheme == "dark"
-                  ? darkMode.Button.backgroundColor
-                  : lightMode.Button.backgroundColor,
-            }}
-          >
-            <MaterialCommunityIcons
-              name={travelingBy}
-              size={24}
-              color={
-                colorScheme == "dark"
-                  ? lightMode.Button.backgroundColor
-                  : darkMode.Button.backgroundColor
-              }
-            />
-          </Button>
-        ) : (
-          <Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card}>
+        {selectTraveler ? (
+              <Box style={
+                {
+                  backgroundColor: colorScheme == "dark" ? darkMode.Card.backgroundColor : lightMode.Card.backgroundColor,
+                  borderRadius: 10,
+                  padding: 10,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  margin: 3,
+                  
+                }
+              }>
             <HStack space={2} alignItems="center" justifyContent="center">
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>Trip:</Text>
+              {/* <Text style={{ fontSize: 16, fontWeight: "bold" }}>Trip:</Text> */}
               <Button
                 variant={"ghost"}
                 onPress={() => {
@@ -449,7 +455,7 @@ export const MapScreen = () => {
               <Divider orientation="vertical" />
               <Button
                 variant={"ghost"}
-                onPress={() => {
+                onPress={() => { 
                   setTravelingBy("walk");
                   setSelectTraveler(false);
                 }}
@@ -464,7 +470,8 @@ export const MapScreen = () => {
               <Button
                 variant={"ghost"}
                 onPress={() => {
-                  setTravelingBy("car");
+                  setTravelingBy("car")
+                  
                   setSelectTraveler(false);
                 }}
               >
@@ -490,7 +497,22 @@ export const MapScreen = () => {
               </Button>
             </HStack>
           </Box>
-        )}
+          
+        ) : null}
+        {
+          isRunning || runTime  ? (
+            <Box style={{ 
+              backgroundColor: colorScheme == "dark" ? darkMode.Card.backgroundColor : lightMode.Card.backgroundColor,
+              borderRadius: 10,
+            }}>
+              <Button onPress={
+                () => continueTripSupa()
+              }  variant={'ghost'} style={{ borderRadius: 10, padding: 10, margin: 5, zIndex: 100, }}>
+              <Text style={{ fontSize: 16, fontWeight: "bold" }}>New Cycle</Text>
+              </Button>
+            </Box>
+          ) : null
+        }
         {travelingBy == "bus" &&
         (startStopName == null || finalStopName == null) ? (
           <HStack
@@ -503,7 +525,7 @@ export const MapScreen = () => {
               padding: 10,
               justifyContent: "center",
               alignItems: "center",
-              margin: 5,
+              margin: 3,
             }}
           >
             <Stack space={0} marginRight={3}>
@@ -552,40 +574,10 @@ export const MapScreen = () => {
             >
               <MaterialCommunityIcons name="check" size={18} color={"white"} />
             </Button>
-            <Button
-              onPress={() => {
-                if (
-                  selectedStop == startStop &&
-                  selectedStopName == startStopName
-                ) {
-                  setStartStop(null);
-                  setStartStopName(null);
-                }
-
-                if (
-                  selectedStop == finalStop &&
-                  selectedStopName == finalStopName
-                ) {
-                  setFinalStop(null);
-                  setFinalStopName(null);
-                }
-              }}
-              style={{
-                backgroundColor: "#D93729",
-                marginLeft: 5,
-                marginRight: 5,
-                padding: 0,
-              }}
-            >
-              {/* material icons white */}
-              <MaterialCommunityIcons name="cancel" size={18} color={"white"} />
-            </Button>
           </HStack>
         ) : null}
         {runTime == true &&
-        (travelingBy == "walk" ||
-          travelingBy == "car" ||
-          travelingBy == "scooter") ? (
+        ( travelingBy == "flying") ? (
           <HStack
             style={{
               backgroundColor:
@@ -698,7 +690,16 @@ export const MapScreen = () => {
           {travelingBy == "bus" ? (
             <>
               <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                Runtime: {tripTime}
+                <MaterialCommunityIcons
+                  name="timer-outline"
+                  size={18}
+                  color={
+                    colorScheme == "dark"
+                      ? darkMode.Text.color
+                      : lightMode.Text.color
+                  }
+                />{" "}
+                {tripTime}
               </Text>
               <Text
                 style={{
@@ -710,32 +711,168 @@ export const MapScreen = () => {
                       : lightMode.Text.color,
                 }}
               >
-                Route ID: {selectedRoute}
+                <MaterialCommunityIcons
+                  name="highway"
+                  size={18}
+                  color={
+                    colorScheme == "dark"
+                      ? darkMode.Text.color
+                      : lightMode.Text.color
+                  }
+                />{" "}
+                {selectedRoute}
               </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
+              <HStack
+                space={2}
+                alignItems={"center"}
+                justifyItems={"space-between"}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color:
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color,
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="bus-stop"
+                    size={18}
+                    color={
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color
+                    }
+                  />
+                    {
+                startStopName? (<Text style={{
+                  fontSize: 14,
                   color:
                     colorScheme == "dark"
                       ? darkMode.Text.color
                       : lightMode.Text.color,
-                }}
-              >
-                First Stop: {startStopName}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
+                }}>
+                {startStopName}
+                </Text>
+): (
+  <Text style={{
+                  fontSize: 14,
                   color:
                     colorScheme == "dark"
                       ? darkMode.Text.color
                       : lightMode.Text.color,
-                }}
+                }}>
+                Choose first stop
+                </Text>
+
+)
+              }
+               </Text>
+
+                {startStop != null ? (
+                  <Button
+                    variant={"ghost"}
+                    margin={1}
+                    padding={1}
+                    onPress={() => {
+                      setStartStop(null);
+                      setStartStopName(null);
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color:
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color,
+                      }}
+                    >
+                      {" "}
+                      Remove stop
+                    </Text>
+                  </Button>
+                ) : null}
+              </HStack>
+
+              <HStack
+                space={2}
+                alignItems={"center"}
+                justifyItems={"space-between"}
               >
-                Final Stop: {finalStopName}
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color:
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color,
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name="bus-stop"
+                    size={18}
+                    color={
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color
+                    }
+                  />{" "}
+                  {finalStopName ? (
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color:
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color,
+                      }}
+                    >
+                      {finalStopName}
+                    </Text>
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        color:
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color,
+                      }}
+                    >
+                      Choose final stop
+                    </Text>
+                  )}
+                </Text>
+
+                {finalStop != null ? (
+                  <Button
+                    variant={"ghost"}
+                    margin={1}
+                    padding={1}
+                    onPress={() => {
+                      setFinalStop(null);
+                      setFinalStopName(null);
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        color:
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color,
+                      }}
+                    >
+                      {" "}
+                      Remove stop
+                    </Text>
+                  </Button>
+                ) : null}
+              </HStack>
             </>
           ) : (
             <>
@@ -758,32 +895,56 @@ export const MapScreen = () => {
                   {tripTime}
                 </Text>
               </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  color:
-                    colorScheme == "dark"
-                      ? darkMode.Text.color
-                      : lightMode.Text.color,
-                }}
-              >
-                Tracking: {backLoc.length}
-              </Text>
             </>
           )}
         </Box>
 
         <HStack space={2} alignItems="center" justifyContent="center">
+          <Button
+            onPress={() => {
+              setSelectTraveler(!selectTraveler);
+            }}
+            style={{
+              zIndex: 100,
+              margin: 3,
+              padding: 2,
+              backgroundColor:
+                colorScheme == "dark"
+                  ? darkMode.Button.backgroundColor
+                  : lightMode.Button.backgroundColor,
+            }}
+          >
+            <MaterialCommunityIcons
+              name={travelingBy}
+              size={24}
+              color={
+                colorScheme == "dark"
+                  ? lightMode.Button.backgroundColor
+                  : darkMode.Button.backgroundColor
+              }
+            />
+          </Button>
+        
           {runTime == false ? (
-    <Button style={{ 
-      backgroundColor: colorScheme == 'dark' ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
-      borderRadius: 10,
-      padding: 10,
-      margin: 5,
-      zIndex: 100, }} onPress={() => startTripSupa()}>
-      <Text style={colorScheme == 'dark' ? darkMode.Title : lightMode.Title}>Start Trip</Text>
-    </Button>
+            <Button
+              style={{
+                backgroundColor:
+                  colorScheme == "dark"
+                    ? darkMode.Button.backgroundColor
+                    : lightMode.Button.backgroundColor,
+                borderRadius: 10,
+                padding: 5,
+                margin: 5,
+                zIndex: 100,
+              }}
+              onPress={() => startTripSupa()}
+            >
+              <Text
+                style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
+              >
+                Start Trip
+              </Text>
+            </Button>
           ) : (
             <>
               <Button
@@ -830,9 +991,12 @@ export const MapScreen = () => {
                 setFinalStop(null);
                 setFinalStopName(null);
                 setMarkers(null);
-                pause();
                 reset();
+                pause();
                 setRunTime(false);
+                setSelectTraveler(false);
+                setBackLoc([]);
+                setConfirm(null);
               }}
             >
               <Text

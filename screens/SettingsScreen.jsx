@@ -42,33 +42,7 @@ export const SettingsScreen = () => {
     const { error } = await supabase.auth.signOut();
   };
 
-  const checkProfile = async () => {
-    const { data , error } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("email", email);
-    
-    if (error) {
-      console.log(error);
-    }
-    if(data.length == 0){
-      const { data, error } = await supabase
-      .from("profiles")
-      .insert([{ email: email, username: email, exp: 10, user_id: uid }]);
-      setDbSession(0);
-    }
-    else{
-      setDbSession(0);
-    }
-
-    // if (error == null) { 
-    //   const { data, error } = await supabase
-    //     .from("profiles")
-    //     .insert([{ email: email, username: email, exp: 10, user_id: uid }]);
-    //     setDbSession(0);
-       
-    // } 
-  };
+   
 
   useEffect(() => {
     (async () => {
@@ -113,16 +87,6 @@ export const SettingsScreen = () => {
         <Text style={colorScheme === "dark" ? darkMode.Text : lightMode.Text}>
           {email}
         </Text>
-        {dbSession == 0 ? (
-          <Text>✅ Verified User</Text>
-        ) : (
-          <Button
-            style={colorScheme === "dark" ? darkMode.Button : lightMode.Button}
-            onPress={checkProfile}
-          >
-            Verify User
-          </Button>
-        )}
         <Button
           style={
             colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn

@@ -57,6 +57,11 @@ export const Auth = () => {
         Alert.alert("Email already exists", "Please try again or sign in")
       }
     }  
+    const {data:{user}} = await supabase.auth.getUser()
+    const uid = user.id
+    const { data } = await supabase
+    .from("profiles")
+    .insert([{ email: email, username: email, exp: 10, user_id: uid }]);
 
   
     setLoading(false)
