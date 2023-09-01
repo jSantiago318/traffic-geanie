@@ -6,7 +6,6 @@ import { AuthStack } from './AuthStack';
 import { LoadingIndicator } from '../components';
 // import { onAuthStateChanged } from 'firebase/auth';
 // supabase auth
-import { Session } from '@supabase/supabase-js';
 import {supabase} from '../utils/supabase'
 import { useColorScheme } from 'react-native';
 

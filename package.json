@@ -41,7 +41,7 @@
     "@tabler/icons-react": "^2.17.0",
     "deprecated-react-native-prop-types": "^4.1.0",
     "dotenv": "^10.0.0",
-    "eas-cli": "^4.1.2",
+    "eas-cli": "^5.0.2",
     "expo": "~48.0.18",
     "expo-camera": "~13.2.1",
     "expo-checkbox": "~2.3.1",
