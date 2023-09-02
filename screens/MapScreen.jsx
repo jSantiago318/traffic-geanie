@@ -302,8 +302,8 @@ export const MapScreen = () => {
         nodeSize={2}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
-        showsUserLocation={true}
-        showsMyLocationButton={true}
+        showsUserLocation={false}
+        // showsMyLocationButton={true}
         style={styles.map}
         initialRegion={INITIAL_REGION}
         ref={_mapRef}

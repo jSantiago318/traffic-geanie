@@ -6,15 +6,13 @@ const config = {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '4.5',
+    version: '4.6',
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
-    updates:{
-      "url": "https://u.expo.dev/c73948ff-e76e-488d-8d47-48a9097fcd54",
-      fallbackToCacheTimeout: 0,
+    "updates": {
+      "url": "https://u.expo.dev/2dd6aac0-107b-4e54-87b6-d632e1083aec"
     },
-
     splash: {
       image: './assets/splash.png',
       resizeMode: 'cover',
@@ -34,8 +32,15 @@ const config = {
         "CFBundleAllowMixedLocalizations": true,
         "NSLocationAlwaysUsageDescription": "App requires geolocation to improve the quality of the service",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
-        "NSLocationWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
         "NSCameraUsageDescription": "This will allow user user to connect to routes and stops using QR codes",
+        "NSLocationWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
+        "NSLocationUsageDescription": "App requires geolocation to improve the quality of the service",
+        "NSLocationTemporaryUsageDescriptionDictionary": {
+          "NSLocationTemporaryUsageDescriptionDictionary": "App requires geolocation to improve the quality of the service"
+        },
+        "NSUserTrackingUsageDescription": "Your data will be shared with third party companies, this will help us provide you with the best user expierence.",
+        
+           
 
       }
 
@@ -51,7 +56,7 @@ const config = {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 45,
+      "versionCode": 46,
       "package": "com.josiba.mayatransit",
       "permissions":["ACCESS_COARSE_LOCATION","ACCESS_FINE_LOCATION","ACCESS_BACKGROUND_LOCATION"]
     },
@@ -76,15 +81,14 @@ const config = {
     [
       'expo-location',
       {
-        'locationPermission': 'Allow $(PRODUCT_NAME) to access location to provide real time arrival predictions',
         'NSLocationAlwaysAndWhenInUseUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
-        'NSLocationWhenInUseUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'locationAlwaysAndWhenInUsePermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'locationAlwayPermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'isIosBackgroundLocationEnabled': true, 
         'allowsBackgroundLocationUpdates': true,
         'NSLocationAlwaysUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
          'isAndroidBackgroundLocationEnabled': true,
+         'NSLocationWhenInUseUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
       }
     ],[
       "expo-tracking-transparency",
