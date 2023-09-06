@@ -28,7 +28,7 @@ export const StopRender = ({stop, index}) => {
             
             setStopName(data.data.references.stops[0].name)
             setCurrentTime(data.currentTime);
-            if(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0] != undefined){
+            if(data.data.entry.stopRouteSchedules[0] != undefined){
 
               setAllStops(data.data.entry.stopRouteSchedules[0].stopRouteDirectionSchedules[0].scheduleStopTimes)
             }

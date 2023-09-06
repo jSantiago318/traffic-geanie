@@ -55,7 +55,7 @@ const darkMode = StyleSheet.create({
     borderRadius: 10,
     margin: 5, 
     padding: 10,
-    maxHeight: '60%',
+    maxHeight: '65%',
   },
   Title:{
     fontSize: 18,
@@ -77,10 +77,17 @@ const lightMode = StyleSheet.create({
     borderRadius: 10,
     margin: 5, 
     padding: 10,
-    maxHeight: '60%',
+    maxHeight: '65%',
   } ,
   Title:{
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  routeList:{
+    maxHeight: '50%',
+    width: '100%',
+    borderRadius: 10,
+    margin: 5,
+    backgroundColor: '#8FCFF9',
   }
 })

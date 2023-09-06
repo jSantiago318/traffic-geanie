@@ -64,6 +64,7 @@ export const MapScreen = () => {
   const [uid, setUid] = useState(null);
   const [email, setEmail] = useState(null);
   const [confirm, setConfirm] = useState(null);
+  const [position, setPosition] = useState([null]);
   const [backLoc, setBackLoc] = useState([]);
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
@@ -77,7 +78,7 @@ export const MapScreen = () => {
     setTripTime(h + ":" + m + ":" + s);
     return h + ":" + m + ":" + s;
   }
- 
+ let foregroundSubscription = null;
 
   useEffect(() => {
     (async () => {
@@ -99,15 +100,24 @@ export const MapScreen = () => {
             "Permission to access location was denied",
           )
           return;
+
         }
-        let location = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.BestForNavigation,
-          timeInterval: 1000,
-        });
-        setLocation(location);
+           // Make sure that foreground location tracking is not running
+    foregroundSubscription?.remove()
+
+    // Start watching position in real-time
+    foregroundSubscription = await Location.watchPositionAsync(
+      {
+        // For better logs, we set the accuracy to the most sensitive option
+        accuracy: Location.Accuracy.BestForNavigation,
+      },
+      location => {
+        setLocation(location.coords)
+      }
+    )
       }
       if(isRunning||runTime){
-        setBackLoc((backLoc) => [...backLoc, location.coords]);
+        setBackLoc((backLoc) => [...backLoc, location]);
       }
     })();
   }, [uid, location]);
@@ -152,35 +162,38 @@ export const MapScreen = () => {
   }
 
   async function continueTripSupa() {
-    const { data, error } = await supabase.from("trips").insert([
+    let a = new Date(startLocData?.timestamp).toISOString()
+    let b = new Date(location?.timestamp).toISOString()
+   const {data, error} = await supabase.from("trips").insert([
       {
         location_start: {
-          latitude: startStop?.coords.latitude,
-          longitude: startStop?.coords.longitude,
+          latitude: startLocData?.latitude,
+          longitude: startLocData?.longitude,
           startStop: startStopName,
         },
         location_end:{
-          latitude: location?.coords.latitude,
-          longitude: location?.coords.longitude,
+          latitude: position?.latitude,
+          longitude: position?.longitude,
         },
-        end_time: new  Date(location?.timestamp).toLocaleTimeString(),
+        start_time:  Date(startLocData?.timestamp).toString(),
+        end_time:    Date().toString(),
         travel: travelingBy,
         trip_duration: tripTime,
         email: uid, //email
-        polyline: [location],
+        polyline: [position],
         seq: seq,
         trip_status: "continued",
       },
-    ]).then(
-      () =>{
-        const a = seq
-        setSeq(a+1)
-      }
-    )
-    if(error){
-      console.log(error)
-    }
+    ])
    
+   if(data!= null){
+    const a = seq
+        setSeq(a+1)
+   }
+   if(error){
+    console.log(error)
+   }
+
   }
  
   async function submitTripSupa() {
@@ -261,14 +274,14 @@ export const MapScreen = () => {
             reset()
             start();
             setConfirm(0);
-            setStartLocData(location);
+            setStartLocData(position);
           }
         } else {
           reset()
           start();
           setRunTime(true);
           setConfirm(1);
-          setStartLocData(location);
+          setStartLocData(position);
           setConfirm(true);
         
         }
@@ -276,7 +289,7 @@ export const MapScreen = () => {
     });
   }
 
-  
+
 
   const animateToRegion = () => {
     let region = {
@@ -302,12 +315,11 @@ export const MapScreen = () => {
         nodeSize={2}
         provider={PROVIDER_GOOGLE}
         customMapStyle={MapVal}
-        showsUserLocation={false}
-        // showsMyLocationButton={true}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
         style={styles.map}
         initialRegion={INITIAL_REGION}
         ref={_mapRef}
-        // onMapReady={animateToRegion}
       >
         {getRoutes().map((route, index) => {
           return (
@@ -342,7 +354,7 @@ export const MapScreen = () => {
                   }}
                 >
                   <Text>
-                    Bus {device.deviceId} - {isOnline}
+                    Bus {device.deviceId} - {isOnline}xcc
                   </Text>
                   <Text> acc: {device.accuracy}</Text>
                 </Callout>
@@ -505,10 +517,21 @@ export const MapScreen = () => {
               backgroundColor: colorScheme == "dark" ? darkMode.Card.backgroundColor : lightMode.Card.backgroundColor,
               borderRadius: 10,
             }}>
-              <Button onPress={
+              <Button
+                leftIcon={
+                  <MaterialCommunityIcons 
+              name={"plus"}
+              size={24} 
+              color={"#1DA15D"} />
+                }
+               onPress={
                 () => continueTripSupa()
               }  variant={'ghost'} style={{ borderRadius: 10, padding: 10, margin: 5, zIndex: 100, }}>
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>New Cycle</Text>
+              <Text style={
+                colorScheme == "dark" ? darkMode.Title : lightMode.Title
+              }>New Cycle
+              </Text>
+              
               </Button>
             </Box>
           ) : null
@@ -689,7 +712,9 @@ export const MapScreen = () => {
           </HStack>
           {travelingBy == "bus" ? (
             <>
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+              <Text style={
+                colorScheme == "dark" ? darkMode.Text : lightMode.Text
+              }>
                 <MaterialCommunityIcons
                   name="timer-outline"
                   size={18}
@@ -889,7 +914,7 @@ export const MapScreen = () => {
                 Trip Time:{" "}
                 <Text
                   style={
-                    colorScheme == "dark" ? darkMode.Title : lightMode.Title
+                    colorScheme == "dark" ? darkMode.Text : lightMode.Text
                   }
                 >
                   {tripTime}
