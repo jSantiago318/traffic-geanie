@@ -6,7 +6,7 @@ const config = {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '4.6',
+    version: '802',
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
@@ -21,13 +21,12 @@ const config = {
     assetBundlePatterns: ['**/*'],
     "ios": {
       supportsTablet: true,
-      buildNumber: '4.5',
+      buildNumber: '802',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.MAPS_API_IOS
       },
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": ["location", "fetch"],
         "CFBundleAllowMixedLocalizations": true,
         "NSLocationAlwaysUsageDescription": "App requires geolocation to improve the quality of the service",
@@ -56,7 +55,7 @@ const config = {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 46,
+      "versionCode": 802,
       "package": "com.josiba.mayatransit",
       "permissions":["ACCESS_COARSE_LOCATION","ACCESS_FINE_LOCATION","ACCESS_BACKGROUND_LOCATION"]
     },
@@ -84,10 +83,7 @@ const config = {
         'NSLocationAlwaysAndWhenInUseUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'locationAlwaysAndWhenInUsePermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'locationAlwayPermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
-        'isIosBackgroundLocationEnabled': true, 
-        'allowsBackgroundLocationUpdates': true,
         'NSLocationAlwaysUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
-         'isAndroidBackgroundLocationEnabled': true,
          'NSLocationWhenInUseUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
       }
     ],[
