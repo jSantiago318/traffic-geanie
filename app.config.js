@@ -1,45 +1,46 @@
 import 'dotenv/config';
 
-const config = {
-    expo: {
+export default {
+  expo: {
     name: 'TravelTransitTracker',
     slug: 'mayatransit',
     "owner": "josiba",
+    "runtimeVersion": {
+        "policy": "sdkVersion",
+        },
     platforms: ['ios', 'android'],
-    version: '802',
+    version: '8.2',
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
-    "updates": {
-      "url": "https://u.expo.dev/2dd6aac0-107b-4e54-87b6-d632e1083aec"
+    updates:{
+      "url": "https://u.expo.dev/c73948ff-e76e-488d-8d47-48a9097fcd54"
     },
+
     splash: {
       image: './assets/splash.png',
       resizeMode: 'cover',
       backgroundColor: '#ffffff'
     },
+    updates: {
+      fallbackToCacheTimeout: 0,
+    },
     assetBundlePatterns: ['**/*'],
     "ios": {
       supportsTablet: true,
-      buildNumber: '802',
+      buildNumber: '8.2',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.MAPS_API_IOS
       },
       "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
         "UIBackgroundModes": ["location", "fetch"],
         "CFBundleAllowMixedLocalizations": true,
         "NSLocationAlwaysUsageDescription": "App requires geolocation to improve the quality of the service",
         "NSLocationAlwaysAndWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
-        "NSCameraUsageDescription": "This will allow user user to connect to routes and stops using QR codes",
         "NSLocationWhenInUseUsageDescription": "App requires geolocation to improve the quality of the service",
-        "NSLocationUsageDescription": "App requires geolocation to improve the quality of the service",
-        "NSLocationTemporaryUsageDescriptionDictionary": {
-          "NSLocationTemporaryUsageDescriptionDictionary": "App requires geolocation to improve the quality of the service"
-        },
-        "NSUserTrackingUsageDescription": "Your data will be shared with third party companies, this will help us provide you with the best user expierence.",
-        
-           
+        "NSCameraUsageDescription": "This will allow user user to connect to routes and stops using QR codes",
 
       }
 
@@ -55,7 +56,7 @@ const config = {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 802,
+      "versionCode": 82,
       "package": "com.josiba.mayatransit",
       "permissions":["ACCESS_COARSE_LOCATION","ACCESS_FINE_LOCATION","ACCESS_BACKGROUND_LOCATION"]
     },
@@ -80,11 +81,12 @@ const config = {
     [
       'expo-location',
       {
+        'locationPermission': 'Allow $(PRODUCT_NAME) to access location to provide real time arrival predictions',
         'NSLocationAlwaysAndWhenInUseUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
+        'NSLocationWhenInUseUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'locationAlwaysAndWhenInUsePermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'locationAlwayPermission': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
         'NSLocationAlwaysUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
-         'NSLocationWhenInUseUsageDescription': 'Your location is used to determine the recomended nearest and provide in real time arival predictions for your arrival at routes or stops.',
       }
     ],[
       "expo-tracking-transparency",
@@ -93,5 +95,4 @@ const config = {
             }
     ],
   ]
-}
-export default config;
+};
