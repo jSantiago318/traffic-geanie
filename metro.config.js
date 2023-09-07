@@ -1,3 +1,4 @@
-// works fine (generated from npx expo customize metro.config.js)
+// Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require('expo/metro-config');
+
 module.exports = getDefaultConfig(__dirname);
