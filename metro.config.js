@@ -1,3 +1,3 @@
-// Learn more https://docs.expo.io/guides/customizing-metro
-require('ts-node/register');
-module.exports = require('./metro.config.ts');
+const { getDefaultConfig } = require('@expo/metro-config');
+const config = getDefaultConfig(__dirname);
+module.exports = config;

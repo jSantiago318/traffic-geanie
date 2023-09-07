@@ -108,7 +108,6 @@ export const SettingsScreen = () => {
             colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
           }
           variant={"ghost"}
-          onPress={() => setShowModal(true)}
         >
           View Alarms
         </Button>

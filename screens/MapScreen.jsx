@@ -42,7 +42,7 @@ import { useStopwatch } from "react-timer-hook";
 
 export const MapScreen = () => {
   const colorScheme = useColorScheme();
-  const [seq, setSeq] = useState(1)
+  const [seq, setSeq] = useState(0)
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [selectedStop, setSelectedStop] = useState(null);
@@ -64,7 +64,6 @@ export const MapScreen = () => {
   const [uid, setUid] = useState(null);
   const [email, setEmail] = useState(null);
   const [confirm, setConfirm] = useState(null);
-  const [position, setPosition] = useState([null]);
   const [backLoc, setBackLoc] = useState([]);
   const { seconds, minutes, hours, days, isRunning, start, pause, reset } =
     useStopwatch({ autoStart: false });
@@ -103,21 +102,22 @@ export const MapScreen = () => {
 
         }
            // Make sure that foreground location tracking is not running
-    foregroundSubscription?.remove()
+    // foregroundSubscription?.remove()
 
     // Start watching position in real-time
     foregroundSubscription = await Location.watchPositionAsync(
       {
         // For better logs, we set the accuracy to the most sensitive option
         accuracy: Location.Accuracy.BestForNavigation,
+        timeInterval: 1000,
       },
       location => {
-        setLocation(location.coords)
+        setLocation(location)
       }
     )
       }
       if(isRunning||runTime){
-        setBackLoc((backLoc) => [...backLoc, location]);
+        setBackLoc((backLoc) => [...backLoc, location.coords]);
       }
     })();
   }, [uid, location]);
@@ -160,62 +160,71 @@ export const MapScreen = () => {
     });
     return coord;
   }
-
+function seqs(opt){
+  if(opt == 0){
+    setSeq(seq + 1)
+  return seq
+  }else if(opt == 1){
+     const a = seq
+     setSeq(0)
+    return a
+  }
+}
   async function continueTripSupa() {
-    let a = new Date(startLocData?.timestamp).toISOString()
-    let b = new Date(location?.timestamp).toISOString()
+    const d1 = new Date(startLocData?.timestamp)
+    const d2 = new Date(location?.timestamp)
    const {data, error} = await supabase.from("trips").insert([
       {
         location_start: {
-          latitude: startLocData?.latitude,
-          longitude: startLocData?.longitude,
+          latitude: startLocData?.coords.latitude,
+          longitude: startLocData?.coords.longitude,
           startStop: startStopName,
+          startTime: d1.toTimeString(),
         },
         location_end:{
-          latitude: position?.latitude,
-          longitude: position?.longitude,
+          latitude: location?.coords.latitude,
+          longitude: location?.coords.longitude,
+          finalStop: finalStopName,
+          endTime: d2.toTimeString(),
         },
-        start_time:  Date(startLocData?.timestamp).toString(),
-        end_time:    Date().toString(),
         travel: travelingBy,
         trip_duration: tripTime,
         email: uid, //email
-        polyline: [position],
-        seq: seq,
+        polyline: [location?.coords],
+        seq: seqs(0),
         trip_status: "continued",
       },
     ])
    
-   if(data!= null){
-    const a = seq
-        setSeq(a+1)
-   }
-   if(error){
+ 
+  if(error){
     console.log(error)
-   }
+  }
 
   }
  
   async function submitTripSupa() {
+    const d1 = new Date(startLocData?.timestamp)
+    const d2 = new Date(location?.timestamp)
     const { data, error } = await supabase.from("trips").insert([
       {
         location_start: {
           latitude: startLocData?.coords.latitude,
           longitude: startLocData?.coords.longitude,
           startStop: startStop,
+          startTime: d1.toTimeString(),
         },
-        start_time: new  Date(startLocData?.timestamp).toLocaleTimeString(),
-        end_time: new  Date(location?.timestamp).toLocaleTimeString(),
         location_end: {
           latitude: location?.coords.latitude,
           longitude: location?.coords.longitude,
           finalStop: finalStop,
+          endTime: d2.toTimeString(),
         },
         travel: travelingBy,
         trip_duration: tripTime,
         email: uid, //email
         polyline: backLoc,
-        seq: seq,
+        seq: seqs(1),
         trip_status: "ended",
       },
     ]);
@@ -239,26 +248,26 @@ export const MapScreen = () => {
     requestAnimationFrame(async () => {
 {
         const { data, error } = await supabase.from("trips").insert([
-      {
-        location_start: {
-          latitude: startLocData?.coords.latitude,
-          longitude: startLocData?.coords.longitude,
-          startStop: startStop,
-        },
-        start_time:  Date(startLocData?.timestamp).toLocaleString(),
-        end_time:  Date(location?.timestamp).toLocaleString(),
-        location_end: {
-          latitude: location?.coords.latitude,
-          longitude: location?.coords.longitude,
-          finalStop: finalStop,
-        },
-        travel: travelingByHistory,
-        trip_duration: getTime() ,
-        email: email,
-        polyline: backLoc,
-        seq: 1,
-        trip_status: "ended",
-      },
+          {
+            location_start: {
+              latitude: startLocData?.latitude,
+              longitude: startLocData?.longitude,
+              startStop: startStopName,
+              startTime: d1.toTimeString(),
+            },
+            location_end:{
+              latitude: location?.coords.latitude,
+              longitude: location?.coords.longitude,
+              finalStop: finalStopName,
+              endTime: d2.toTimeString(),
+            },
+            travel: travelingBy,
+            trip_duration: tripTime,
+            email: uid, //email
+            polyline: [location?.coords],
+            seq: seqs(0),
+            trip_status: "continued",
+          },
     ]);
     
 }
@@ -274,14 +283,14 @@ export const MapScreen = () => {
             reset()
             start();
             setConfirm(0);
-            setStartLocData(position);
+            setStartLocData(location);
           }
         } else {
           reset()
           start();
           setRunTime(true);
           setConfirm(1);
-          setStartLocData(position);
+          setStartLocData(location);
           setConfirm(true);
         
         }
@@ -407,7 +416,7 @@ export const MapScreen = () => {
       ) : null}
       </MapView>
 
-      <View
+      {/* <View
         style={{
           position: "absolute",
           alignContent: "center",
@@ -423,7 +432,7 @@ export const MapScreen = () => {
         data={getRoutes()}
       
       />
-      </View>
+      </View> */}
       <VStack
         style={{
           position: "absolute",
