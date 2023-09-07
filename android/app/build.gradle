@@ -118,8 +118,8 @@ android {
         applicationId 'com.josiba.mayatransit'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 46
-        versionName "4.6"
+        versionCode 83
+        versionName "8.3.0"
     }
 
     splits {

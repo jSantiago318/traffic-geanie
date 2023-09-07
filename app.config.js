@@ -5,11 +5,9 @@ export default {
     name: 'TravelTransitTracker',
     slug: 'mayatransit',
     "owner": "josiba",
-    "runtimeVersion": {
-        "policy": "sdkVersion",
-        },
     platforms: ['ios', 'android'],
-    version: '8.2',
+    "version": "8.4.0",
+    "runtimeVersion": "8.4.0",
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
@@ -28,7 +26,7 @@ export default {
     assetBundlePatterns: ['**/*'],
     "ios": {
       supportsTablet: true,
-      buildNumber: '8.2',
+      buildNumber: '8.4.0',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.MAPS_API_IOS
@@ -56,7 +54,7 @@ export default {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 82,
+      "versionCode": 83,
       "package": "com.josiba.mayatransit",
       "permissions":["ACCESS_COARSE_LOCATION","ACCESS_FINE_LOCATION","ACCESS_BACKGROUND_LOCATION"]
     },
