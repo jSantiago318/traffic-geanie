@@ -348,36 +348,7 @@ export const MapScreen = () => {
         initialRegion={INITIAL_REGION}
         ref={_mapRef}
       >
-      {
-       activeMarkers.map((marker, index) => {
-          return (
-            <Marker
-              key={index}
-              coordinate={{
-                latitude: marker.latitude,
-                longitude: marker.longitude,
-              }}
-            >
-              <Image
-                source={require("../assets/car-online.png")}
-                style={{ height: 40, width: 40 }}
-              />
-              <Callout
-                style={{
-                  width: 200,
-                  borderRadius: 10,
-                }}
-              >
-                <Text>
-                  Bus {marker.deviceId} - {marker.status}
-                </Text>
-                <Text> acc: {marker.accuracy}</Text>
-              </Callout>
-            </Marker>
-          );
-        })
-        
-      }
+      
         {getRoutes().map((route, index) => {
           return (
             <Polyline
@@ -1259,9 +1230,9 @@ export const MapScreen = () => {
                       space={2}
                       alignItems="center"
                       justifyContent="center"
+                
                     >
                       <Box
-                        key={index}
                         style={{
                           backgroundColor:
                             colorScheme == "dark"
@@ -1354,10 +1325,7 @@ export const MapScreen = () => {
           alignItems: "center",
           zIndex: 1,
       }}
-     onPress={() => {
-      setActiveMarkers(...activeMarkers, trip.location_start)
-      setActiveMarkers(...activeMarkers, trip.location_end)
-      console.log(activeMarkers)
+     onPress={() => { 
       setShowTripData(trip)
     } } > 
     <MaterialCommunityIcons name={"arrow-right"} size={18} color={"white"} />
