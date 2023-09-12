@@ -6,7 +6,7 @@ export default {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '4.1',
+    version: '9.0',
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
@@ -26,7 +26,7 @@ export default {
     "ios": {
       supportsTablet: true,
       
-      buildNumber: '4.1',
+      buildNumber: '9.0',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.MAPS_API_IOS
@@ -56,19 +56,13 @@ export default {
           "apiKey": process.env.MAPS_API
         }
       },
-      "versionCode": 41,
+      "versionCode": 90,
       "package": "com.josiba.mayatransit",
 
     },
     extra: {
       "eas": {
         "projectId": "2dd6aac0-107b-4e54-87b6-d632e1083aec"      },
-      apiKey: process.env.API_KEY,
-      authDomain: process.env.AUTH_DOMAIN,
-      projectId: process.env.PROJECT_ID,
-      storageBucket: process.env.STORAGE_BUCKET,
-      messagingSenderId: process.env.MESSAGING_SENDER_ID,
-      appId: process.env.APP_ID
     },
   }, 
   'plugins':[
