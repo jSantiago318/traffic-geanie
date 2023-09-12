@@ -6,8 +6,8 @@ export default {
     slug: 'mayatransit',
     "owner": "josiba",
     platforms: ['ios', 'android'],
-    version: '9.0.1',
-    "runTimeVersion": "9.0.1",
+    version: '9.0.2',
+    "runTimeVersion": "9.0.2",
     orientation: 'portrait',
     icon: './assets/car-online.png',
     "userInterfaceStyle": "automatic",
@@ -26,7 +26,7 @@ export default {
     "ios": {
       supportsTablet: true,
       
-      buildNumber: '9.0.1',
+      buildNumber: '9.0.2',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.MAPS_API_IOS
