@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import {Auth} from '../screens/Auth';
-import {HomeScreen} from '../screens/HomeScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -21,9 +20,12 @@ export const AuthStack = () => {
         
     //   <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
     // </Stack.Navigator>
-    <Drawer.Navigator  >
+    <Drawer.Navigator
+      screenOptions={{ headerShown: false }}
+      >
     {/* <Drawer.Screen      name='About' component={IntroScreen} /> */}
-    <Drawer.Screen name='Login' component={Auth} />
+    <Drawer.Screen
+     name='Login' component={Auth} />
     {/* <Drawer.Screen name='Home' component={HomeScreen}   /> */}
     {/* <Drawer.Screen name='Settings' component={SettingsScreen} /> */}
     {/* <Drawer.Screen name='Login' component={LoginScreen} />

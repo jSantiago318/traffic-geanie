@@ -1117,6 +1117,46 @@ export const MapScreen = () => {
                 margin: 3,
               }}
             >
+                <HStack space={2} alignItems="center" justifyContent="center">
+                <MaterialCommunityIcons
+                  name={showTripData.travel}
+                  size={20}
+                  color={"white"}
+                />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color:
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color,
+                  }}
+                >
+                   {showTripData.id || "no id"} - {showTripData.seq}
+                </Text>
+              </HStack>
+              <HStack space={2} alignItems="center" justifyContent="center">
+                <MaterialCommunityIcons
+                  name={"calendar-month-outline"}
+                  size={20}
+                  color={"white"}
+                />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color:
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color,
+                  }}
+                >
+                   {
+                    new Date(showTripData.created_at).toDateString()
+                  }
+                </Text>
+              </HStack>
               <HStack space={2} alignItems="center" justifyContent="center">
                 <MaterialCommunityIcons
                   name={"alarm"}
@@ -1133,11 +1173,91 @@ export const MapScreen = () => {
                         : lightMode.Text.color,
                   }}
                 >
-                  : {showTripData.trip_duration}
+                   {showTripData.trip_duration}
+                </Text>
+              </HStack>
+              <HStack space={2} alignItems="center" justifyContent="center">
+                <MaterialCommunityIcons
+                  name={"bus-stop"}
+                  size={20}
+                  color={"white"}
+                />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color:
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color,
+                  }}
+                >
+                   {showTripData.location_start.startStop || "no stop"}
+                </Text>
+              </HStack>
+              <HStack space={2} alignItems="center" justifyContent="center">
+                <MaterialCommunityIcons
+                  name={"arrow-right"}
+                  size={20}
+                  color={"white"}
+                />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color:
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color,
+                  }}
+                >
+                   {showTripData.location_start.startTime || "no departure"}
+                </Text>
+              </HStack>
+              <HStack space={2} alignItems="center" justifyContent="center">
+                <MaterialCommunityIcons
+                  name={"bus-stop"}
+                  size={20}
+                  color={"white"}
+                />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color:
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color,
+                  }}
+                >
+                   {showTripData.location_end.finalStop || "no stop"}
+                </Text>
+              </HStack>
+              <HStack space={2} alignItems="center" justifyContent="center">
+                <MaterialCommunityIcons
+                  name={"arrow-right"}
+                  size={20}
+                  color={"white"}
+                />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    color:
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color,
+                  }}
+                >
+                   {
+                    new Date(showTripData.location_end.endTime).toTimeString() || "no arrival"
+                   }
                 </Text>
               </HStack>
             </View>
           ) : null}
+
+          
           {trips.length == 0 ? (
             <>
               <Button
