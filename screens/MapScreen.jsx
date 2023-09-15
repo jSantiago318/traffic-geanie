@@ -244,8 +244,7 @@ export const MapScreen = () => {
     // setLastTripId(data[0].id)
     if (error) {
       console.log(error);
-    } else {
-      setConfirm(null);
+    } else { 
       setRunTime(false);
       setStartStop(null);
       setFinalStop(null);
@@ -294,17 +293,14 @@ export const MapScreen = () => {
           if (startStop && finalStop) {
             setRunTime(true);
             reset();
-            start();
-            setConfirm(0);
+            start(); 
             setStartLocData(location);
           }
         } else {
           reset();
           start();
-          setRunTime(true);
-          setConfirm(1);
-          setStartLocData(location);
-          setConfirm(true);
+          setRunTime(true); 
+          setStartLocData(location); 
         }
       }
     });
@@ -1066,7 +1062,6 @@ export const MapScreen = () => {
                   setRunTime(false);
                   setSelectTraveler(false);
                   setBackLoc([]);
-                  setConfirm(null);
                 }}
               >
                 <Text

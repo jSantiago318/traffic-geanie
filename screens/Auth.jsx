@@ -55,7 +55,7 @@ export const Auth = () => {
     setLoading(true);
     const { session, error } = await supabase.auth.signUp({
       email: email,
-      password: password,
+      password: password
     });
     // sign up and then update the user with the name and number
 
@@ -72,7 +72,7 @@ export const Auth = () => {
     const uid = user.id;
     const { data } = await supabase
       .from("profiles")
-      .insert([{ email: email, username: email, exp: 10, user_id: uid }]);
+      .insert([{ email: email, username: email, exp: 10, user_id: uid, phone: number  }]);
 
     setLoading(false);
   }
@@ -162,6 +162,17 @@ export const Auth = () => {
                 </Pressable>
               }
             />
+            {
+              showSignUp ? (
+                <Input
+              style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
+              onChangeText={(num) => setNumber(num)}
+              value={number}
+              placeholder="phone"
+              keyboardType="numeric"
+            />
+              ) : null
+            }
 
             {showSignUp ? (
               <>
