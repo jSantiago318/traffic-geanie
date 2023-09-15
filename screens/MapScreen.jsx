@@ -1,15 +1,12 @@
 import * as Location from "expo-location";
 import * as MapVal from "../assets/map.json";
-import * as TaskManager from "expo-task-manager";
 
 import {
   Alert,
-  AlertDialog,
   Box,
   Button,
   Divider,
   HStack,
-  Icon,
   ScrollView,
   Stack,
   Text,
@@ -18,7 +15,6 @@ import {
 import { Callout, Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
 import {
   Dimensions,
-  FlatList,
   Image,
   StyleSheet,
   View,
@@ -26,18 +22,14 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { color, set } from "react-native-reanimated";
 import { darkMode, lightMode } from "../config";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
-import { getStopById, getStopByIdOnline, getStops } from "../assets/gtfs/stops";
 
-import BusArrivalInformation from "../components/BusArrivalInformation";
 import MapView from "react-native-map-clustering";
-import { Pedometer } from "expo-sensors";
 import Shapes from "../assets/gtfs/shapes.json";
+import { getStops } from "../assets/gtfs/stops";
 import { supabase } from "../utils/supabase";
-import { useNavigation } from "@react-navigation/native";
 import { useStopwatch } from "react-timer-hook";
 
 export const MapScreen = () => {

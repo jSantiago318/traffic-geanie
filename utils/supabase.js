@@ -4,9 +4,6 @@ import * as SecureStore from 'expo-secure-store'
 
 import { createClient } from '@supabase/supabase-js'
 
-// import AsyncStorage from '@react-native-async-storage/async-storage'
- 
-
 const ExpoSecureStoreAdapter = {
   getItem: (key) => {
     return SecureStore.getItemAsync(key)

@@ -1,30 +1,38 @@
 import * as React from 'react';
 
 import {Auth} from '../screens/Auth';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-import { createStackNavigator } from '@react-navigation/stack';
+import { MaterialIcons } from "@expo/vector-icons";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+// const Stack = createStackNavigator();
 
 // import { FeedbackScreen, ForgotPasswordScreen, HomeScreen, IntroScreen, LoginScreen, SignupScreen } from '../screens';
 
 
-const Stack = createStackNavigator();
-const Drawer = createDrawerNavigator();
-export const AuthStack = () => {
 
+const Tab = createBottomTabNavigator();
+
+export const AuthStack = () => {
   return (
-    // <Stack.Navigator
-    //   screenOptions={{ headerShown: false }}
-    // >
-    // <Stack.Screen name='Login' component={LoginScreen} />
-    //   <Stack.Screen name='Signup' component={SignupScreen} 
-        
-    //   <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
-    // </Stack.Navigator>
-    <Drawer.Navigator
-      screenOptions={{ headerShown: false }}
-      >
+    <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        let iconName;
+
+        if (route.name === 'Login') {
+          iconName = 'account-circle'
+        }
+
+        // You can return any component that you like here!
+        return <MaterialIcons name={iconName} size={size} color={color} />;
+      },
+      tabBarActiveTintColor: 'tomato',
+      tabBarInactiveTintColor: 'gray',
+    })}
+  >
     {/* <Drawer.Screen      name='About' component={IntroScreen} /> */}
-    <Drawer.Screen
+    <Tab.Screen
+    screenOptions={{ headerShown: false }}
      name='Login' component={Auth} />
     {/* <Drawer.Screen name='Home' component={HomeScreen}   /> */}
     {/* <Drawer.Screen name='Settings' component={SettingsScreen} /> */}
@@ -33,6 +41,6 @@ export const AuthStack = () => {
     <Drawer.Screen name='Feedback' component={FeedbackScreen} /> */}
       {/* <Drawer.Screen name='ForgotPassword' component={ForgotPasswordScreen} /> */}
 
-  </Drawer.Navigator>
+  </Tab.Navigator>
   );
 };

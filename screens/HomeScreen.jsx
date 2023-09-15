@@ -1,6 +1,5 @@
 // import {darkMode, lightMode} from '../config/theme'
 import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
 
 import {
   Box,
@@ -22,43 +21,6 @@ import {
 import { CheckIcon } from "native-base";
 import { RoutesList } from "../components/RoutesList";
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
-
-const TASK_NAME = "BACKGROUND_LOCATION_TASK"
-
-TaskManager.defineTask(TASK_NAME, async ({ data, error }) => {
-  if (error) {
-    console.error(error);
-    return;
-  }
-  if (data) {
-		/* Data object example:
-      {
-        locations: [
-          {
-            coords: {
-              accuracy: 22.5,
-              altitude: 61.80000305175781,
-              altitudeAccuracy: 1.3333333730697632,
-              heading: 0,
-              latitude: 36.7384187,
-              longitude: 3.3464008,
-              speed: 0,
-            },
-            timestamp: 1640286402303,
-          },
-        ],
-      };
-    */
-    const { locations } = data;
-    const location = locations[0];
-
-    if (location) {
-      // Do something with location...
-      console.log(location);
-    }
-  }
-});
-
 
 export const HomeScreen = () => {
   

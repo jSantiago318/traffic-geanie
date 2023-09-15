@@ -1,6 +1,3 @@
-import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
-
 import {
   Alert,
   Keyboard,
@@ -27,9 +24,7 @@ import { Colors, darkMode, lightMode } from "../config";
 import React, { useState } from "react";
 
 import { MaterialIcons } from "@expo/vector-icons";
-import { ScrollView } from "react-native-gesture-handler";
-import UserLocation from "../components/startTracking";
-import { WarningOutlineIcon } from "native-base";
+import { ScrollView } from "react-native";
 import logo from "../assets/car-blue.png";
 import { supabase } from "../utils/supabase";
 
