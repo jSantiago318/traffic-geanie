@@ -16,6 +16,7 @@ export const AuthStack = () => {
   return (
     <Tab.Navigator
     screenOptions={({ route }) => ({
+      headerShown: false,
       tabBarIcon: ({ focused, color, size }) => {
         let iconName;
 
@@ -32,7 +33,6 @@ export const AuthStack = () => {
   >
     {/* <Drawer.Screen      name='About' component={IntroScreen} /> */}
     <Tab.Screen
-    screenOptions={{ headerShown: false }}
      name='Login' component={Auth} />
     {/* <Drawer.Screen name='Home' component={HomeScreen}   /> */}
     {/* <Drawer.Screen name='Settings' component={SettingsScreen} /> */}

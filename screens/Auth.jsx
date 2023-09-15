@@ -29,7 +29,6 @@ import logo from "../assets/car-blue.png";
 import { supabase } from "../utils/supabase";
 
 export const Auth = () => {
-  const [name, setName] = useState("");
   const [number, setNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +37,6 @@ export const Auth = () => {
   const [showSignIn, setShowSignIn] = useState(true);
   const [termsCheck, setTermsCheck] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
-  const [showPermissions, setShowPermissions] = useState(false);
 
   async function signInWithEmail() {
     setLoading(true);
@@ -102,14 +100,13 @@ export const Auth = () => {
             style={{
               width: 125,
               height: 125,
-              marginTop: "20%",
-              marginBottom: "5%",
+              marginTop: "50%",
+              padding: 5,
               alignSelf: "center",
             }}
           />
           <Text
-            style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
-          >
+            style={colorScheme == "dark" ? darkMode.Title : lightMode.Title} >
             Mayaguez Transit Tracker
           </Text>
 

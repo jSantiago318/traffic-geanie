@@ -27,6 +27,7 @@ import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 
 import MapView from "react-native-map-clustering";
+import { Platform } from "react-native";
 import Shapes from "../assets/gtfs/shapes.json";
 import { getStops } from "../assets/gtfs/stops";
 import { supabase } from "../utils/supabase";
@@ -328,10 +329,11 @@ export const MapScreen = () => {
       <MapView
         minPoints={3}
         nodeSize={2}
-        provider={PROVIDER_GOOGLE}
+        provider={
+          Platform.OS == "android" ? PROVIDER_GOOGLE : MapView.PROVIDER_DEFAULT
+        }
         customMapStyle={MapVal}
         showsUserLocation={true}
-        showsMyLocationButton={true}
         style={styles.map}
         initialRegion={INITIAL_REGION}
         ref={_mapRef}
@@ -721,7 +723,7 @@ export const MapScreen = () => {
                 colorScheme == "dark"
                   ? darkMode.Card.backgroundColor
                   : lightMode.Card.backgroundColor,
-              width: "90%",
+              width: "95%",
               justifyContent: "center",
               borderRadius: 10,
               paddingLeft: 15,

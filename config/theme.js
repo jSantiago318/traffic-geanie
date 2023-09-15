@@ -179,14 +179,22 @@ const darkMode = {
     width: "100%",
     backgroundColor: "#293241",
   },
-
+Heading:{
+  fontSize: 24,
+  fontWeight: "bold",
+  marginTop: '1%',
+  marginBottom: '1%',
+  padding: 2,
+  color: 'black',
+},
 Title:{
-    fontSize: 16,
-    fontWeight: "bold",
-    margin: 1,
-    padding: 1,
-    color: 'white',
-    
+   
+  fontSize: 18,
+  fontWeight: "bold",
+  marginTop: '2%',
+  marginBottom: '2%',
+  padding: 2,
+  color: 'white',
 } , 
 routeList:{
   width: '90%',
@@ -346,10 +354,19 @@ const lightMode = {
   backgroundColor: '#3d5a80',
   
 },
+Heading:{
+  fontSize: 24,
+  fontWeight: "bold",
+  marginTop: '1%',
+  marginBottom: '1%',
+  padding: 2,
+  color: 'black',
+},
   Title:{
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
-    margin: 2,
+    marginTop: '1%',
+    marginBottom: '1%',
     padding: 2,
     color: 'black',
     
