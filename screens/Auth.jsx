@@ -29,6 +29,8 @@ import logo from "../assets/car-blue.png";
 import { supabase } from "../utils/supabase";
 
 export const Auth = () => {
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
   const [number, setNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,7 +55,13 @@ export const Auth = () => {
     setLoading(true);
     const { session, error } = await supabase.auth.signUp({
       email: email,
-      password: password
+      password: password,
+      options: {
+        data: {
+          first_name: name,
+          phone: number,
+        }
+      }
     });
     // sign up and then update the user with the name and number
 
@@ -70,7 +78,7 @@ export const Auth = () => {
     const uid = user.id;
     const { data } = await supabase
       .from("profiles")
-      .insert([{ email: email, username: email, exp: 10, user_id: uid, phone: number  }]);
+      .insert([{ email: email, username: name, exp: 5, user_id: uid, phone: number  }]);
 
     setLoading(false);
   }
@@ -128,6 +136,8 @@ export const Auth = () => {
                   : lightMode.Input.backgroundColor
               }
               placeholder="email@address.com"
+              autoCapitalize={"none"}
+              keyboardType="email-address"
               InputLeftElement={
                 <Icon
                   as={<MaterialIcons name="person" />}
@@ -161,13 +171,22 @@ export const Auth = () => {
             />
             {
               showSignUp ? (
-                <Input
-              style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
-              onChangeText={(num) => setNumber(num)}
-              value={number}
-              placeholder="phone"
-              keyboardType="numeric"
-            />
+                <>
+                  <Input
+                    style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
+                    onChangeText={(num) => setName(num)}
+                    value={name}
+                    placeholder="name"
+                     />
+                    
+                    <Input
+                  style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
+                  onChangeText={(num) => setNumber(num)}
+                  value={number}
+                  placeholder="phone"
+                  keyboardType="number-pad" />
+                
+                    </>
               ) : null
             }
 

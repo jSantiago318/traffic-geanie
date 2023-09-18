@@ -45,13 +45,12 @@ export const MapScreen = () => {
   const [travelingBy, setTravelingBy] = useState("bus");
   const [startStop, setStartStop] = useState(null);
   const [finalStop, setFinalStop] = useState(null);
-  const [tripD, setTripD] = useState(null);
+  const [lastTripId, setLastTripId] = useState(0);
   const memoRt = React.useMemo(() => Shapes, []);
   const memoStop = React.useMemo(() => getStops(), []);
   const [startStopName, setStartStopName] = useState(null);
   const [finalStopName, setFinalStopName] = useState(null);
   const [selectTraveler, setSelectTraveler] = useState(false);
-  const [selectDestination, setSelectDestination] = useState(false);
   const [runTime, setRunTime] = useState(false);
   const [markers, setMarkers] = useState(null);
   const [startLocData, setStartLocData] = useState(null);
@@ -177,7 +176,7 @@ export const MapScreen = () => {
       setSeq(0);
       return a;
     }
-  }
+  } 
   async function continueTripSupa() {
     const d1 = new Date(startLocData?.timestamp);
     const d2 = new Date(location?.timestamp);
@@ -203,10 +202,14 @@ export const MapScreen = () => {
           polyline: [location?.coords],
           seq: seqs(0),
           trip_status: "continued",
+          tripId: lastTripId,
         },
       ])
       .select();
     if (data) {
+      if(seq == 0){
+        setLastTripId(data[0].id);
+      }
       console.log(data);
     }
 
@@ -238,6 +241,7 @@ export const MapScreen = () => {
         polyline: [],
         seq: seqs(1),
         trip_status: "ended",
+        tripId: lastTripId,
       },
     ]);
     console.log(data);
@@ -254,38 +258,12 @@ export const MapScreen = () => {
       pause();
       reset();
       pause();
+      setLastTripId(0);
     }
   }
   const _mapRef = useRef();
 
-  async function addCycle({ travel, timestamp }) {
-    requestAnimationFrame(async () => {
-      {
-        const { data, error } = await supabase.from("trips").insert([
-          {
-            location_start: {
-              latitude: startLocData?.latitude,
-              longitude: startLocData?.longitude,
-              startStop: startStopName,
-              startTime: d1.toTimeString(),
-            },
-            location_end: {
-              latitude: location?.coords.latitude,
-              longitude: location?.coords.longitude,
-              finalStop: finalStopName,
-              endTime: d2.toTimeString(),
-            },
-            travel: travelingBy,
-            trip_duration: tripTime,
-            email: uid, //email
-            polyline: [location?.coords],
-            seq: seqs(0),
-            trip_status: "continued",
-          },
-        ]);
-      }
-    });
-  }
+  
 
   async function startTripSupa() {
     requestAnimationFrame(() => {
@@ -302,6 +280,7 @@ export const MapScreen = () => {
           start();
           setRunTime(true); 
           setStartLocData(location); 
+          setLastTripId(0)
         }
       }
     });
