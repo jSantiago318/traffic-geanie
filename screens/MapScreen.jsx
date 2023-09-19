@@ -36,7 +36,7 @@ import { useStopwatch } from "react-timer-hook";
 export const MapScreen = () => {
   const colorScheme = useColorScheme();
   const [seq, setSeq] = useState(0);
-  const [activeMarkers, setActiveMarkers] = useState([]);
+  const [fullTrip, setFullTrip] = useState([]);
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [selectedStop, setSelectedStop] = useState(null);
@@ -1245,18 +1245,25 @@ export const MapScreen = () => {
                 style={{
                   backgroundColor:
                     colorScheme == "dark"
-                      ? darkMode.Button.backgroundColor
-                      : lightMode.Button.backgroundColor,
+                      ? darkMode.Card.backgroundColor
+                      : lightMode.Card.backgroundColor,
                   borderRadius: 10,
                   padding: 10,
+
                   margin: 5,
                   justifyContent: "center",
                   alignItems: "center",
                   zIndex: 1,
                 }}
               >
-                <HStack space={2} alignItems="center" justifyContent="center">
-                  <MaterialIcons name="refresh" size={18} color="white" />
+                <HStack
+                
+                 space={2} alignItems="center" justifyContent="center">
+                  <MaterialIcons name="refresh" size={18} color={
+                    colorScheme == "dark"
+                    ? darkMode.Text.color
+                    : lightMode.Text.color
+                  }/>
                   <Text
                     style={{
                       fontSize: 16,
@@ -1302,130 +1309,72 @@ export const MapScreen = () => {
 
           <ScrollView
             style={{
-              maxHeight: Dimensions.get("window").height * 0.3,
-              width: Dimensions.get("window").width * 0.6,
-              padding: 5,
-              margin: 5,
-              // space to left
-              paddingLeft: "5%",
+              maxHeight: Dimensions.get("window").height * 0.4,
+              width: Dimensions.get("window").width * 0.9,
+              padding: 1,
+              margin: 1,
             }}
           >
             {trips.map((trip, index) => {
               if (trip.seq == 0) {
                 return (
-                  <>
-                    <HStack
-                      space={2}
-                      alignItems="center"
-                      justifyContent="center"
-                
+                <Box key={index} 
+                  style={{
+                    backgroundColor:
+                      colorScheme == "dark"
+                        ? darkMode.Card.backgroundColor
+                        : lightMode.Card.backgroundColor,
+                    borderRadius: 10,
+                    padding: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: 3,
+                  }}
+                 >
+                  <Stack space={0} marginRight={3}>
+
+                  <HStack space={2} alignItems="center" justifyContent="center">
+                    <MaterialCommunityIcons
+                      name={trip.travel}
+                      size={20}
+                      color={
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color
+                        }
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color:
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color,
+                      }}
                     >
-                      <Box
-                        style={{
-                          backgroundColor:
-                            colorScheme == "dark"
-                              ? darkMode.Card.backgroundColor
-                              : lightMode.Card.backgroundColor,
-                          borderRadius: 10,
-                          padding: 10,
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                          margin: 3,
-                          width: "80%",
-                        }}
-                      >
-                      <HStack>
-                      <Stack>
-
-                      
-<HStack
-  space={2}
-  alignItems="center"
-  justifyContent="center"
->
-  <MaterialCommunityIcons
-    name={trip.travel}
-    size={20}
-    color={"white"}
-  />
-  <Text
-    style={{
-      fontSize: 16,
-      fontWeight: "bold",
-      color:
-        colorScheme == "dark"
-          ? darkMode.Text.color
-          : lightMode.Text.color,
-    }}
-  >
-    trip: {trip.id }
-  </Text>
-  <MaterialCommunityIcons
-    name={"restart"}
-    size={20}
-    color={"white"}
-  />
-   <Text
-    style={{
-      fontSize: 16,
-      fontWeight: "bold",
-      color:
-        colorScheme == "dark"
-          ? darkMode.Text.color
-          : lightMode.Text.color,
-    }}
-  >
-    {trips.seq}
-  </Text>
-</HStack>
-<HStack
-  space={2}
-  alignItems="center"
-  justifyContent="center"
->
-  <MaterialCommunityIcons
-    name={"alarm"}
-    size={20}
-    color={"white"}
-  />
-  <Text
-    style={{
-      fontSize: 16,
-      fontWeight: "bold",
-      color:
-        colorScheme == "dark"
-          ? darkMode.Text.color
-          : lightMode.Text.color,
-    }}
-  >
-    : {trip.trip_duration}
-  </Text>
-</HStack>
-</Stack>
-
-    <Button
-      style={{
-          backgroundColor: 'transparent',
-          borderRadius: 10,
-          padding: 1,
-          margin: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 1,
-      }}
-     onPress={() => { 
-      setShowTripData(trip)
-    } } > 
-    <MaterialCommunityIcons name={"arrow-right"} size={18} color={"white"} />
-    </Button>
-                      </HStack>
-                     
-                      
-                       
-                      </Box>
+                      {trip.id || "no id"} - {trip.seq}
+                    </Text>
+                    <Button   onPress={() => showTripMenu(true)} variant={"ghost"} style={{padding:0, margin:0}}>
+                      <MaterialCommunityIcons
+                        name={"chevron-down"}
+                        size={20}
+                        color={
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color
+                        }
+                      />
+                    </Button>
                     
                     </HStack>
-                  </>
+                      {
+
+                      }
+                  </Stack>
+
+                 
+                </Box>
                 );
               }
             })}
