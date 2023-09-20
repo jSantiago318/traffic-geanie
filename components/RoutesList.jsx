@@ -1,93 +1,81 @@
-import { Box, FlatList, HStack, Icon, Text, VStack } from 'native-base';
-import React, { useEffect, useMemo, useState } from 'react';
-import { StyleSheet, View, useColorScheme } from 'react-native';
+import { Center, Heading, SectionList } from "native-base";
+import React, { useEffect, useMemo, useState } from "react";
+import { StyleSheet, View, useColorScheme } from "react-native";
+import { colorsDark, colorsLight, darkMode, lightMode } from "../config";
 
-import { StopRender } from './OBAFetches/StopRender';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { StopRender } from "./OBAFetches/StopRender";
 
-export const RoutesList = ({route}) => {
+export const RoutesList = ({ route }) => {
   const colorScheme = useColorScheme();
   const [stp, setStp] = useState([]);
   const [stp1, setStp1] = useState([]);
   const memo = useMemo(() => getURL(route), [route]);
   async function getURL(url) {
-    const response = await fetch("https://proba.live/api/where/stops-for-route/"+url+".json?key=TEST");
+    const response = await fetch(
+      "https://proba.live/api/where/stops-for-route/" + url + ".json?key=TEST"
+    );
     const data = await response.json();
-    const stops = data.data.entry.stopGroupings[0].stopGroups[0].stopIds
-    const stops1 = data.data.entry.stopGroupings[0].stopGroups[1].stopIds
-    setStp(stops)
-    setStp1(stops1)
+    const stops = data.data.entry.stopGroupings[0].stopGroups[0].stopIds;
+    const stops1 = data.data.entry.stopGroupings[0].stopGroups[1].stopIds;
+    setStp(stops);
+    setStp1(stops1);
     return stops, stops1;
   }
 
   const renderItem = ({ item, index }) => (
     <StopRender stop={item} index={index} />
-    )
+  );
 
-  if (route.includes('TIM')) {
-    route = route.substring( 4, route.length)
-  } 
+  if (route.includes("TIM")) {
+    route = route.substring(4, route.length);
+  }
 
-  
+  const data = [
+    {
+      title: "Route: " + route + " Ongoing",
+      data: stp,
+    },
+    {
+      title: "Route: " + route + " Return",
+      data: stp1,
+    },
+  ];
   return (
-  <Box style={colorScheme == "dark" ? darkMode.Card : lightMode.Card} >
-    <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title} >{route} - 0</Text>
-<FlatList
-      style={colorScheme == 'dark' ? darkMode.routeList : lightMode.routeList}
-      data={stp}
-      renderItem={renderItem} />
-      
-     <Text style={colorScheme == "dark" ? darkMode.Title : lightMode.Title} >{route} - 1</Text>
- <FlatList
-       style={colorScheme == 'dark' ? darkMode.routeList : lightMode.routeList}
-       data={stp1}
-       renderItem={renderItem} />
-     </Box > 
-  )
-}
-
-
-
-const darkMode = StyleSheet.create({
-  Card:{
-    width: '90%',
-    // backgroundColor: '##046C1C',#046C1C
-    backgroundColor: '#8CCCF4',
-    borderRadius: 10,
-    margin: 5, 
-    padding: 10,
-    maxHeight: '65%',
-  },
-  Title:{
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  routeList:{
-    maxHeight: '50%',
-    width: '100%',
-    borderRadius: 10,
-    margin: 5,
-    backgroundColor: '#8FCFF9',
-  }
-})
-
-const lightMode = StyleSheet.create({
-  Card:{
-    width: '90%',
-    backgroundColor: '#8CCCF4',
-    borderRadius: 10,
-    margin: 5, 
-    padding: 10,
-    maxHeight: '65%',
-  } ,
-  Title:{
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  routeList:{
-    maxHeight: '50%',
-    width: '100%',
-    borderRadius: 10,
-    margin: 5,
-    backgroundColor: '#8FCFF9',
-  }
-})
+    <Center 
+      style={{
+        backgroundColor: colorScheme === "light" ? colorsLight.secondaryColor : colorsDark.secondaryColor,
+        borderRadius: 10,
+        padding: 5,
+        margin: 5,
+      }}
+      h={{
+        base: "60%",
+        md: "60%",
+        lg: "60%",
+      }}
+     >
+      <SectionList
+        w="90%" 
+        
+        mb="4"
+        sections={data}
+        keyExtractor={(item, index) => item + index}
+        renderItem={renderItem}
+        renderSectionHeader={({ section: { title } }) => (
+          <Center
+            alignItems={"flex-start"}
+            paddingLeft={5}
+            width={"100%"}
+            borderRadius={10}
+            backgroundColor={colorScheme === "light" ? colorsLight.accentColor : colorsDark.accentColor}
+          >
+            <Heading fontSize="xl" mt="4" pb="2" >
+              {title}
+            </Heading>
+          </Center>
+        )}
+      />
+    </Center>
+  );
+};

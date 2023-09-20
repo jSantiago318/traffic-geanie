@@ -20,8 +20,8 @@ import {
   Text,
   View,
 } from "native-base";
-import { Colors, darkMode, lightMode } from "../config";
 import React, { useState } from "react";
+import { colorsDark, colorsLight, darkMode, lightMode } from "../config";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native";
@@ -39,7 +39,7 @@ export const Auth = () => {
   const [showSignIn, setShowSignIn] = useState(true);
   const [termsCheck, setTermsCheck] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
-
+  const [ageCheck, setAgeCheck] = useState(false);
   async function signInWithEmail() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
@@ -108,7 +108,8 @@ export const Auth = () => {
             style={{
               width: 125,
               height: 125,
-              marginTop: "50%",
+              marginTop: "20%",
+              marginBottom: 20,
               padding: 5,
               alignSelf: "center",
             }}
@@ -124,18 +125,24 @@ export const Auth = () => {
               md: "25%",
             }}
             space={3}
+            mt={5}
+            p={5}
+            rounded="md"
+          
             alignItems="center"
           >
             <Input
+              variant="filled"
               onChangeText={(text) => setEmail(text)}
               style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
               value={email}
+              size="md"
               backgroundColor={
                 colorScheme == "dark"
                   ? darkMode.Input.backgroundColor
                   : lightMode.Input.backgroundColor
               }
-              placeholder="email@address.com"
+              placeholder="email"
               autoCapitalize={"none"}
               keyboardType="email-address"
               InputLeftElement={
@@ -151,7 +158,9 @@ export const Auth = () => {
               style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
               onChangeText={(text) => setPassword(text)}
               value={password}
+              variant="filled"
               placeholder="password"
+              size="md"
               autoCapitalize={"none"}
               type={show ? "text" : "password"}
               InputRightElement={
@@ -176,6 +185,8 @@ export const Auth = () => {
                     style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
                     onChangeText={(num) => setName(num)}
                     value={name}
+                    size={"md"}
+                    variant={"filled"}
                     placeholder="name"
                      />
                     
@@ -184,16 +195,22 @@ export const Auth = () => {
                   onChangeText={(num) => setNumber(num)}
                   value={number}
                   placeholder="phone"
+                  size={"md"}
+                    variant={"filled"}
                   keyboardType="number-pad" />
                 
                     </>
               ) : null
             }
 
-            {showSignUp ? (
-              <>
+           
+          </Stack>
+          {showSignUp ? (
+              <Box
+                style={colorScheme == "dark" ? darkMode.ModalBody : lightMode.ModalBody}
+              >
                 {/* check terms and conditions */}
-                <HStack alignItems="center" space={2} mt={5}>
+                <HStack style={colorScheme == "dark" ? darkMode.ModalBody : lightMode.ModalBody} alignItems="center" space={2} mt={5}>
                   <Box>
                     {termsCheck ? (
                       <Icon
@@ -224,15 +241,52 @@ export const Auth = () => {
                     </Text>
                   </Text>
                 </HStack>
-              </>
+                <HStack style={colorScheme == "dark" ? darkMode.ModalBody : lightMode.ModalBody} alignItems="center" space={2} mt={5}>
+                  <Box>
+                    {ageCheck ? (
+                      <Icon
+                        as={<MaterialIcons name="check-box" />}
+                        size={7}
+                        ml="2"
+                        color="muted.400"
+                        onPress={() => setAgeCheck(false)}
+                      />
+                    ) : (
+                      <Icon
+                        as={<MaterialIcons name="check-box-outline-blank" />}
+                        size={7}
+                        ml="2"
+                        color="muted.400"
+                        onPress={() => setAgeCheck(true)}
+                      />
+                    )}
+                  </Box>
+                  <Text color="muted.700" fontSize="sm">
+                    Are you 18 or older?
+                  </Text>
+                </HStack>
+              </Box>
             ) : null}
-          </Stack>
-
           {showSignIn ? (
-            <>
-              <Button
-                style={
-                  colorScheme == "dark" ? darkMode.Button : lightMode.Button
+             <Box
+              style={{
+                marginTop: 20,
+                justifyContent: "center",
+                alignItems: "center",
+              }
+              }
+             >
+             <Button
+                style={{
+                  alignItems : 'center',
+                  justifyContent: 'center',
+                  borderRadius: 10,
+                  width: '50%',
+                  padding: 5,
+                  margin: 5,
+                  height: 50,
+                  backgroundColor: '#3d5a80',
+                }
                 }
                 disabled={loading}
                 onPress={() => signInWithEmail()}
@@ -256,10 +310,12 @@ export const Auth = () => {
                     setShowSignUp(true);
                   }}
                 >
-                  Sign Up
+                  Sign up
                 </Text>
               </Text>
-            </>
+             </Box>
+            
+              
           ) : null}
           {showSignUp ? (
             <>

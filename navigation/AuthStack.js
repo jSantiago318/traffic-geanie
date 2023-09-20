@@ -27,7 +27,7 @@ export const AuthStack = () => {
         // You can return any component that you like here!
         return <MaterialIcons name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: 'tomato',
+      tabBarActiveTintColor: '#27491d',
       tabBarInactiveTintColor: 'gray',
     })}
   >

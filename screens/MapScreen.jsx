@@ -5,8 +5,10 @@ import {
   Alert,
   Box,
   Button,
+  Container,
   Divider,
   HStack,
+  Input,
   ScrollView,
   Stack,
   Text,
@@ -64,6 +66,12 @@ export const MapScreen = () => {
   const [trips, setTrips] = useState([]);
   const memo = useMemo(() => getTime(), [hours, minutes, seconds]);
   const [showAlert, setShowAlert] = useState(false);
+  
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertProblem, setAlertProblem] = useState('');
+  const [alertCat, setAlertCat] = useState('');
+  const [alertStatus, setAlertStatus] = useState(1);
+
   const [showTripData, setShowTripData] = useState(false);
   async function getTime() {
     const h = hours > 9 ? hours : "0" + hours;
@@ -417,6 +425,7 @@ export const MapScreen = () => {
       >
         <Button
           onPress={() => {
+            setTr
             setSelectTraveler(!selectTraveler);
           }}
           style={{
@@ -498,6 +507,7 @@ export const MapScreen = () => {
       </VStack>
 
       {/* vertical menu  */}
+     
       {showTripMenu ? (
         <VStack
           style={{
@@ -629,6 +639,108 @@ export const MapScreen = () => {
               </Button>
             </Box>
           ) : null}
+          {
+        showAlert ? (
+          <Container>
+            <VStack
+              style={{
+                backgroundColor:
+                  colorScheme == "dark"
+                    ? darkMode.Card.backgroundColor
+                    : lightMode.Card.backgroundColor,
+                borderRadius: 10,
+                padding: 10,
+                justifyContent: "center",
+                alignItems: "center",//flex-start
+                margin: 3,
+              }}
+            >
+              <Text
+                style={
+                  colorScheme == "dark" ? darkMode.Title : lightMode.Title
+                }
+              >Alert</Text>
+              <HStack 
+                space={5}
+                width={'100%'}
+                justifyContent={'space-between'}
+               >
+              <Button 
+                onPress={
+                  () => {
+                    setAlertCat('Alerts')
+                    setAlertStatus(1)
+                  }
+                }
+               >
+              <MaterialCommunityIcons name={"alert"} size={20}  />
+              </Button>
+              <Button 
+                onPress={
+                  () => {
+                    setAlertCat('Vehicle Location')
+                    setAlertStatus(1)
+                  }
+                } >
+              <MaterialCommunityIcons name={"bus-multiple"} size={20}  />
+              </Button>
+              <Button 
+                onPress={
+                  () => {
+                    setAlertCat('Bus Stops')
+                    setAlertStatus(1)
+                  }
+                } >
+              <MaterialCommunityIcons name={"bus-stop"} size={20}  />
+              </Button>
+              <Button 
+                onPress={
+                  () => {
+                    setAlertCat('Stop Markers')
+                    setAlertStatus(1)
+                  }
+                } >
+              <MaterialCommunityIcons name={"bus-marker"} size={20}  />
+              </Button>
+              </HStack>
+              <Text
+              style={
+                  colorScheme == "dark" ? darkMode.Text : lightMode.Text
+                }>Title</Text>
+              <Input
+              onChangeText={text => setAlertTitle(text)}
+               p={3} m={3} variant="filled" size="md" placeholder="Title" backgroundColor={'blueGray.300'} />
+              <Text
+              style={
+                  colorScheme == "dark" ? darkMode.Text : lightMode.Text
+                }>Problem</Text>
+              <Input 
+              onChangeText={text => setAlertProblem(text)}
+              p={3} m={3} variant="filled" size="md" placeholder="Problem" backgroundColor={'blueGray.300'} />
+                <Button
+                onPress={
+                  async () => {
+                    const { data, error } = await supabase.from('feedback').insert([
+                      {
+                        title: alertTitle,
+                        conv: alertProblem,
+                        cat: alertCat,
+                        status: alertStatus,
+                      }
+                    ])
+                    if(error){
+                      console.log(error)
+                    }
+                    setShowAlert(false)
+                  }
+                }
+                >
+                  Submit
+                </Button>
+            </VStack>
+          </Container>
+        ): null
+      }
           {travelingBy == "bus" &&
           (startStopName == null || finalStopName == null) ? (
             <HStack
@@ -1234,7 +1346,7 @@ export const MapScreen = () => {
                     .from("trips")
                     .select("*")
                     .eq("email", uid)
-                    .order("id", { ascending: false });
+                    .order("id", { ascending: true });
                   if (error) {
                     console.log(error);
                   } else {
@@ -1325,13 +1437,77 @@ export const MapScreen = () => {
                         ? darkMode.Card.backgroundColor
                         : lightMode.Card.backgroundColor,
                     borderRadius: 10,
-                    padding: 10,
+                    padding: 5,
                     justifyContent: "center",
                     alignItems: "center",
                     margin: 3,
                   }}
                  >
                   <Stack space={0} marginRight={3}>
+
+                  <HStack space={2} alignItems="center" justifyContent="center">
+                    <MaterialCommunityIcons
+                      name={trip.travel}
+                      size={20}
+                      color={
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color
+                        }
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color:
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color,
+                      }}
+                    >
+                      {trip.id || "no id"} - {trip.seq}
+                    </Text>
+                    <Button    variant={"ghost"} style={{padding:0, margin:0}}>
+                      <MaterialCommunityIcons
+                        name={"chevron-down"}
+                        size={20}
+                        color={
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color
+                        }
+                      />
+                    </Button>
+                    
+                    </HStack>
+                 
+                  </Stack>
+
+                 
+                </Box>
+                );
+              } else if(
+                trips.length > 1 && 
+                trip.seq != 0 &&
+                trip.tripId == trips[index].tripId
+              ){
+                return (
+                  <Box key={index} 
+                  style={{
+                    backgroundColor:
+                      colorScheme == "dark"
+                        ? darkMode.Card.backgroundColor
+                        : lightMode.Card.backgroundColor,
+                    borderRadius: 10,
+                    padding: 5,
+                    justifyContent: "flex-end",
+                    alignItems: "flex-end",
+                    margin: 3,
+                    width: Dimensions.get("window").width * 0.7,
+                    
+                  }}
+                 >
+                  <Stack space={0}marginRight={3}>
 
                   <HStack space={2} alignItems="center" justifyContent="center">
                     <MaterialCommunityIcons
@@ -1368,14 +1544,12 @@ export const MapScreen = () => {
                     </Button>
                     
                     </HStack>
-                      {
-
-                      }
+                 
                   </Stack>
 
                  
                 </Box>
-                );
+                )
               }
             })}
           </ScrollView>

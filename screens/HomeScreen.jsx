@@ -90,6 +90,7 @@ export const HomeScreen = () => {
         <Center>
           <Text
             fontSize="xl"
+            paddingTop="10"
             bold
             style={
               colorScheme == "dark" ? darkMode.Text : lightMode.Text
@@ -127,7 +128,7 @@ export const HomeScreen = () => {
           <Button
         onPress={startForegroundUpdate}
         style={
-          colorScheme == "dark" ? darkMode.button : lightMode.button
+          colorScheme == "dark" ? darkMode.Button : lightMode.Button
         }
       ><Text
       style={colorScheme == "dark" ? lightMode.Text : darkMode.Text}
@@ -141,7 +142,7 @@ export const HomeScreen = () => {
           allowTracking
         }
         style={
-          colorScheme == "dark" ? darkMode.button : lightMode.button
+          colorScheme == "dark" ? darkMode.Button : lightMode.Button
         }
       ><Text
       style={colorScheme == "dark" ? lightMode.Text : darkMode.Text}
@@ -183,8 +184,8 @@ export const HomeScreen = () => {
       )}
 
     </View>
-  );
-};
+  )
+}
 
 
 const darkMode = StyleSheet.create({
