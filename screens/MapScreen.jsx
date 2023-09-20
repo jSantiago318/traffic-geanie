@@ -81,7 +81,18 @@ export const MapScreen = () => {
     return h + ":" + m + ":" + s;
   }
   let foregroundSubscription = null;
-
+  async function newCoords(){
+    await supabase.from('travel')
+    .insert([
+      {
+        udi: uid,
+        lat: location.coords.latitude,
+        lon: location.coords.longitude,
+        tripId: lastTripId,
+        travel: travelingBy,
+      }
+    ])
+  }
   useEffect(() => {
     (async () => {
       if (uid == null) {
@@ -116,7 +127,7 @@ export const MapScreen = () => {
             // if(seconds % 6 == 0){
             //   setBackLoc(backLoc => [...backLoc, [location.coords.latitude, location.coords.longitude]])
             // }
-
+            newCoords()
             setLocation(location);
           }
         );
@@ -425,7 +436,6 @@ export const MapScreen = () => {
       >
         <Button
           onPress={() => {
-            setTr
             setSelectTraveler(!selectTraveler);
           }}
           style={{
