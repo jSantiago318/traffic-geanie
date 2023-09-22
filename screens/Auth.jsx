@@ -277,26 +277,26 @@ export const Auth = () => {
               }
              >
              <Button
-                style={{
-                  alignItems : 'center',
-                  justifyContent: 'center',
-                  borderRadius: 10,
-                  width: '50%',
-                  padding: 5,
-                  margin: 5,
-                  height: 50,
-                  backgroundColor: '#3d5a80',
-                }
-                }
-                disabled={loading}
-                onPress={() => signInWithEmail()}
+              style={{
+                marginTop: 20,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: colorScheme == "dark" ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
+              }}
+             >
+              <Text
+                style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
+                onPress={() => {
+                  if (email.length == 0 || password.length == 0) {
+                    Alert.alert("Please fill out all fields");
+                  } else {
+                    signInWithEmail();
+                  }
+                }}
               >
-                <Text
-                  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
-                >
-                  Sign In
-                </Text>
-              </Button>
+                Sign In
+              </Text>
+             </Button>
               <Text
                 style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
               >

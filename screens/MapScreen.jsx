@@ -5,6 +5,7 @@ import {
   Alert,
   Box,
   Button,
+  Center,
   Container,
   Divider,
   HStack,
@@ -24,7 +25,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { darkMode, lightMode } from "../config";
+import { colorsDark, colorsLight, darkMode, lightMode } from "../config";
 import { getOnlineById, getPosition } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 
@@ -425,6 +426,7 @@ export const MapScreen = () => {
       {/* vertical right pannel button menu */}
       <VStack
         style={{
+          zIndex: 100,
           position: "absolute",
           alignContent: "flex-end",
           justifyContent: "flex-end",
@@ -663,6 +665,7 @@ export const MapScreen = () => {
                 justifyContent: "center",
                 alignItems: "center",//flex-start
                 margin: 3,
+                width: '50%',
               }}
             >
               <Text
@@ -1184,13 +1187,10 @@ export const MapScreen = () => {
         <VStack
           style={{
             position: "absolute",
-            alignContent: "flex-start",
-            alignItems: "flex-start",
-            justifyContent: "center",
-            bottom: "5%",
-            padding: 1,
-            left: "5%",
-            width: "60%",
+            alignContent: "center", 
+            justifyContent: "center", 
+            bottom: "3%",
+            padding: 1, 
           }}
         >
           {showTripData ? (
@@ -1202,8 +1202,8 @@ export const MapScreen = () => {
                     : lightMode.Card.backgroundColor,
                 borderRadius: 10,
                 padding: 5,
-                alignContent: "flex-start",
-            alignItems: "flex-start",
+                alignContent: "center",
+            alignItems: "center",
                 margin: 3,
               }}
             >
@@ -1434,28 +1434,31 @@ export const MapScreen = () => {
               maxHeight: Dimensions.get("window").height * 0.4,
               width: Dimensions.get("window").width * 0.9,
               padding: 1,
-              margin: 1,
+              margin: 1, 
             }}
           >
             {trips.map((trip, index) => {
               if (trip.seq == 0) {
                 return (
-                <Box key={index} 
+                  <Center key={index} >
+
+                 
+                <HStack  
                   style={{
                     backgroundColor:
                       colorScheme == "dark"
-                        ? darkMode.Card.backgroundColor
-                        : lightMode.Card.backgroundColor,
+                        ? colorsDark.secondaryColor
+                        : colorsLight.secondaryColor,
                     borderRadius: 10,
                     padding: 5,
-                    justifyContent: "center",
+                    justifyContent: "space-between",
                     alignItems: "center",
                     margin: 3,
+                    width: Dimensions.get("window").width * 0.7,
                   }}
                  >
-                  <Stack space={0} marginRight={3}>
-
-                  <HStack space={2} alignItems="center" justifyContent="center">
+                
+              
                     <MaterialCommunityIcons
                       name={trip.travel}
                       size={20}
@@ -1479,7 +1482,7 @@ export const MapScreen = () => {
                     </Text>
                     <Button    variant={"ghost"} style={{padding:0, margin:0}}>
                       <MaterialCommunityIcons
-                        name={"chevron-down"}
+                        name={"chevron-right"}
                         size={20}
                         color={
                           colorScheme == "dark"
@@ -1488,13 +1491,8 @@ export const MapScreen = () => {
                         }
                       />
                     </Button>
-                    
-                    </HStack>
-                 
-                  </Stack>
-
-                 
-                </Box>
+                </HStack>
+                </Center>
                 );
               } else if(
                 trips.length > 1 && 
@@ -1502,7 +1500,8 @@ export const MapScreen = () => {
                 trip.tripId == trips[index].tripId
               ){
                 return (
-                  <Box key={index} 
+                  <Center key={index} >
+                  <HStack  
                   style={{
                     backgroundColor:
                       colorScheme == "dark"
@@ -1510,16 +1509,13 @@ export const MapScreen = () => {
                         : lightMode.Card.backgroundColor,
                     borderRadius: 10,
                     padding: 5,
-                    justifyContent: "flex-end",
-                    alignItems: "flex-end",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                     margin: 3,
                     width: Dimensions.get("window").width * 0.7,
                     
                   }}
-                 >
-                  <Stack space={0}marginRight={3}>
-
-                  <HStack space={2} alignItems="center" justifyContent="center">
+                 > 
                     <MaterialCommunityIcons
                       name={trip.travel}
                       size={20}
@@ -1541,7 +1537,7 @@ export const MapScreen = () => {
                     >
                       {trip.id || "no id"} - {trip.seq}
                     </Text>
-                    <Button   onPress={() => showTripMenu(true)} variant={"ghost"} style={{padding:0, margin:0}}>
+                    <Button   variant={"ghost"} style={{padding:0, margin:0}}>
                       <MaterialCommunityIcons
                         name={"chevron-down"}
                         size={20}
@@ -1553,12 +1549,11 @@ export const MapScreen = () => {
                       />
                     </Button>
                     
-                    </HStack>
-                 
-                  </Stack>
+                   
 
                  
-                </Box>
+                </HStack>
+                </Center>
                 )
               }
             })}

@@ -46,31 +46,27 @@ export const RoutesList = ({ route }) => {
       style={{
         backgroundColor: colorScheme === "light" ? colorsLight.secondaryColor : colorsDark.secondaryColor,
         borderRadius: 10,
+        width: "90%",
         padding: 5,
-        margin: 5,
+        margin: 5, 
       }}
-      h={{
-        base: "60%",
-        md: "60%",
-        lg: "60%",
-      }}
+
      >
       <SectionList
-        w="90%" 
-        
+        w="100%" 
         mb="4"
         sections={data}
         keyExtractor={(item, index) => item + index}
         renderItem={renderItem}
         renderSectionHeader={({ section: { title } }) => (
           <Center
+            w="100%"
             alignItems={"flex-start"}
-            paddingLeft={5}
-            width={"100%"}
+            paddingLeft={3}
             borderRadius={10}
             backgroundColor={colorScheme === "light" ? colorsLight.accentColor : colorsDark.accentColor}
           >
-            <Heading fontSize="xl" mt="4" pb="2" >
+            <Heading fontSize="xl" p={2} >
               {title}
             </Heading>
           </Center>
