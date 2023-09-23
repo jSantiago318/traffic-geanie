@@ -11,6 +11,8 @@ import {
   HStack,
   Input,
   ScrollView,
+  SectionList,
+  Select,
   Stack,
   Text,
   VStack,
@@ -39,7 +41,7 @@ import { useStopwatch } from "react-timer-hook";
 export const MapScreen = () => {
   const colorScheme = useColorScheme();
   const [seq, setSeq] = useState(0);
-  const [fullTrip, setFullTrip] = useState([]);
+  
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [selectedStop, setSelectedStop] = useState(null);
@@ -337,6 +339,10 @@ export const MapScreen = () => {
         initialRegion={INITIAL_REGION}
         ref={_mapRef}
       >
+
+      {
+        
+      }
       
         {getRoutes().map((route, index) => {
           return (
@@ -516,6 +522,32 @@ export const MapScreen = () => {
             color={"white"}
           />
         </Button>
+        <Button
+          onPress={() => {
+            // console.log(location);
+            _mapRef.current.animateToRegion({
+              latitude: location.coords?.latitude,
+              longitude: location.coords?.longitude,
+              latitudeDelta: 0.0092,
+              longitudeDelta: 0.0091,
+            }, 1000);
+          }}
+          style={{
+            zIndex: 100,
+            margin: 2,
+            padding: 2,
+            borderRadius: 10,
+            maxHeight: 50,
+            maxWidth: 50,
+            backgroundColor: "#36B24A",
+          }}
+        >
+          <MaterialCommunityIcons
+            name={"map-marker-account"}
+            size={24}
+            color={"white"}
+          />
+        </Button>
       </VStack>
 
       {/* vertical menu  */}
@@ -665,7 +697,7 @@ export const MapScreen = () => {
                 justifyContent: "center",
                 alignItems: "center",//flex-start
                 margin: 3,
-                width: '50%',
+                width: '80%',
               }}
             >
               <Text
@@ -673,62 +705,41 @@ export const MapScreen = () => {
                   colorScheme == "dark" ? darkMode.Title : lightMode.Title
                 }
               >Alert</Text>
-              <HStack 
-                space={5}
-                width={'100%'}
-                justifyContent={'space-between'}
-               >
-              <Button 
-                onPress={
-                  () => {
-                    setAlertCat('Alerts')
-                    setAlertStatus(1)
-                  }
-                }
-               >
-              <MaterialCommunityIcons name={"alert"} size={20}  />
-              </Button>
-              <Button 
-                onPress={
-                  () => {
-                    setAlertCat('Vehicle Location')
-                    setAlertStatus(1)
-                  }
-                } >
-              <MaterialCommunityIcons name={"bus-multiple"} size={20}  />
-              </Button>
-              <Button 
-                onPress={
-                  () => {
-                    setAlertCat('Bus Stops')
-                    setAlertStatus(1)
-                  }
-                } >
-              <MaterialCommunityIcons name={"bus-stop"} size={20}  />
-              </Button>
-              <Button 
-                onPress={
-                  () => {
-                    setAlertCat('Stop Markers')
-                    setAlertStatus(1)
-                  }
-                } >
-              <MaterialCommunityIcons name={"bus-marker"} size={20}  />
-              </Button>
-              </HStack>
-              <Text
-              style={
-                  colorScheme == "dark" ? darkMode.Text : lightMode.Text
-                }>Title</Text>
+             <Select 
+              selectedValue={alertCat}
+              minWidth={'100%'}
+              size={'md'}
+              backgroundColor={'blueGray.300'}
+              accessibilityLabel="Select Category"
+              placeholder="Select Category"
+              onValueChange={(itemValue) => setAlertCat(itemValue)}
+              _selectedItem={{
+                bg: "blueGray.300",
+                endIcon: <MaterialCommunityIcons 
+                name="chevron-down" 
+                size={5}
+                 />
+              }}
+            >
+              <Select.Item label="Bus" value="bus" />
+              <Select.Item label="Bus and system predictions" value="predictions" />
+              <Select.Item label="Bus stops" value="bus-stops" />
+              <Select.Item label="New Feature" value="new-feature" />
+              <Select.Item label="Other" value="other" />
+            </Select>
+            
+{/*        
               <Input
+              w={'100%'}
               onChangeText={text => setAlertTitle(text)}
-               p={3} m={3} variant="filled" size="md" placeholder="Title" backgroundColor={'blueGray.300'} />
+               p={3} m={3} variant="filled" size="md" placeholder="Title" backgroundColor={'blueGray.300'} /> */}
               <Text
               style={
                   colorScheme == "dark" ? darkMode.Text : lightMode.Text
                 }>Problem</Text>
               <Input 
               onChangeText={text => setAlertProblem(text)}
+              w={'100%'}
               p={3} m={3} variant="filled" size="md" placeholder="Problem" backgroundColor={'blueGray.300'} />
                 <Button
                 onPress={
@@ -1347,7 +1358,6 @@ export const MapScreen = () => {
             </View>
           ) : null}
 
-          
           {trips.length == 0 ? (
             <>
               <Button
@@ -1430,19 +1440,16 @@ export const MapScreen = () => {
           ) : null}
 
           <ScrollView
-            style={{
-              maxHeight: Dimensions.get("window").height * 0.4,
-              width: Dimensions.get("window").width * 0.9,
-              padding: 1,
-              margin: 1, 
-            }}
+          height={Dimensions.get("window").height * 0.30}
+          width={Dimensions.get("window").width * 0.9}
           >
             {trips.map((trip, index) => {
               if (trip.seq == 0) {
                 return (
-                  <Center key={index} >
+                  <>
 
-                 
+                  
+                  <Center key={index} >
                 <HStack  
                   style={{
                     backgroundColor:
@@ -1460,7 +1467,7 @@ export const MapScreen = () => {
                 
               
                     <MaterialCommunityIcons
-                      name={trip.travel}
+                      name={'bus-stop'}
                       size={20}
                       color={
                           colorScheme == "dark"
@@ -1478,29 +1485,30 @@ export const MapScreen = () => {
                             : lightMode.Text.color,
                       }}
                     >
-                      {trip.id || "no id"} - {trip.seq}
+                     Trip {trip.id || "no id"} 
                     </Text>
                     <Button    variant={"ghost"} style={{padding:0, margin:0}}>
-                      <MaterialCommunityIcons
-                        name={"chevron-right"}
-                        size={20}
-                        color={
-                          colorScheme == "dark"
-                            ? darkMode.Text.color
-                            : lightMode.Text.color
-                        }
-                      />
+                    <MaterialCommunityIcons 
+                    name={"chevron-down"}
+                    size={20}
+                    color={
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color
+                    }/>
                     </Button>
                 </HStack>
                 </Center>
-                );
-              } else if(
-                trips.length > 1 && 
-                trip.seq != 0 &&
-                trip.tripId == trips[index].tripId
-              ){
-                return (
-                  <Center key={index} >
+                <HStack  
+                  style={{
+                    borderRadius: 10,
+                    // padding: 5,
+                    justifyContent: "flex-end",
+                    // alignItems: "center",
+                    // margin: 3,
+                    width: Dimensions.get("window").width * 0.8,
+                  }}
+                   >
                   <HStack  
                   style={{
                     backgroundColor:
@@ -1512,7 +1520,7 @@ export const MapScreen = () => {
                     justifyContent: "space-between",
                     alignItems: "center",
                     margin: 3,
-                    width: Dimensions.get("window").width * 0.7,
+                    width: Dimensions.get("window").width * 0.6,
                     
                   }}
                  > 
@@ -1537,10 +1545,128 @@ export const MapScreen = () => {
                     >
                       {trip.id || "no id"} - {trip.seq}
                     </Text>
-                    <Button   variant={"ghost"} style={{padding:0, margin:0}}>
+                    {
+                      trip.location_start.latitude && trip.location_start.longitude ?(
+                        <Button 
+                      onPress={
+                        () => {
+                          // setShowTripData(trip)
+                          _mapRef.current.animateToRegion({
+                            latitude: trip.location_start.latitude,
+                            longitude: trip.location_start.longitude,
+                            latitudeDelta: 0.005,
+                            longitudeDelta: 0.005,
+                          }, 1000)
+                        }
+                      }
+                      variant={"ghost"} style={{padding:0, margin:0}}>
                       <MaterialCommunityIcons
-                        name={"chevron-down"}
-                        size={20}
+                        name={"map-marker"}
+                        size={14}
+                        color={
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color
+                        }
+                      />
+                    </Button>
+                      ): (
+                        <Button 
+                     
+                      variant={"ghost"} style={{padding:0, margin:0}}>
+                      <MaterialCommunityIcons
+                        name={"map-marker-off"}
+                        size={14}
+                        color={
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color
+                        }
+                      />
+                    </Button>
+                      )
+                    }
+                    
+                   
+
+                 
+                </HStack>
+                </HStack>
+                </>
+                );
+              } else if(
+                trips.length > 1 && 
+                trip.seq != 0 &&
+                trip.tripId == trips[index].tripId
+              ){
+                return (
+                  <HStack key={index} 
+                  style={{
+                    borderRadius: 10,
+                    // padding: 5,
+                    justifyContent: "flex-end",
+                    // alignItems: "center",
+                    // margin: 3,
+                    
+                    width: Dimensions.get("window").width * 0.8,
+                  }}
+                   >
+                 <HStack  
+                  style={{
+                    backgroundColor:
+                      colorScheme == "dark"
+                        ? darkMode.Card.backgroundColor
+                        : lightMode.Card.backgroundColor,
+                    borderRadius: 10,
+                    padding: 5,
+                    
+                    margin: 3,
+                    width: Dimensions.get("window").width * 0.6,
+                    
+                  }}
+                 > 
+                 <Stack space={0} w={'100%'} >
+                 <HStack style={{
+                  justifyContent: "space-between",
+                    alignItems: "center",
+                 }}>
+                    <MaterialCommunityIcons
+                      name={trip.travel}
+                      size={20}
+                      color={
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color
+                        }
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color:
+                          colorScheme == "dark"
+                            ? darkMode.Text.color
+                            : lightMode.Text.color,
+                      }}
+                    >
+                      {trip.id || "no id"} - {trip.seq}
+                    </Text>
+                    <Button 
+                      onPress={
+                        () => {
+                          // setShowTripData(trip)
+                          _mapRef.current.animateToRegion({
+                            latitude: trip.location_start.longitude,
+                            longitude: trip.location_start.latitude,
+                            latitudeDelta: 0.005,
+                            longitudeDelta: 0.005,
+                          }, 1000)
+                        }
+                      }
+                      variant={"ghost"} style={{padding:0, margin:0}}>
+                      <MaterialCommunityIcons
+                        name={"map-marker"}
+                        size={14}
                         color={
                           colorScheme == "dark"
                             ? darkMode.Text.color
@@ -1550,14 +1676,90 @@ export const MapScreen = () => {
                     </Button>
                     
                    
-
+</HStack>
+   <HStack style={{
+      width: '100%',
+      justifyContent: "space-between",
+      alignItems: "center",
+   }}>
+     <Text style={{
+                  fontSize: 12,
+                  color:
+                    colorScheme == "dark"
+                      ? darkMode.Text.color
+                      : lightMode.Text.color,
+                }}>
+                  {trip.location_start.startStop
+                  }
+                </Text>
+                <Text style={{
+                  fontSize: 12,
+                  color:
+                    colorScheme == "dark"
+                      ? darkMode.Text.color
+                      : lightMode.Text.color,
+                }}>
+                  {trip.trip_duration}
+                </Text>
+                <Text style={{
+                  fontSize: 12,
+                  color:
+                    colorScheme == "dark"
+                      ? darkMode.Text.color
+                      : lightMode.Text.color,
+                }}>
+                  {trip.location_end.finalStop}
+                </Text>
+   </HStack>
+   <HStack style={{
+      width: '100%',
+      justifyContent: "space-between",
+      alignItems: "center",
+   }}>
+     <Text style={{
+                  fontSize: 12,
+                  color:
+                    colorScheme == "dark"
+                      ? darkMode.Text.color
+                      : lightMode.Text.color,
+                }}>
+                  {
+                    trip.location_start.startTime == "Invalid Date" ? (
+                      new Date(trip.created_at).getHours() + ":" + new Date(trip.created_at).getMinutes() + "-" + new Date(trip.created_at).getDate() + "/" + new Date(trip.created_at).getMonth() + "/" + new Date(trip.created_at).getFullYear()
+                    ) : (
+                      trip.location_start.startTime
+                    )
+                    
+                  }
+                </Text>
+               
+                <Text style={{
+                  fontSize: 12,
+                  color:
+                    colorScheme == "dark"
+                      ? darkMode.Text.color
+                      : lightMode.Text.color,
+                }}>
+                  {
+                    trip.location_end.endTime == "Invalid Date" ? (
+                      null
+                    ) : (
+                      trip.location_end.endTime
+                    )
+                    
+                  }
+                </Text>
+   </HStack>
+</Stack>
                  
                 </HStack>
-                </Center>
+                </HStack>
                 )
               }
             })}
           </ScrollView>
+
+
         </VStack>
       ) : null}
     </View>
