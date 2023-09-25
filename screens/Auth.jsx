@@ -78,7 +78,11 @@ export const Auth = () => {
     const uid = user.id;
     const { data } = await supabase
       .from("profiles")
-      .insert([{ email: email, username: name, exp: 5, user_id: uid, phone: number  }]);
+      .insert([{ email: email, username: name, exp: 5, user_id: uid, phone: number, data: {
+        first_name: name,
+        is18: ageCheck,
+
+      }  }]);
 
     setLoading(false);
   }

@@ -38,12 +38,15 @@ import { getStops } from "../assets/gtfs/stops";
 import { supabase } from "../utils/supabase";
 import { useStopwatch } from "react-timer-hook";
 
+const pngStop = require("../assets/BusStop.png")
+
+
 export const MapScreen = () => {
   const colorScheme = useColorScheme();
   const [seq, setSeq] = useState(0);
   
   const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [selectedSeq, setSelectedSeq] = useState(null);
   const [selectedStop, setSelectedStop] = useState(null);
   const [selectedStopName, setSelectedStopName] = useState(null);
   const [selectedRoute, setSelectedRoute] = useState(null);
@@ -69,7 +72,6 @@ export const MapScreen = () => {
   const [trips, setTrips] = useState([]);
   const memo = useMemo(() => getTime(), [hours, minutes, seconds]);
   const [showAlert, setShowAlert] = useState(false);
-  
   const [alertTitle, setAlertTitle] = useState('');
   const [alertProblem, setAlertProblem] = useState('');
   const [alertCat, setAlertCat] = useState('');
@@ -153,27 +155,89 @@ export const MapScreen = () => {
     })();
   }, [uid, location]);
 
-  function returnStop(stopId) {
+  function returnStop(stopId, stopName) {
+    if (selectedSeq !=null &&
+        selectedSeq.location_start.startStop
+        == stopName
+      ) {
+      return (
+        <><Image
+        source={require("../assets/busStopArrival.png")}
+        style={{ height: 40, width: 40 }} /><Callout
+          style={{
+            width: 200,
+            zIndex: 100,
+            borderRadius: 10,
+          }}
+        >
+          <Text>{stopName}</Text>
+          <Text>{selectedSeq.location_start.startTime}</Text>
+        </Callout></>
+      );
+    } else   if (selectedSeq !=null &&
+      selectedSeq.location_end.finalStop
+      == stopName
+    ) {
+    return (
+      <><Image
+        source={require("../assets/busStopArrival.png")}
+        style={{ height: 40, width: 40 }} /><Callout
+          style={{
+            width: 200,
+            zIndex: 100,
+            borderRadius: 10,
+          }}
+        >
+          <Text>{stopName}</Text>
+          <Text>{selectedSeq.location_start.startTime}</Text>
+
+        </Callout></>
+    );
+  }
     if (stopId == startStop) {
       return (
-        <Image
-          source={require("../assets/busStop1.png")}
-          style={{ height: 40, width: 40 }}
-        />
+        <><Image
+        source={require("../assets/busStop1.png")}
+        style={{ height: 40, width: 40 }} /><Callout
+          style={{
+            width: 200,
+            zIndex: 100,
+            borderRadius: 10,
+          }}
+        >
+          <Text>{stopName}</Text>
+          <Text>{stopId}</Text>
+        </Callout></>
       );
     } else if (stopId == finalStop) {
       return (
-        <Image
-          source={require("../assets/busStop2.png")}
-          style={{ height: 40, width: 40 }}
-        />
+        <><Image
+        source={require("../assets/busStop2.png")}
+        style={{ height: 40, width: 40 }} /><Callout
+          style={{
+            width: 200,
+            zIndex: 100,
+            borderRadius: 10,
+          }}
+        >
+          <Text>{stopName}</Text>
+          <Text>{stopId}</Text>
+        </Callout></>
       );
-    } else {
+    }   else {
       return (
-        <Image
-          source={require("../assets/BusStop.png")}
-          style={{ height: 40, width: 40 }}
-        />
+        <><Image
+        source={require("../assets/BusStop.png")}
+        style={{ height: 40, width: 40 }} /><Callout
+          style={{
+            width: 200,
+            zIndex: 100,
+            borderRadius: 10,
+          }}
+        >
+          <Text>{stopName}</Text>
+          <Text>{stopId}</Text>
+        </Callout></>
       );
     }
   }
@@ -339,10 +403,6 @@ export const MapScreen = () => {
         initialRegion={INITIAL_REGION}
         ref={_mapRef}
       >
-
-      {
-        
-      }
       
         {getRoutes().map((route, index) => {
           return (
@@ -386,7 +446,8 @@ export const MapScreen = () => {
           }
         })}
         {memoStop.map((stop, index) => {
-          return (
+
+            return (
             <Marker
               zIndex={10}
               key={index}
@@ -406,19 +467,13 @@ export const MapScreen = () => {
                 setSelectedStopName(stop.name);
               }}
             >
-              {returnStop(stop.id)}
-              <Callout
-                style={{
-                  width: 200,
-                  zIndex: 100,
-                  borderRadius: 10,
-                }}
-              >
-                <Text>{stop.name}</Text>
-                <Text>{stop.id}</Text>
-              </Callout>
+              {returnStop(stop.id, stop.name)}
+              
             </Marker>
           );
+          
+          
+         
         })}
 
         {backLoc ? (
@@ -976,6 +1031,7 @@ export const MapScreen = () => {
                       </Text>
                     )}
                   </Text>
+                  
 
                   {startStop != null ? (
                     <Button
@@ -987,7 +1043,16 @@ export const MapScreen = () => {
                         setStartStopName(null);
                       }}
                     >
-                      <Text
+                    <MaterialCommunityIcons
+                      name="delete"//arrow-right-thick
+                      size={18}//dump-truck
+                      color={
+                        colorScheme == "dark"
+                          ? darkMode.Text.color
+                          : lightMode.Text.color
+                      }
+                    />
+                      {/* <Text
                         style={{
                           fontSize: 12,
                           color:
@@ -998,11 +1063,26 @@ export const MapScreen = () => {
                       >
                         {" "}
                         Remove stop
-                      </Text>
+                      </Text> */}
                     </Button>
                   ) : null}
                 </HStack>
-
+                <Container
+                  style={{
+                    // width: "100%",
+                    // height: 1,
+                  }}
+                >
+                <MaterialCommunityIcons
+                    name="arrow-down"
+                    size={18}
+                    color={
+                      colorScheme == "dark"
+                        ? darkMode.Text.color
+                        : lightMode.Text.color
+                    }
+                  />
+                </Container>
                 <HStack
                   space={2}
                   alignItems={"center"}
@@ -1064,18 +1144,15 @@ export const MapScreen = () => {
                         setFinalStopName(null);
                       }}
                     >
-                      <Text
-                        style={{
-                          fontSize: 12,
-                          color:
-                            colorScheme == "dark"
-                              ? darkMode.Text.color
-                              : lightMode.Text.color,
-                        }}
-                      >
-                        {" "}
-                        Remove stop
-                      </Text>
+                      <MaterialCommunityIcons
+                      name="delete"//arrow-right-thick
+                      size={18}//dump-truck
+                      color={
+                        colorScheme == "dark"
+                          ? darkMode.Text.color
+                          : lightMode.Text.color
+                      }
+                    />
                     </Button>
                   ) : null}
                 </HStack>
@@ -1444,10 +1521,11 @@ export const MapScreen = () => {
           width={Dimensions.get("window").width * 0.9}
           >
             {trips.map((trip, index) => {
+
               if (trip.seq == 0) {
                 return (
                   <>
-
+                  
                   
                   <Center key={index} >
                 <HStack  
@@ -1551,12 +1629,7 @@ export const MapScreen = () => {
                       onPress={
                         () => {
                           // setShowTripData(trip)
-                          _mapRef.current.animateToRegion({
-                            latitude: trip.location_start.latitude,
-                            longitude: trip.location_start.longitude,
-                            latitudeDelta: 0.005,
-                            longitudeDelta: 0.005,
-                          }, 1000)
+                          setSelectedSeq(trip)
                         }
                       }
                       variant={"ghost"} style={{padding:0, margin:0}}>
@@ -1655,12 +1728,7 @@ export const MapScreen = () => {
                       onPress={
                         () => {
                           // setShowTripData(trip)
-                          _mapRef.current.animateToRegion({
-                            latitude: trip.location_start.longitude,
-                            longitude: trip.location_start.latitude,
-                            latitudeDelta: 0.005,
-                            longitudeDelta: 0.005,
-                          }, 1000)
+                          setSelectedSeq(trip)
                         }
                       }
                       variant={"ghost"} style={{padding:0, margin:0}}>
