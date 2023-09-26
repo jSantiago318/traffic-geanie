@@ -76,7 +76,7 @@ export const MapScreen = () => {
   const [alertProblem, setAlertProblem] = useState('');
   const [alertCat, setAlertCat] = useState('');
   const [alertStatus, setAlertStatus] = useState(1);
-
+  
   const [showTripData, setShowTripData] = useState(false);
   async function getTime() {
     const h = hours > 9 ? hours : "0" + hours;
@@ -87,6 +87,7 @@ export const MapScreen = () => {
   }
   let foregroundSubscription = null;
   async function newCoords(){
+    try{
     await supabase.from('travel')
     .insert([
       {
@@ -97,6 +98,10 @@ export const MapScreen = () => {
         travel: travelingBy,
       }
     ])
+
+  } catch (error) {
+    console.log(error)
+  }
   }
   useEffect(() => {
     (async () => {
@@ -134,26 +139,25 @@ export const MapScreen = () => {
             // }
             newCoords()
             setLocation(location);
+            // const url = 'https://www.api.proba.live/genUserLoc?userId=' + uid + '&tripId=' + lastTripId + '&tripSequence=' + seq + '&routeId=' + selectedRoute + '&busId=' + '0' + '&stopId=' + selectedStop + '&predictionTime=' + '0' + '&device=0&deviceTime=0&transportationBy=' + travelingBy + '&lat=' + location.coords.latitude + '&lon=' + location.coords.longitude
+
+            // fetch(url)
+            //   .then((response) => response.json())
+            //   .then((json) => {
+            //     console.log(json);
+            //   })
+            //   .catch((error) => {
+            //     console.error(error);
+            //   });
           }
         );
       }
-      if (seconds % 6 == 0 && seconds > 5) {
-        const { data, error } = await supabase.from("routes").insert([
-          {
-            user_id: uid,
-            color: "#94EC94",
-            sequence: seq,
-            trip_id: lastTripId,
-            lat: location.coords.latitude,
-            lon: location.coords.longitude,
-          },
-        ]);
-        if (error) {
-          console.log(error);
-        }
-      }
+
+   
     })();
   }, [uid, location]);
+
+
 
   function returnStop(stopId, stopName) {
     if (selectedSeq !=null &&
@@ -1525,8 +1529,6 @@ export const MapScreen = () => {
               if (trip.seq == 0) {
                 return (
                   <>
-                  
-                  
                   <Center key={index} >
                 <HStack  
                   style={{
@@ -1542,8 +1544,6 @@ export const MapScreen = () => {
                     width: Dimensions.get("window").width * 0.7,
                   }}
                  >
-                
-              
                     <MaterialCommunityIcons
                       name={'bus-stop'}
                       size={20}

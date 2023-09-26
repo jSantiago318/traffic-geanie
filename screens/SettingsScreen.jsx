@@ -18,6 +18,7 @@ import {
 import React, { useEffect } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
 
+import { A } from '@expo/html-elements';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { supabase } from "../utils/supabase";
 
@@ -83,34 +84,13 @@ export const SettingsScreen = () => {
         >
           Account
         </Heading>
-
+      
         <Text style={colorScheme === "dark" ? darkMode.Text : lightMode.Text}>
           {email}
         </Text>
-        <Button
-          style={
-            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
-          }
-          variant={"ghost"}
-        >
-          Change Account Data
-        </Button>
-        <Button
-          style={
-            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
-          }
-          variant={"ghost"}
-        >
-          View Trips
-        </Button>
-        <Button
-          style={
-            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
-          }
-          variant={"ghost"}
-        >
-          View Alarms
-        </Button>
+      
+      
+  
         <Heading
           style={
             colorScheme === "dark"
@@ -172,13 +152,9 @@ export const SettingsScreen = () => {
           }
           title="Privacy"
           variant={"ghost"}
-          onPress={() =>
-            console.log(
-              "https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7"
-            )
-          }
+         
         >
-          Privacy Privacy
+        <A href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">Go to privacypolicies</A>
         </Button>
 
         <Button

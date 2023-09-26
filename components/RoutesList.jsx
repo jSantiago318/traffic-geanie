@@ -54,6 +54,7 @@ export const RoutesList = ({ route }) => {
      >
       <SectionList
         w="100%" 
+        h={"60%"}
         mb="4"
         sections={data}
         keyExtractor={(item, index) => item + index}
@@ -62,7 +63,7 @@ export const RoutesList = ({ route }) => {
           <Center
             w="100%"
             alignItems={"flex-start"}
-            paddingLeft={3}
+            paddingLeft={2}
             borderRadius={10}
             backgroundColor={colorScheme === "light" ? colorsLight.accentColor : colorsDark.accentColor}
           >
