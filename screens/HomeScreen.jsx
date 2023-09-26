@@ -193,8 +193,11 @@ const darkMode = StyleSheet.create({
     flex: 1,
       // justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#293241',
+      backgroundColor: '#0b1d19',
       width:'100%',
+  },
+  Text:{
+    color: 'white',
   },
   Select:{
     backgroundColor: '#fff',
@@ -210,18 +213,7 @@ const darkMode = StyleSheet.create({
     width:'100%',
     backgroundColor: '#8CCCF4',
   },
-  Text:{
-    color: '#fff',
-  },
-  button:{
-    backgroundColor: '#8CCCF4',
-    color: '#fff',
-    width: '100%',
-    marginTop: 10,
-    marginBottom: 10,
-    height: 50,
-    borderRadius: 10,
-  }
+  
 })
 
 const lightMode = StyleSheet.create({
@@ -252,22 +244,3 @@ const lightMode = StyleSheet.create({
   
 })
 
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  switchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  button: {
-    marginTop: 15,
-  },
-  separator: {
-    marginVertical: 8,
-  },
-})

@@ -108,7 +108,16 @@ export const SettingsScreen = () => {
           variant={"ghost"}
           onPress={() => setShowModal(true)}
         >
-          Delete Account
+          <Text
+            style={{
+              color: 
+                colorScheme === "dark" ? "#fff" : "#000"
+              ,
+              fontSize: 13,
+              // fontWeight: "bold",
+              // textDecorationLine: "underline",
+            }}
+          >Delete Account</Text>
         </Button>
 
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
@@ -154,7 +163,18 @@ export const SettingsScreen = () => {
           variant={"ghost"}
          
         >
-        <A href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">Go to privacypolicies</A>
+        <A href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">
+          <Text
+            style={{
+              color: 
+                colorScheme === "dark" ? "#fff" : "#000"
+              ,
+              fontSize: 13,
+              // fontWeight: "bold",
+              // textDecorationLine: "underline",
+            }}
+          >Privacy Policy</Text>
+        </A>
         </Button>
 
         <Button
@@ -165,7 +185,16 @@ export const SettingsScreen = () => {
           variant={"ghost"}
           onPress={handleLogout}
         >
-          Log Out
+           <Text
+            style={{
+              color: 
+                colorScheme === "dark" ? "#fff" : "#000"
+              ,
+              fontSize: 13,
+              // fontWeight: "bold",
+              // textDecorationLine: "underline",
+            }}
+          >Log Out</Text>
         </Button>
       </Container>
       {/* </Center> */}
@@ -176,10 +205,9 @@ export const SettingsScreen = () => {
 const darkMode = StyleSheet.create({
   View: {
     flex: 1,
-    // justifyContent: 'center',
-    paddingTop: 30,
+    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#293241",
+    backgroundColor: "#000",
     width: "100%",
   },
   Text: {
@@ -188,7 +216,7 @@ const darkMode = StyleSheet.create({
     color: "#fff",
   },
   TextHeading: {
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "bold",
     color: "#fff",
   },

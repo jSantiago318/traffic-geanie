@@ -92,7 +92,7 @@ StopText:{
   borderRadius: 10,
   padding: 10,
   margin: 10,
-  backgroundColor: '#3d5a80',
+ 
   
 },
 Heading:{

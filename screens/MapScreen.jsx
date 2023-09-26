@@ -943,7 +943,7 @@ export const MapScreen = () => {
                 size={24}
                 color={
                   colorScheme == "dark"
-                    ? "white"
+                    ? "#000"
                     : darkMode.Button.backgroundColor
                 }
               />

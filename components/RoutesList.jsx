@@ -44,7 +44,7 @@ export const RoutesList = ({ route }) => {
   return (
     <Center 
       style={{
-        backgroundColor: colorScheme === "light" ? colorsLight.secondaryColor : colorsDark.secondaryColor,
+        backgroundColor: colorScheme === "light" ? colorsLight.accentColor : colorsDark.accentColor,
         borderRadius: 10,
         width: "90%",
         padding: 5,

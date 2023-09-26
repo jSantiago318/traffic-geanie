@@ -116,7 +116,7 @@ export const StopRender = ({ stop, index }) => {
         style={{
           fontSize: colorScheme == "dark" ? darkMode.Text.fontSize : lightMode.Text.fontSize,
           fontWeight: "normal",
-          color: colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor,
+          color: colorScheme == "dark" ? '#000' : colorsLight.textColor,
           width: '85%',
         }}
          >
