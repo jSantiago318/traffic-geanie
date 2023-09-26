@@ -88,16 +88,27 @@ export const MapScreen = () => {
   let foregroundSubscription = null;
   async function newCoords(){
     try{
-    await supabase.from('travel')
-    .insert([
-      {
-        udi: uid,
-        lat: location.coords.latitude,
-        lon: location.coords.longitude,
-        tripId: lastTripId,
-        travel: travelingBy,
-      }
-    ])
+    
+    if(
+      uid != null && 
+      lastTripId != null &&
+      seq != null &&
+      selectedRoute != null &&
+      selectedStop != null &&
+      travelingBy != null &&
+      location.coords.latitude != null 
+  ){
+    const url = 'https://www.api.proba.live/genUserLoc?userId=' + uid + '&tripId=' + lastTripId + '&tripSequence=' + seq + '&routeId=' + '00' + '&busId=' + '0' + '&stopId=' + selectedStop + '&predictionTime=' + '0' + '&device=0&deviceTime=0&transportationBy=' + travelingBy + '&lat=' + location.coords.latitude + '&lon=' + location.coords.longitude
+
+  fetch(url)
+    .then((response) => response.json())
+    .then((json) => {
+      console.log(json);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
 
   } catch (error) {
     console.log(error)
@@ -137,18 +148,15 @@ export const MapScreen = () => {
             // if(seconds % 6 == 0){
             //   setBackLoc(backLoc => [...backLoc, [location.coords.latitude, location.coords.longitude]])
             // }
-            newCoords()
-            setLocation(location);
-            // const url = 'https://www.api.proba.live/genUserLoc?userId=' + uid + '&tripId=' + lastTripId + '&tripSequence=' + seq + '&routeId=' + selectedRoute + '&busId=' + '0' + '&stopId=' + selectedStop + '&predictionTime=' + '0' + '&device=0&deviceTime=0&transportationBy=' + travelingBy + '&lat=' + location.coords.latitude + '&lon=' + location.coords.longitude
+            // check no nulll values
+            (
+              async () => {
+                await newCoords()
+              }
 
-            // fetch(url)
-            //   .then((response) => response.json())
-            //   .then((json) => {
-            //     console.log(json);
-            //   })
-            //   .catch((error) => {
-            //     console.error(error);
-            //   });
+             )()
+            
+            setLocation(location);
           }
         );
       }
@@ -156,7 +164,7 @@ export const MapScreen = () => {
    
     })();
   }, [uid, location]);
-
+ 
 
 
   function returnStop(stopId, stopName) {
