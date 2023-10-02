@@ -9,6 +9,7 @@ import {
 import {
   Box,
   Button,
+  Center,
   FormControl,
   HStack,
   Icon,
@@ -23,6 +24,7 @@ import {
 import React, { useState } from "react";
 import { colorsDark, colorsLight, darkMode, lightMode } from "../config";
 
+import { A } from '@expo/html-elements';
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native";
 import logo from "../assets/car-blue.png";
@@ -90,7 +92,7 @@ export const Auth = () => {
   return (
     <KeyboardAvoidingView
       enabled={false}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      // behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={{
         flex: 1,
       }}
@@ -120,7 +122,7 @@ export const Auth = () => {
           />
           <Text
             style={colorScheme == "dark" ? darkMode.Title : lightMode.Title} >
-            Mayaguez Transit Tracker
+            Travel Transit Tracker
           </Text>
 
           <Stack
@@ -129,32 +131,115 @@ export const Auth = () => {
               md: "25%",
             }}
             space={3}
-            mt={5}
-            p={5}
+            mt={1}
+            p={1}
             rounded="md"
           
             alignItems="center"
           >
+          {
+              showSignUp ? (
+                <>
+                  <Input
+                    style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
+                    onChangeText={(num) => setName(num)}
+                    value={name}
+                    size={"md"}
+                    backgroundColor={
+                colorScheme == "dark"
+                  ? colorsDark.primaryColor
+                  : colorsLight.primaryColor
+              }
+              borderColor={'transparent'}
+              color={
+                colorScheme == "dark"
+                  ? darkMode.Title.color
+                  : lightMode.Title.color
+              }
+              autoCapitalize={"none"}
+                    placeholder="name"
+
+              InputLeftElement={
+                <Icon
+                  as={<MaterialIcons name="person" />}
+                  size={7}
+                  ml="2"
+                  color={
+                    colorScheme == "dark"
+                      ? darkMode.Title.color
+                      : lightMode.Title.color
+                  }
+                />
+              }
+                     />
+                    
+                    <Input
+                  style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
+                  onChangeText={(num) => setNumber(num)}
+                  value={number}
+                  placeholder="phone"
+                  size={"md"}
+                    variant={"filled"}
+                  keyboardType="number-pad"
+                  borderColor={'transparent'}
+                  backgroundColor={
+                colorScheme == "dark"
+                  ? colorsDark.primaryColor
+                  : colorsLight.primaryColor
+              }
+              color={
+                colorScheme == "dark"
+                  ? darkMode.Title.color
+                  : lightMode.Title.color
+              }
+                  
+              InputLeftElement={
+                <Icon
+                  as={<MaterialIcons name="phone" />}
+                  size={7}
+                  ml="2"
+                  color={
+                    colorScheme == "dark"
+                      ? darkMode.Title.color
+                      : lightMode.Title.color
+                  }
+                />
+              }
+                   />
+                
+                    </>
+              ) : null
+            }
             <Input
-              variant="filled"
               onChangeText={(text) => setEmail(text)}
               style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
               value={email}
               size="md"
               backgroundColor={
                 colorScheme == "dark"
-                  ? darkMode.Input.backgroundColor
-                  : lightMode.Input.backgroundColor
+                  ? colorsDark.primaryColor
+                  : colorsLight.primaryColor
               }
+              borderColor={'transparent'}
               placeholder="email"
+              color={
+                colorScheme == "dark"
+                  ? darkMode.Title.color
+                  : lightMode.Title.color
+              }
               autoCapitalize={"none"}
               keyboardType="email-address"
+              
               InputLeftElement={
                 <Icon
                   as={<MaterialIcons name="person" />}
                   size={7}
                   ml="2"
-                  color="muted.400"
+                  color={
+                    colorScheme == "dark"
+                      ? darkMode.Title.color
+                      : lightMode.Title.color
+                  }
                 />
               }
             />
@@ -162,11 +247,22 @@ export const Auth = () => {
               style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
               onChangeText={(text) => setPassword(text)}
               value={password}
-              variant="filled"
               placeholder="password"
+              backgroundColor={
+                colorScheme == "dark"
+                  ? colorsDark.primaryColor
+                  : colorsLight.primaryColor
+              }
               size="md"
+              borderColor={'transparent'}
+              color={
+                colorScheme == "dark"
+                  ? darkMode.Title.color
+                  : lightMode.Title.color
+              }
               autoCapitalize={"none"}
               type={show ? "text" : "password"}
+             
               InputRightElement={
                 <Pressable onPress={() => setShow(!show)}>
                   <Icon
@@ -177,35 +273,16 @@ export const Auth = () => {
                     }
                     size={7}
                     mr="2"
-                    color="muted.400"
+                    color={
+                      colorScheme == "dark"
+                        ? darkMode.Title.color
+                        : lightMode.Title.color
+                    }
                   />
                 </Pressable>
               }
             />
-            {
-              showSignUp ? (
-                <>
-                  <Input
-                    style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
-                    onChangeText={(num) => setName(num)}
-                    value={name}
-                    size={"md"}
-                    variant={"filled"}
-                    placeholder="name"
-                     />
-                    
-                    <Input
-                  style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
-                  onChangeText={(num) => setNumber(num)}
-                  value={number}
-                  placeholder="phone"
-                  size={"md"}
-                    variant={"filled"}
-                  keyboardType="number-pad" />
-                
-                    </>
-              ) : null
-            }
+            
 
            
           </Stack>
@@ -221,7 +298,11 @@ export const Auth = () => {
                         as={<MaterialIcons name="check-box" />}
                         size={7}
                         ml="2"
-                        color="muted.400"
+                        color={
+                          colorScheme == "dark"
+                            ? darkMode.Title.color
+                            : lightMode.Title.color
+                        }
                         onPress={() => setTermsCheck(false)}
                       />
                     ) : (
@@ -229,20 +310,43 @@ export const Auth = () => {
                         as={<MaterialIcons name="check-box-outline-blank" />}
                         size={7}
                         ml="2"
-                        color="muted.400"
+                        color={
+                          colorScheme == "dark"
+                            ? darkMode.Title.color
+                            : lightMode.Title.color
+                        }
                         onPress={() => setTermsCheck(true)}
                       />
                     )}
                   </Box>
-                  <Text color="muted.700" fontSize="sm">
+                  <Text 
+                    color={
+                      colorScheme == "dark"
+                        ? darkMode.Title.color
+                        : lightMode.Title.color
+                    }
+                        fontWeight="medium"
+                        fontSize={'sm'}
+                  >
                     By signing up, you agree to our{" "}
-                    <Text color="primary.500" fontWeight="medium">
-                      Terms of Use
-                    </Text>{" "}
-                    and{" "}
-                    <Text color="primary.500" fontWeight="medium">
-                      Privacy Policy
-                    </Text>
+                    <A  color={
+                    colorScheme == "dark"
+                      ? darkMode.Title.color
+                      : lightMode.Title.color
+                  }
+                      fontWeight="medium" href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">
+               <Text
+                      color={
+                    'primary.00'
+                  }
+                      fontWeight="medium"
+                      fontSize={'sm'}
+                  >
+
+                      Terms of Use and Conditions
+                  </Text>
+                    
+                    </A>
                   </Text>
                 </HStack>
                 <HStack style={colorScheme == "dark" ? darkMode.ModalBody : lightMode.ModalBody} alignItems="center" space={2} mt={5}>
@@ -252,7 +356,11 @@ export const Auth = () => {
                         as={<MaterialIcons name="check-box" />}
                         size={7}
                         ml="2"
-                        color="muted.400"
+                        color={
+                          colorScheme == "dark"
+                            ? darkMode.Title.color
+                            : lightMode.Title.color
+                        }
                         onPress={() => setAgeCheck(false)}
                       />
                     ) : (
@@ -260,12 +368,24 @@ export const Auth = () => {
                         as={<MaterialIcons name="check-box-outline-blank" />}
                         size={7}
                         ml="2"
-                        color="muted.400"
+                        color={
+                          colorScheme == "dark"
+                            ? darkMode.Title.color
+                            : lightMode.Title.color
+                        }
                         onPress={() => setAgeCheck(true)}
                       />
                     )}
                   </Box>
-                  <Text color="muted.700" fontSize="sm">
+                  <Text 
+                   color={
+                    colorScheme == "dark"
+                      ? darkMode.Title.color
+                      : lightMode.Title.color
+                  }
+                      fontWeight="medium"
+                      fontSize={'sm'}
+                  >
                     Are you 18 or older?
                   </Text>
                 </HStack>
@@ -274,22 +394,25 @@ export const Auth = () => {
           {showSignIn ? (
              <Box
               style={{
-                marginTop: 20,
+                marginTop: 10,
                 justifyContent: "center",
                 alignItems: "center",
               }
               }
              >
              <Button
-              style={{
-                marginTop: 20,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: colorScheme == "dark" ? darkMode.Button.backgroundColor : lightMode.Button.backgroundColor,
-              }}
-             >
+            backgroundColor={
+              colorScheme == "dark" ? colorsDark.primaryColor : colorsLight.primaryColor
+            }
+            padding={2}
+            borderRadius={10}
+            paddingLeft={10}
+            paddingRight={10}
+            marginBottom={5}
+             >  
               <Text
-                style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
+                bold 
+                fontSize={'lg'}
                 onPress={() => {
                   if (email.length == 0 || password.length == 0) {
                     Alert.alert("Please fill out all fields");
@@ -302,13 +425,22 @@ export const Auth = () => {
               </Text>
              </Button>
               <Text
-                style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
-              >
-                Don't have an account?{" "}
-                <Text
-                  style={
-                    colorScheme == "dark" ? darkMode.Title : lightMode.Title
+color={
+                    colorScheme == "dark"
+                      ? darkMode.Title.color
+                      : lightMode.Title.color
                   }
+                  fontSize={"md"}
+              >
+                Don't have an account? {" "}
+                <Text
+                  color={
+                    colorScheme == "dark"
+                      ? darkMode.Title.color
+                      : lightMode.Title.color
+                  }
+                  fontSize={"md"}
+                  fontWeight={"bold"}
                   onPress={() => {
                     setShowSignIn(false);
                     setShowSignUp(true);
@@ -324,15 +456,19 @@ export const Auth = () => {
           {showSignUp ? (
             <>
               <Button
-                style={
-                  colorScheme == "dark" ? darkMode.Button : lightMode.Button
-                }
-                disabled={loading}
+               backgroundColor={
+              colorScheme == "dark" ? colorsDark.primaryColor : colorsLight.primaryColor
+            }
+            padding={2}
+            borderRadius={10}
+            paddingLeft={10}
+            paddingRight={10}
+            marginBottom={5}
                 onPress={() => {
                   if (email.length == 0 || password.length == 0) {
                     Alert.alert("Please fill out all fields");
                   } else {
-                    if (termsCheck) {
+                    if (termsCheck && ageCheck) {
                       signUpWithEmail();
                     } else {
                       Alert.alert(
@@ -343,19 +479,18 @@ export const Auth = () => {
                 }}
               >
                 <Text
-                  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
+                  bold
+                  fontSize={'lg'}
                 >
                   Sign Up
                 </Text>
               </Button>
               <Text
-                style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
-              >
+             fontSize={"sm"} >
                 Have an account?{" "}
                 <Text
-                  style={
-                    colorScheme == "dark" ? darkMode.Title : lightMode.Title
-                  }
+                  fontSize={"md"}
+                  bold
                   onPress={() => {
                     setShowSignIn(true);
                     setShowSignUp(false);

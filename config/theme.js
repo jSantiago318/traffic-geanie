@@ -1,17 +1,32 @@
 import { StyleSheet } from 'react-native';
-const colorsLight = {
-  textColor : '#130916',
-  backgroundColor : '#fdf8f8',
-  primaryColor : '#27491d',
-  secondaryColor : '#d3eee7',
-  accentColor : '#668b5b',
+
+const colorsLight1 = {
+  textColor : '#040316',
+  backgroundColor : '#fbfbfe',
+  primaryColor : '#2f27ce',
+  secondaryColor : '#dddbff',
+  accentColor : '#443dff',
 }
+const colorsLight = {
+  textColor : '#040316',
+  backgroundColor : '#FFFBED',
+  primaryColor : '#C8D5B9',
+  secondaryColor : '#8FC0A9',
+  accentColor : '#443dff',
+}
+// const colorsDark = {
+//   textColor: '#eae9fc',
+//   backgroundColor: '#010104',
+//   primaryColor: '#3a31d8',
+//   secondaryColor: '#020024',
+//   accentColor: '#0600c2',
+// }
 const colorsDark = {
-  textColor: '#fdf8f8',
-  backgroundColor: '#130916',
-  primaryColor: '#27491d',
-  secondaryColor: '#0b1d19',
-  accentColor: '#b8cdb2',
+  textColor : '#FFFBED',
+  backgroundColor : '#040316',
+  primaryColor : '#C8D5B9',
+  secondaryColor : '#8FC0A9',
+  accentColor : '#443dff',
 }
 const darkMode ={
   ListItem:{
@@ -35,7 +50,7 @@ StopText:{
     margin: 2,
   },
   TextInput:{
-        backgroundColor: colorsLight.backgroundColor,
+        backgroundColor: colorsDark.backgroundColor,
         borderRadius: 8,
         flexDirection: 'row',
         padding: 12,
@@ -46,15 +61,17 @@ StopText:{
       
   },
   Button:{
-    backgroundColor: '#98c1d9',
-    width: '50%',
+    backgroundColor: colorsDark.accentColor,
+    // width: '50%',
     justifyContent: 'center',
+    alignItems: 'center',
+
     borderRadius: 10,
     padding: 5,
     margin: 5,
   },
   Card:{
-    backgroundColor: '#e0fbfc',
+    backgroundColor: colorsDark.secondaryColor,
     width: '90%',
     justifyContent: 'center',
 
@@ -66,7 +83,7 @@ StopText:{
     flex: 1,
       alignItems: 'center',
       padding: 2,
-      backgroundColor: colorsLight.backgroundColor,
+      backgroundColor: colorsDark.backgroundColor,
       width:'100%',
       
   },
@@ -109,13 +126,14 @@ Heading:{
     marginTop: '1%',
     marginBottom: '1%',
     padding: 2,
-    color: colorsLight.textColor,
+    color: colorsDark.textColor,
     
   },  
   Text:{
     fontSize: 14,
     fontWeight: "normal",
-    color: '#293241',
+    color: '#fff',
+    padding: 2,
 
   },  Map:{
     flex: 1,
@@ -160,9 +178,11 @@ StopText:{
       
   },
   Button:{
-    backgroundColor: '#98c1d9',
-    width: '50%',
+    backgroundColor: colorsLight.accentColor,
+    // width: '50%',
     justifyContent: 'center',
+    alignItems: 'center',
+
     borderRadius: 10,
     padding: 5,
     margin: 5,
@@ -233,6 +253,7 @@ Heading:{
     fontSize: 14,
     fontWeight: "normal",
     color: '#293241',
+    padding: 2,
 
   },  Map:{
     flex: 1,

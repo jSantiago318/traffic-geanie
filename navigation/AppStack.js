@@ -1,15 +1,18 @@
 import * as React from 'react';
 
+import { colorsDark, colorsLight } from '../config';
+
 import { HomeScreen } from '../screens/HomeScreen';
 import { MapScreen } from '../screens/MapScreen';
 import {MaterialIcons} from '@expo/vector-icons';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useColorScheme } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
 export const AppStack = () => {
-
+  const colorScheme = useColorScheme();
   return (
     <Tab.Navigator
     screenOptions={({ route }) => ({
@@ -30,7 +33,8 @@ export const AppStack = () => {
         // You can return any component that you like here!
         return <MaterialIcons name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: '#27491d',
+      tabBarHideOnKeyboard: true,
+      tabBarActiveTintColor: '#68B0AB',
       tabBarInactiveTintColor: 'gray',
     })}
   >

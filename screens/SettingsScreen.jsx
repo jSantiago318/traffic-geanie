@@ -17,6 +17,7 @@ import {
 } from "native-base";
 import React, { useEffect } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
+import { colorsDark, colorsLight } from "../config";
 
 import { A } from '@expo/html-elements';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -72,51 +73,44 @@ export const SettingsScreen = () => {
   }, [email, dbSession]);
 
   return (
-    <View style={colorScheme === "dark" ? darkMode.View : lightMode.View}>
+    <Container 
+      backgroundColor={
+        colorScheme === "dark" ? colorsDark.background : colorsLight.background
+      }
+      flex={1}
+      justifyContent="center"
+      alignItems="center"
+    >
       {/* <Center> */}
       <Container>
         <Heading
-          style={
-            colorScheme === "dark"
-              ? darkMode.TextHeading
-              : lightMode.TextHeading
-          }
+          
         >
           Account
         </Heading>
       
-        <Text style={colorScheme === "dark" ? darkMode.Text : lightMode.Text}>
-          {email}
+        <Text 
+          fontSize={16}
+          
+        >
+        {email}
         </Text>
       
       
   
         <Heading
-          style={
-            colorScheme === "dark"
-              ? darkMode.TextHeading
-              : lightMode.TextHeading
-          }
+       
         >
           Profile
         </Heading>
         
         <Button
-          style={
-            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
-          }
+         
           variant={"ghost"}
           onPress={() => setShowModal(true)}
         >
           <Text
-            style={{
-              color: 
-                colorScheme === "dark" ? "#fff" : "#000"
-              ,
-              fontSize: 13,
-              // fontWeight: "bold",
-              // textDecorationLine: "underline",
-            }}
+           fontSize={16}
           >Delete Account</Text>
         </Button>
 
@@ -156,23 +150,14 @@ export const SettingsScreen = () => {
         </Modal>
 
         <Button
-          style={
-            colorScheme === "dark" ? darkMode.subtleBtn : lightMode.subtleBtn
-          }
-          title="Privacy"
+          fontSize={16}
+          
           variant={"ghost"}
          
         >
         <A href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">
           <Text
-            style={{
-              color: 
-                colorScheme === "dark" ? "#fff" : "#000"
-              ,
-              fontSize: 13,
-              // fontWeight: "bold",
-              // textDecorationLine: "underline",
-            }}
+           fontSize={16}
           >Privacy Policy</Text>
         </A>
         </Button>
@@ -186,19 +171,12 @@ export const SettingsScreen = () => {
           onPress={handleLogout}
         >
            <Text
-            style={{
-              color: 
-                colorScheme === "dark" ? "#fff" : "#000"
-              ,
-              fontSize: 13,
-              // fontWeight: "bold",
-              // textDecorationLine: "underline",
-            }}
+            fontSize={16}
           >Log Out</Text>
         </Button>
       </Container>
       {/* </Center> */}
-    </View>
+    </Container>
   );
 };
 
@@ -207,18 +185,18 @@ const darkMode = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#000",
+    backgroundColor: colorsDark.background,
     width: "100%",
   },
   Text: {
     fontSize: 13,
     fontWeight: "bold",
-    color: "#fff",
+    color: colorsDark.textColor,
   },
   TextHeading: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#fff",
+    color: colorsDark.textColor,
   },
   subtleBtn: {
     backgroundColor: "transparent",
@@ -236,18 +214,18 @@ const lightMode = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: colorsLight.background,
     width: "100%",
   },
   Text: {
     fontSize: 13,
     fontWeight: "bold",
-    color: "#293241",
+    color: colorsLight.textColor,
   },
   TextHeading: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#293241",
+    color: colorsLight.textColor,
   },
   subtleBtn: {
     backgroundColor: "transparent",

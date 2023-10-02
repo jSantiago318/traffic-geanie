@@ -15,24 +15,18 @@ const Tab = createBottomTabNavigator();
 export const AuthStack = () => {
   return (
     <Tab.Navigator
-    screenOptions={({ route }) => ({
-      headerShown: false,
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
-
-        if (route.name === 'Login') {
-          iconName = 'account-circle'
-        }
-
-        // You can return any component that you like here!
-        return <MaterialIcons name={iconName} size={size} color={color} />;
-      },
-      tabBarActiveTintColor: '#27491d',
-      tabBarInactiveTintColor: 'gray',
-    })}
+screenOptions={{ headerShown: false , 
+  tabBarShowLabel: false,
+  tabBarActiveTintColor: '#68B0AB',
+  tabBarHideOnKeyboard: true,
+ 
+}}
   >
     {/* <Drawer.Screen      name='About' component={IntroScreen} /> */}
     <Tab.Screen
+    // no bottom tab
+ 
+
      name='Login' component={Auth} />
     {/* <Drawer.Screen name='Home' component={HomeScreen}   /> */}
     {/* <Drawer.Screen name='Settings' component={SettingsScreen} /> */}

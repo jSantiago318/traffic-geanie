@@ -1,11 +1,12 @@
-// import {darkMode, lightMode} from '../config/theme'
 import * as Location from "expo-location";
 
 import {
   Box,
   Button,
   Center,
+  Container,
   HStack,
+  Heading,
   Select,
   Stack,
   Text,
@@ -13,6 +14,7 @@ import {
 } from "native-base";
 import { Platform, StyleSheet, View, useColorScheme } from "react-native";
 import React, { useEffect, useState } from "react";
+import { colorsDark, colorsLight, darkMode, lightMode } from "../config";
 import {
   getOnlineActiveTripsCount,
   getOnlineCount,
@@ -74,7 +76,6 @@ export const HomeScreen = () => {
       }
     )
   }
-
   const allowTracking = async () => {
     // Check if third party tracking is allowed
     const { status } = await requestTrackingPermissionsAsync();
@@ -85,56 +86,88 @@ export const HomeScreen = () => {
 
 
   return (
-    <View style={colorScheme == "dark" ? darkMode.View : lightMode.View}>
-      <View style={colorScheme == "dark" ? darkMode.CardView : lightMode.CardView}>
-        <Center>
-          <Text
-            fontSize="xl"
-            paddingTop="10"
-            bold
-            style={
-              colorScheme == "dark" ? darkMode.Text : lightMode.Text
-            }
+    <View 
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor:
+          colorScheme == "dark"
+            ? colorsDark.backgroundColor
+            : colorsLight.backgroundColor,
+        width: "100%",
+      }}
+    >
+      <Container
+        style={{
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 2,
+          // paddingBottom: '5%',
+          marginTop: '10%',
+          backgroundColor:
+            colorScheme == "dark"
+              ? colorsDark.backgroundColor
+              : colorsLight.backgroundColor,
+          width: "100%",
+        }}
+       >
+        <Center 
+        //  flex start
+        style={{
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+          borderRadius: 10,
+          width: "100%",
+          backgroundColor: colorScheme == "dark" ? colorsDark.primaryColor : colorsLight.primaryColor,
+          padding: 10,
+          // margin: 2,
+        }
+        }
+         
+          >
+          <Center
+            width={'100%'}
+          >
+
+          <Heading
+            padding={1}
           >
             Travel Transit Tracker
-          </Text>
-          <View
-            style={
-              colorScheme == "dark" ? darkMode.CardView : lightMode.CardView
-            }
-          >
+          </Heading>
+          </Center>
+        
             <HStack>
               <Stack>
                 <Text
-                  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
-                  
+                  fontSize={16}
+                  padding={1}
                 >
                   Online Buses: {busCount}
                 </Text>
                 <Text
-                  style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}
-                  
+                   fontSize={16}
+                  padding={1}
                 >
-                  Connected Routes: {activeTripCount}
+                  Active predictions: {activeTripCount}
                 </Text>
               </Stack>
             </HStack>
 
-            <Box >
-             
-              <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>Select Route: </Text>
-      {
-        position && (
-          <Button
-        onPress={startForegroundUpdate}
-        style={
-          colorScheme == "dark" ? darkMode.Button : lightMode.Button
-        }
-      ><Text
-      style={colorScheme == "dark" ? lightMode.Text : darkMode.Text}
-      >Start Tracking</Text> </Button>
-        )
-      }
+            <Box
+              style={{
+                width: "100%",
+                
+              }
+              }
+             >
+              <Text
+                bold
+                fontSize={16}
+                padding={1}
+               >Select Route: </Text>
+   
       {
         tracking && Platform.OS == "ios" ? (
           <Button
@@ -151,15 +184,22 @@ export const HomeScreen = () => {
       }
    
               <Select
-                style={colorScheme == 'dark' ? darkMode.Select : lightMode.Select}
+                // style={colorScheme == 'dark' ? darkMode.Select : lightMode.Select}
+                backgroundColor={colorScheme == 'dark' ? colorsDark.secondaryColor : colorsLight.secondaryColor}
                 selectedValue={selectedRoute}
                 size={'lg'}
                 accessibilityLabel="Choose a route"
                 placeholder="Choose a route"
                 _selectedItem={{
                   // bg: colorScheme == 'dark' ? 'blueGray.400' : 'blueGray.400',
-                  endIcon: <CheckIcon size="5"   />,
+                  endIcon: <CheckIcon size="5" />,
                 }}
+                color={
+                  colorScheme == "dark"
+                    ? colorsDark.textColor
+                    : colorsLight.textColor
+                }
+                borderColor={'transparent'}
                 mt={1}
                 onValueChange={(itemValue) => {
                   setSelectedRoute(itemValue);
@@ -174,73 +214,29 @@ export const HomeScreen = () => {
               </Select>
             </Box>
 
-          </View>
+          
         </Center>
-      </View>
+      </Container>
       {selectedRoute.length > 0 ? (
         <RoutesList route={selectedRoute} />
       ) : (
-        <Text> Finding Stops ... </Text>
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: "bold",
+            marginTop: "1%",
+            marginBottom: "1%",
+            padding: 2,
+            color:
+              colorScheme == "dark"
+                ? colorsDark.textColor
+                : colorsLight.textColor,
+          }}
+        > Finding Stops ... </Text>
       )}
 
     </View>
   )
 }
 
-
-const darkMode = StyleSheet.create({
-  View:{
-    flex: 1,
-      // justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#0b1d19',
-      width:'100%',
-  },
-  Text:{
-    color: 'white',
-  },
-  Select:{
-    backgroundColor: '#fff',
-  },
-  CardView:{
-    width:'90%',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-    marginTop: 20,
-  },
-  Card:{
-    width:'100%',
-    backgroundColor: '#8CCCF4',
-  },
-  
-})
-
-const lightMode = StyleSheet.create({
-  View:{
-    flex: 1,
-      // justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      width:'100%',
-  },
-  Text:{
-    color: 'black',
-  },
-  Select:{
-    backgroundColor: '#fff',
-  },
-  CardView:{
-    width:'90%',
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 10,
-    marginTop: 20,
-  },
-  Card:{
-    width:'100%',
-    backgroundColor: '#8CCCF4',
-  },
-  
-})
 

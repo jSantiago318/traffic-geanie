@@ -44,7 +44,7 @@ export const RoutesList = ({ route }) => {
   return (
     <Center 
       style={{
-        backgroundColor: colorScheme === "light" ? colorsLight.accentColor : colorsDark.accentColor,
+        backgroundColor: colorScheme === "light" ? colorsLight.secondaryColor : colorsDark.secondaryColor,
         borderRadius: 10,
         width: "90%",
         padding: 5,
@@ -53,8 +53,8 @@ export const RoutesList = ({ route }) => {
 
      >
       <SectionList
-        w="100%" 
-        h={"60%"}
+        w="100%"
+        height={"60%"}
         mb="4"
         sections={data}
         keyExtractor={(item, index) => item + index}
@@ -65,9 +65,11 @@ export const RoutesList = ({ route }) => {
             alignItems={"flex-start"}
             paddingLeft={2}
             borderRadius={10}
-            backgroundColor={colorScheme === "light" ? colorsLight.accentColor : colorsDark.accentColor}
+            backgroundColor={colorScheme === "light" ? colorsLight.primaryColor : colorsDark.primaryColor}
           >
-            <Heading fontSize="xl" p={2} >
+            <Heading fontSize="lg" p={2} color={
+              colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
+            } >
               {title}
             </Heading>
           </Center>
