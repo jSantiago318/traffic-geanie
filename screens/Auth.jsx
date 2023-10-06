@@ -337,7 +337,7 @@ export const Auth = () => {
                       fontWeight="medium" href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">
                <Text
                       color={
-                    'primary.00'
+                    'primary.600'
                   }
                       fontWeight="medium"
                       fontSize={'sm'}
@@ -377,6 +377,7 @@ export const Auth = () => {
                       />
                     )}
                   </Box>
+                  
                   <Text 
                    color={
                     colorScheme == "dark"
@@ -388,6 +389,7 @@ export const Auth = () => {
                   >
                     Are you 18 or older?
                   </Text>
+
                 </HStack>
               </Box>
             ) : null}

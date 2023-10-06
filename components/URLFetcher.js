@@ -27,8 +27,8 @@ if (gOnline.length === 0) {
       gPosition = data;
     });
 }
-export function getStopTime(route, index) {
-  fetch(
+export async function getStopTime(route, index) {
+  await fetch(
     "https://proba.live/api/where/schedule-for-stop/TIM_" +
       route +
       "S" +
@@ -37,7 +37,7 @@ export function getStopTime(route, index) {
   )
     .then((response) => response.json())
     .then((data) => {
-      return data;
+      console.log(data);
     });
 }
 

@@ -12,9 +12,7 @@ export const RoutesList = ({ route }) => {
   const [stp1, setStp1] = useState([]);
   const memo = useMemo(() => getURL(route), [route]);
   async function getURL(url) {
-    const response = await fetch(
-      "https://proba.live/api/where/stops-for-route/" + url + ".json?key=TEST"
-    );
+    const response = await fetch("https://proba.live/api/where/stops-for-route/" + url + ".json?key=TEST");
     const data = await response.json();
     const stops = data.data.entry.stopGroupings[0].stopGroups[0].stopIds;
     const stops1 = data.data.entry.stopGroupings[0].stopGroups[1].stopIds;
