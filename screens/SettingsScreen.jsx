@@ -19,7 +19,7 @@ import React, { useEffect } from "react";
 import { StyleSheet, View, useColorScheme } from "react-native";
 import { colorsDark, colorsLight } from "../config";
 
-import { A } from '@expo/html-elements';
+import { A } from "@expo/html-elements";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { supabase } from "../utils/supabase";
 
@@ -44,8 +44,6 @@ export const SettingsScreen = () => {
     const { error } = await supabase.auth.signOut();
   };
 
-   
-
   useEffect(() => {
     (async () => {
       if (email == null) {
@@ -55,25 +53,21 @@ export const SettingsScreen = () => {
         setEmail(user.email);
         setuid(user.id);
       }
-      if(
-        dbSession == null
-      ){
-        const { data , error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("email", email)
-        console.log(data)
+      if (dbSession == null) {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("email", email);
+        console.log(data);
         if (error) {
           console.log(error);
         }
       }
-
-    
     })();
   }, [email, dbSession]);
 
   return (
-    <Container 
+    <Container
       backgroundColor={
         colorScheme === "dark" ? colorsDark.background : colorsLight.background
       }
@@ -83,35 +77,14 @@ export const SettingsScreen = () => {
     >
       {/* <Center> */}
       <Container>
-        <Heading
-          
-        >
-          Account
-        </Heading>
-      
-        <Text 
-          fontSize={16}
-          
-        >
-        {email}
-        </Text>
-      
-      
-  
-        <Heading
-       
-        >
-          Profile
-        </Heading>
-        
-        <Button
-         
-          variant={"ghost"}
-          onPress={() => setShowModal(true)}
-        >
-          <Text
-           fontSize={16}
-          >Delete Account</Text>
+        <Heading>Account</Heading>
+
+        <Text fontSize={16}>{email}</Text>
+
+        <Heading>Profile</Heading>
+
+        <Button variant={"ghost"} onPress={() => setShowModal(true)}>
+          <Text fontSize={16}>Delete Account</Text>
         </Button>
 
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
@@ -149,17 +122,10 @@ export const SettingsScreen = () => {
           </Modal.Content>
         </Modal>
 
-        <Button
-          fontSize={16}
-          
-          variant={"ghost"}
-         
-        >
-        <A href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">
-          <Text
-           fontSize={16}
-          >Privacy Policy</Text>
-        </A>
+        <Button fontSize={16} variant={"ghost"}>
+          <A href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">
+            <Text fontSize={16}>Privacy Policy</Text>
+          </A>
         </Button>
 
         <Button
@@ -170,9 +136,7 @@ export const SettingsScreen = () => {
           variant={"ghost"}
           onPress={handleLogout}
         >
-           <Text
-            fontSize={16}
-          >Log Out</Text>
+          <Text fontSize={16}>Log Out</Text>
         </Button>
       </Container>
       {/* </Center> */}

@@ -24,7 +24,7 @@ import {
 import React, { useState } from "react";
 import { colorsDark, colorsLight, darkMode, lightMode } from "../config";
 
-import { A } from '@expo/html-elements';
+import { A } from "@expo/html-elements";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native";
 import logo from "../assets/car-blue.png";
@@ -62,8 +62,8 @@ export const Auth = () => {
         data: {
           first_name: name,
           phone: number,
-        }
-      }
+        },
+      },
     });
     // sign up and then update the user with the name and number
 
@@ -78,13 +78,19 @@ export const Auth = () => {
       data: { user },
     } = await supabase.auth.getUser();
     const uid = user.id;
-    const { data } = await supabase
-      .from("profiles")
-      .insert([{ email: email, username: name, exp: 5, user_id: uid, phone: number, data: {
-        first_name: name,
-        is18: ageCheck,
-
-      }  }]);
+    const { data } = await supabase.from("profiles").insert([
+      {
+        email: email, 
+        username: name,
+        exp: 5,
+        user_id: uid,
+        phone: number,
+        data: {
+          first_name: name,
+          is18: ageCheck,
+        },
+      },
+    ]);
 
     setLoading(false);
   }
@@ -114,14 +120,15 @@ export const Auth = () => {
             style={{
               width: 125,
               height: 125,
-              marginTop: "20%",
+              marginTop: "40%",
               marginBottom: 20,
               padding: 5,
               alignSelf: "center",
             }}
           />
           <Text
-            style={colorScheme == "dark" ? darkMode.Title : lightMode.Title} >
+            style={colorScheme == "dark" ? darkMode.Title : lightMode.Title}
+          >
             Travel Transit Tracker
           </Text>
 
@@ -134,82 +141,80 @@ export const Auth = () => {
             mt={1}
             p={1}
             rounded="md"
-          
             alignItems="center"
           >
-          {
-              showSignUp ? (
-                <>
-                  <Input
-                    style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
-                    onChangeText={(num) => setName(num)}
-                    value={name}
-                    size={"md"}
-                    backgroundColor={
-                colorScheme == "dark"
-                  ? colorsDark.primaryColor
-                  : colorsLight.primaryColor
-              }
-              borderColor={'transparent'}
-              color={
-                colorScheme == "dark"
-                  ? darkMode.Title.color
-                  : lightMode.Title.color
-              }
-              autoCapitalize={"none"}
-                    placeholder="name"
-
-              InputLeftElement={
-                <Icon
-                  as={<MaterialIcons name="person" />}
-                  size={7}
-                  ml="2"
+            {showSignUp ? (
+              <>
+                <Input
+                  style={
+                    colorScheme == "dark" ? darkMode.Input : lightMode.Input
+                  }
+                  onChangeText={(num) => setName(num)}
+                  value={name}
+                  size={"md"}
+                  backgroundColor={
+                    colorScheme == "dark"
+                      ? colorsDark.backgroundColor
+                      : colorsLight.backgroundColor
+                  }
+                  borderColor={"transparent"}
                   color={
                     colorScheme == "dark"
                       ? darkMode.Title.color
                       : lightMode.Title.color
                   }
+                  autoCapitalize={"none"}
+                  placeholder="name"
+                  InputLeftElement={
+                    <Icon
+                      as={<MaterialIcons name="person" />}
+                      size={7}
+                      ml="2"
+                      color={
+                        colorScheme == "dark"
+                          ? darkMode.Title.color
+                          : lightMode.Title.color
+                      }
+                    />
+                  } 
                 />
-              }
-                     />
-                    
-                    <Input
-                  style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
+
+                <Input
+                  style={
+                    colorScheme == "dark" ? darkMode.Input : lightMode.Input
+                  }
                   onChangeText={(num) => setNumber(num)}
                   value={number}
                   placeholder="phone"
                   size={"md"}
-                    variant={"filled"}
+                  variant={"filled"}
                   keyboardType="number-pad"
-                  borderColor={'transparent'}
+                  borderColor={"transparent"}
                   backgroundColor={
-                colorScheme == "dark"
-                  ? colorsDark.primaryColor
-                  : colorsLight.primaryColor
-              }
-              color={
-                colorScheme == "dark"
-                  ? darkMode.Title.color
-                  : lightMode.Title.color
-              }
-                  
-              InputLeftElement={
-                <Icon
-                  as={<MaterialIcons name="phone" />}
-                  size={7}
-                  ml="2"
+                    colorScheme == "dark"
+                      ? colorsDark.backgroundColor
+                      : colorsLight.backgroundColor
+                  }
                   color={
                     colorScheme == "dark"
                       ? darkMode.Title.color
                       : lightMode.Title.color
                   }
+                  InputLeftElement={
+                    <Icon
+                      as={<MaterialIcons name="phone" />}
+                      size={7}
+                      ml="2"
+                      color={
+                        colorScheme == "dark"
+                          ? darkMode.Title.color
+                          : lightMode.Title.color
+                      }
+                    />
+                  }
                 />
-              }
-                   />
-                
-                    </>
-              ) : null
-            }
+              </>
+            ) : null}
             <Input
               onChangeText={(text) => setEmail(text)}
               style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
@@ -217,10 +222,10 @@ export const Auth = () => {
               size="md"
               backgroundColor={
                 colorScheme == "dark"
-                  ? colorsDark.primaryColor
-                  : colorsLight.primaryColor
+                  ? colorsDark.backgroundColor
+                  : colorsLight.backgroundColor
               }
-              borderColor={'transparent'}
+              borderColor={"transparent"}
               placeholder="email"
               color={
                 colorScheme == "dark"
@@ -229,7 +234,6 @@ export const Auth = () => {
               }
               autoCapitalize={"none"}
               keyboardType="email-address"
-              
               InputLeftElement={
                 <Icon
                   as={<MaterialIcons name="person" />}
@@ -250,11 +254,11 @@ export const Auth = () => {
               placeholder="password"
               backgroundColor={
                 colorScheme == "dark"
-                  ? colorsDark.primaryColor
-                  : colorsLight.primaryColor
+                  ? colorsDark.backgroundColor
+                  : colorsLight.backgroundColor
               }
               size="md"
-              borderColor={'transparent'}
+              borderColor={"transparent"}
               color={
                 colorScheme == "dark"
                   ? darkMode.Title.color
@@ -262,7 +266,6 @@ export const Auth = () => {
               }
               autoCapitalize={"none"}
               type={show ? "text" : "password"}
-             
               InputRightElement={
                 <Pressable onPress={() => setShow(!show)}>
                   <Icon
@@ -282,159 +285,175 @@ export const Auth = () => {
                 </Pressable>
               }
             />
-            
-
-           
           </Stack>
           {showSignUp ? (
-              <Box
-                style={colorScheme == "dark" ? darkMode.ModalBody : lightMode.ModalBody}
+            <Box
+              style={
+                colorScheme == "dark" ? darkMode.ModalBody : lightMode.ModalBody
+              }
+            >
+              {/* check terms and conditions */}
+              <HStack
+                style={
+                  colorScheme == "dark"
+                    ? darkMode.ModalBody
+                    : lightMode.ModalBody
+                }
+                alignItems="center"
+                space={2}
+                mt={5}
               >
-                {/* check terms and conditions */}
-                <HStack style={colorScheme == "dark" ? darkMode.ModalBody : lightMode.ModalBody} alignItems="center" space={2} mt={5}>
-                  <Box>
-                    {termsCheck ? (
-                      <Icon
-                        as={<MaterialIcons name="check-box" />}
-                        size={7}
-                        ml="2"
-                        color={
-                          colorScheme == "dark"
-                            ? darkMode.Title.color
-                            : lightMode.Title.color
-                        }
-                        onPress={() => setTermsCheck(false)}
-                      />
-                    ) : (
-                      <Icon
-                        as={<MaterialIcons name="check-box-outline-blank" />}
-                        size={7}
-                        ml="2"
-                        color={
-                          colorScheme == "dark"
-                            ? darkMode.Title.color
-                            : lightMode.Title.color
-                        }
-                        onPress={() => setTermsCheck(true)}
-                      />
-                    )}
-                  </Box>
-                  <Text 
+                <Box>
+                  {termsCheck ? (
+                    <Icon
+                      as={<MaterialIcons name="check-box" />}
+                      size={7}
+                      ml="2"
+                      color={
+                        colorScheme == "dark"
+                          ? darkMode.Title.color
+                          : lightMode.Title.color
+                      }
+                      onPress={() => setTermsCheck(false)}
+                    />
+                  ) : (
+                    <Icon
+                      as={<MaterialIcons name="check-box-outline-blank" />}
+                      size={7}
+                      ml="2"
+                      color={
+                        colorScheme == "dark"
+                          ? darkMode.Title.color
+                          : lightMode.Title.color
+                      }
+                      onPress={() => setTermsCheck(true)}
+                    />
+                  )}
+                </Box>
+                <Text
+                  color={
+                    colorScheme == "dark"
+                      ? darkMode.Title.color
+                      : lightMode.Title.color
+                  }
+                  fontWeight="medium"
+                  fontSize={"sm"}
+                >
+                  By signing up, you agree to our{" "}
+                  <A
                     color={
                       colorScheme == "dark"
                         ? darkMode.Title.color
                         : lightMode.Title.color
                     }
-                        fontWeight="medium"
-                        fontSize={'sm'}
+                    fontWeight="medium"
+                    href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7"
                   >
-                    By signing up, you agree to our{" "}
-                    <A  color={
-                    colorScheme == "dark"
-                      ? darkMode.Title.color
-                      : lightMode.Title.color
-                  }
-                      fontWeight="medium" href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">
-               <Text
-                      color={
-                    'primary.600'
-                  }
+                    <Text
+                      color={"primary.600"}
                       fontWeight="medium"
-                      fontSize={'sm'}
-                  >
-
+                      fontSize={"sm"}
+                    >
                       Terms of Use and Conditions
-                  </Text>
-                    
-                    </A>
-                  </Text>
-                </HStack>
-                <HStack style={colorScheme == "dark" ? darkMode.ModalBody : lightMode.ModalBody} alignItems="center" space={2} mt={5}>
-                  <Box>
-                    {ageCheck ? (
-                      <Icon
-                        as={<MaterialIcons name="check-box" />}
-                        size={7}
-                        ml="2"
-                        color={
-                          colorScheme == "dark"
-                            ? darkMode.Title.color
-                            : lightMode.Title.color
-                        }
-                        onPress={() => setAgeCheck(false)}
-                      />
-                    ) : (
-                      <Icon
-                        as={<MaterialIcons name="check-box-outline-blank" />}
-                        size={7}
-                        ml="2"
-                        color={
-                          colorScheme == "dark"
-                            ? darkMode.Title.color
-                            : lightMode.Title.color
-                        }
-                        onPress={() => setAgeCheck(true)}
-                      />
-                    )}
-                  </Box>
-                  
-                  <Text 
-                   color={
+                    </Text>
+                  </A>
+                </Text>
+              </HStack>
+              <HStack
+                style={
+                  colorScheme == "dark"
+                    ? darkMode.ModalBody
+                    : lightMode.ModalBody
+                }
+                alignItems="center"
+                space={2}
+                mt={5}
+              >
+                <Box>
+                  {ageCheck ? (
+                    <Icon
+                      as={<MaterialIcons name="check-box" />}
+                      size={7}
+                      ml="2"
+                      color={
+                        colorScheme == "dark"
+                          ? darkMode.Title.color
+                          : lightMode.Title.color
+                      }
+                      onPress={() => setAgeCheck(false)}
+                    />
+                  ) : (
+                    <Icon
+                      as={<MaterialIcons name="check-box-outline-blank" />}
+                      size={7}
+                      ml="2"
+                      color={
+                        colorScheme == "dark"
+                          ? darkMode.Title.color
+                          : lightMode.Title.color
+                      }
+                      onPress={() => setAgeCheck(true)}
+                    />
+                  )}
+                </Box>
+
+                <Text
+                  color={
                     colorScheme == "dark"
                       ? darkMode.Title.color
                       : lightMode.Title.color
                   }
-                      fontWeight="medium"
-                      fontSize={'sm'}
-                  >
-                    Are you 18 or older?
-                  </Text>
-
-                </HStack>
-              </Box>
-            ) : null}
+                  fontWeight="medium"
+                  fontSize={"sm"}
+                >
+                  Are you 18 or older?
+                </Text>
+              </HStack>
+            </Box>
+          ) : null}
           {showSignIn ? (
-             <Box
+            <Box
               style={{
                 marginTop: 10,
                 justifyContent: "center",
                 alignItems: "center",
-              }
-              }
-             >
-             <Button
-            backgroundColor={
-              colorScheme == "dark" ? colorsDark.primaryColor : colorsLight.primaryColor
-            }
-            padding={2}
-            borderRadius={10}
-            paddingLeft={10}
-            paddingRight={10}
-            marginBottom={5}
-             >  
-              <Text
-                bold 
-                fontSize={'lg'}
-                onPress={() => {
-                  if (email.length == 0 || password.length == 0) {
-                    Alert.alert("Please fill out all fields");
-                  } else {
-                    signInWithEmail();
-                  }
-                }}
+              }}
+            >
+              <Button
+                backgroundColor={
+                  colorScheme == "dark"
+                    ? colorsDark.primaryColor
+                    : colorsLight.primaryColor
+                }
+                padding={2}
+                borderRadius={10}
+                paddingLeft={10}
+                paddingRight={10}
+                marginBottom={5}
               >
-                Sign In
-              </Text>
-             </Button>
+                <Text
+                  bold
+                  fontSize={"lg"}
+                  onPress={() => {
+                    if (email.length == 0 || password.length == 0) {
+                      Alert.alert("Please fill out all fields");
+                    } else {
+                      signInWithEmail();
+                    }
+                  }}
+                >
+                  Sign In
+                </Text>
+              </Button>
               <Text
-color={
-                    colorScheme == "dark"
-                      ? darkMode.Title.color
-                      : lightMode.Title.color
-                  }
-                  fontSize={"md"}
+                color={
+                  colorScheme == "dark"
+                    ? darkMode.Title.color
+                    : lightMode.Title.color
+                }
+                fontSize={"md"}
               >
-                Don't have an account? {" "}
+                Don't have an account?{" "}
                 <Text
                   color={
                     colorScheme == "dark"
@@ -451,21 +470,21 @@ color={
                   Sign up
                 </Text>
               </Text>
-             </Box>
-            
-              
+            </Box>
           ) : null}
           {showSignUp ? (
             <>
               <Button
-               backgroundColor={
-              colorScheme == "dark" ? colorsDark.primaryColor : colorsLight.primaryColor
-            }
-            padding={2}
-            borderRadius={10}
-            paddingLeft={10}
-            paddingRight={10}
-            marginBottom={5}
+                backgroundColor={
+                  colorScheme == "dark"
+                    ? colorsDark.primaryColor
+                    : colorsLight.primaryColor
+                }
+                padding={2}
+                borderRadius={10}
+                paddingLeft={10}
+                paddingRight={10}
+                marginBottom={5}
                 onPress={() => {
                   if (email.length == 0 || password.length == 0) {
                     Alert.alert("Please fill out all fields");
@@ -480,15 +499,11 @@ color={
                   }
                 }}
               >
-                <Text
-                  bold
-                  fontSize={'lg'}
-                >
+                <Text bold fontSize={"lg"}>
                   Sign Up
                 </Text>
               </Button>
-              <Text
-             fontSize={"sm"} >
+              <Text fontSize={"sm"}>
                 Have an account?{" "}
                 <Text
                   fontSize={"md"}

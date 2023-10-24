@@ -34,7 +34,7 @@ export const AppStack = () => {
         return <MaterialIcons name={iconName} size={size} color={color} />;
       },
       tabBarHideOnKeyboard: true,
-      tabBarActiveTintColor: '#68B0AB',
+      tabBarActiveTintColor: '#215fab',
       tabBarInactiveTintColor: 'gray',
     })}
   >

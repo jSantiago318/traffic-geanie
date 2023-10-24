@@ -9,10 +9,10 @@ const colorsLight1 = {
 }
 const colorsLight = {
   textColor : '#040316',
-  backgroundColor : '#FFFBED',
-  primaryColor : '#C8D5B9',
-  secondaryColor : '#8FC0A9',
-  accentColor : '#443dff',
+  backgroundColor : '#eef4fc',
+  primaryColor : '#67a6ef',
+  secondaryColor : '#a9c9ef',
+  accentColor : '#215fab',
 }
 // const colorsDark = {
 //   textColor: '#eae9fc',
@@ -200,7 +200,7 @@ StopText:{
     flex: 1,
       alignItems: 'center',
       padding: 2,
-      backgroundColor: colorsLight.backgroundColor,
+      backgroundColor: colorsLight.secondaryColor,
       width:'100%',
       
   },

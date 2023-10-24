@@ -6,8 +6,9 @@ import {
   Dimensions,
   Image,
   StyleSheet,
+  TouchableOpacity,
   View,
-  useColorScheme,
+  useColorScheme
 } from "react-native";
 import {
   Box,
@@ -27,18 +28,21 @@ import {
   ZStack,
 } from "native-base";
 import { Callout, CalloutSubview, Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
+import { Camera, CameraType } from 'expo-camera';
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { colorsDark, colorsLight, darkMode, lightMode } from "../config";
-import { getOnlineById, getPosition, getStopTime } from "../components/URLFetcher";
+import { getOnlineById, getPosition, getStopTime, getTrip } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import { getStopById, getStops } from "../assets/gtfs/stops";
 
+import { FlashList } from "@shopify/flash-list";
 import MapView from "react-native-map-clustering";
 import { P } from "@expo/html-elements";
 import { Platform } from "react-native";
 import Shapes from "../assets/gtfs/shapes.json";
 import { StopRender } from "../components/OBAFetches/StopRender";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import openMap from 'react-native-open-maps';
 import { supabase } from "../utils/supabase";
 import { useStopwatch } from "react-timer-hook";
@@ -88,6 +92,7 @@ const [expFade, setExpFade] = useState('transparent')
     setTripTime(h + ":" + m + ":" + s);
     return h + ":" + m + ":" + s;
   }
+  const [trips, setTrips] = useState(null);
   let foregroundSubscription = null;
   async function newCoords() {
     try {
@@ -147,6 +152,7 @@ const [expFade, setExpFade] = useState('transparent')
         if (user) {
           setUid(user.email);
         }
+
       }
 
       if (location == null || runTime == true) {
@@ -157,8 +163,6 @@ const [expFade, setExpFade] = useState('transparent')
         }
         // Make sure that foreground location tracking is not running
         // foregroundSubscription?.remove()
-        
-         
         
         // Start watching position in real-time
         foregroundSubscription = await Location.watchPositionAsync(
@@ -182,15 +186,6 @@ const [expFade, setExpFade] = useState('transparent')
     })();
   }, [uid, location]);
 
-  // setInterval(() => {
-  //   if(location != null){
-  //     setBackLoc(backLoc => [...backLoc, [location.coords.latitude, location.coords.longitude]])
-  //     console.log(backLoc.length)
-  //   }
-  // }, 5000)
-
- 
-
   function TextLocale({ time }) {
     const newTime = new Date(time);
 
@@ -212,6 +207,22 @@ const [expFade, setExpFade] = useState('transparent')
       );
     }
   }
+
+  async function getTrips(){
+    const { data: {
+      datas
+    } } = await supabase
+    .from("trips")
+    .select("*")
+    .eq("email", uid)
+    .order("id", { ascending: false });
+  if (datas) {
+    console.log(datas)  
+    setTrips(datas);
+  
+  }
+  }
+
 
   function getDirs(){
     if(travelingBy == 'walk'){
@@ -258,34 +269,6 @@ const [expFade, setExpFade] = useState('transparent')
             <Text>{stopName}</Text>
             <Text>{stopId}</Text>
             </Stack>
-            {/* <HStack space={1}>
-            <Button>
-              <MaterialCommunityIcons 
-              name={'google-maps'}
-              size={24}
-              backgroundColor={'transparent'}
-              color={colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor}
-              onPress={() => {
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'google' })
-              }
-              }
-              />
-              
-            </Button>
-            <Button>
-              <MaterialCommunityIcons 
-              name={'directions'}
-              size={24}
-              backgroundColor={'transparent'}
-              color={colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor}
-              onPress={() => {
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'apple' })
-              }
-              }
-              />
-              
-            </Button>
-            </HStack> */}
             <CalloutSubview onPress={() => {
               if (Platform.OS == 'android'){
                 openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'google' })
@@ -562,17 +545,22 @@ const [expFade, setExpFade] = useState('transparent')
       console.log(error);
     }
   }
+const [startCamera, setStartCamera] = useState(false);
 
-
-
-
-
-
-
-
-
-
-
+  const __startCamera = async () => {
+    const { status } = await Camera.requestPermissionsAsync()
+    if (status === 'granted') {
+      // start the camera
+      setStartCamera(true)
+    } else {
+      Alert.alert('Access denied')
+    }
+  }
+  const __takePicture = async () => {
+    if (!camera) return
+    const photo = await camera.takePictureAsync()
+   
+  }
   async function submitTripSupa() {
     const d1 = new Date(startLocData?.timestamp);
     const d2 = new Date(location?.timestamp);
@@ -809,6 +797,8 @@ function getRouteWidth (routeId){
           padding: 2,
           right: "1%",
           backgroundColor: "transparent",
+          backgroundColor: colorsLight.backgroundColor,
+          borderRadius: 10,
         }}
       >
         {/* <Button
@@ -835,7 +825,7 @@ function getRouteWidth (routeId){
             }
           />
         </Button> */}
-        <Button
+        {/* <Button
           style={{
             zIndex: 100,
             margin: 2,
@@ -856,11 +846,9 @@ function getRouteWidth (routeId){
                 : colorsLight.backgroundColor
             }
           />
-        </Button>
+        </Button> */}
         <Button
-          onPress={() => {
-            // setSelectTraveler(!selectTraveler);
-          }}
+          onPress={__startCamera}
           style={{
             zIndex: 100,
             margin: 2,
@@ -868,7 +856,7 @@ function getRouteWidth (routeId){
             borderRadius: 10,
             maxHeight: 50,
             maxWidth: 50,
-            backgroundColor: "#FACA2D",
+            backgroundColor: "#36B24A",
           }}
         >
           <MaterialCommunityIcons
@@ -894,7 +882,7 @@ function getRouteWidth (routeId){
             borderRadius: 10,
             maxHeight: 50,
             maxWidth: 50,
-            backgroundColor: "#BF2834",
+            backgroundColor: "#FACA2D",
           }}
         >
           <MaterialCommunityIcons
@@ -927,7 +915,7 @@ function getRouteWidth (routeId){
             borderRadius: 10,
             maxHeight: 50,
             maxWidth: 50,
-            backgroundColor: "#0B87DE",
+            backgroundColor: "#BF2834",
           }}
         >
           <MaterialCommunityIcons
@@ -940,10 +928,74 @@ function getRouteWidth (routeId){
             }
           />
         </Button>
+       
       </VStack>
 
       {/* Modal overlay */}
 
+      {startCamera ? (
+        <Camera
+          style={{width:"100%", height:"100%", zIndex: 100, 
+          }}
+          ref={(r) => {
+            camera = r
+          }}
+        >
+            <View
+        style={{
+        position: 'absolute',
+        bottom: 0,
+        flexDirection: 'row',
+        flex: 1,
+        width: '100%',
+        padding: 20,
+        justifyContent: 'space-between'
+        }}
+      >
+        <View
+        style={{
+        alignSelf: 'center',
+        flex: 1,
+        alignItems: 'center'
+        }}
+        >
+        <HStack space={2} padding={2}>
+        <TouchableOpacity
+            onPress={
+              () => { setStartCamera(false) }
+            }
+            style={{
+            width: 70,
+            height: 70,
+            bottom: 0,
+            borderRadius: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fff'
+            }}
+            >
+              <MaterialCommunityIcons name={'arrow-left'} size={24} color={'black'} />
+            </TouchableOpacity>
+           <TouchableOpacity
+            onPress={__takePicture}
+            style={{
+            width: 70,
+            height: 70,
+            bottom: 0,
+            borderRadius: 50,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fff'
+            }}
+            >
+              <MaterialCommunityIcons name={'camera'} size={24} color={'black'} />
+            </TouchableOpacity>
+            
+            </HStack>
+    </View>
+    </View>
+        </Camera>
+      ) : null}
      
 
       {menu == "main" ? (
@@ -1008,6 +1060,7 @@ function getRouteWidth (routeId){
                 w={"50%"}
                 onPress={() => {
                   setMenu("history");
+                  getTrips()
                 }}
                 backgroundColor={
                   colorScheme == "dark"
@@ -1603,42 +1656,13 @@ function getRouteWidth (routeId){
               : colorsLight.backgroundColor
           }
           top={Dimensions.get("window").height * 0.7}
+          
           padding={2}
           borderRadius={10}
           shadow={2}
         >
-          <Center>
-            <HStack space={2} padding={2}>
-              <Button
-                w={"100%"}
-                leftIcon={<MaterialCommunityIcons name={'ticket-confirmation-outline'} size={24} color={colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor} />}
-
-                onPress={() => {
-                  setMenu("trip");
-                }}
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-              >
-                <Text bold fontSize={"md"}
-                >Start Trip</Text>
-              </Button>
-              {/* <Button
-                w={"50%"}
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setMenu("travel");
-                }}
-              >
-                <Text  bold fontSize={"md"}>Travel</Text>
-              </Button> */}
-            </HStack>
+          <Center> 
+            
             <HStack space={2} padding={2}>
               <Button
                 w={"50%"}
@@ -2429,4 +2453,38 @@ const styles = StyleSheet.create({
     borderRadius: 42,
     backgroundColor: "#fff",
   },
+  outer: {
+    padding: "10px",
+    overflowY: "hidden",
+    width: "100%",
+    height: "100%",
+    border: "1px solid red",
+    // width: 400px;
+    // height: 90%;
+    // border: 1px solid blue;
+  },
+  flexContainer: {
+    overflowX: "auto",
+    height: "100%",
+    paddingBottom: "17px",
+    display: "flex",
+    flexWrap: "nowrap",
+    // overflow-x: auto;
+    // height: calc(100% + 17px);
+    // padding-bottom: 17px;
+    // display: flex;
+    // flex-wrap: nowrap;
+  },
+  card :{
+    flex: 1,
+    height: 150,
+    display: "inline-block",
+    margin: 5,
+    border: "1px solid",
+    // flex: 1 0 100px;
+    // height: 150px;
+    // display: inline-block;
+    // margin: 5px;
+    // border: 1px solid;
+  }
 });
