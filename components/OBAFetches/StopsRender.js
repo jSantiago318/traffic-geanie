@@ -1,6 +1,6 @@
-import { HStack, Icon, Text } from 'native-base';
+import { HStack, Text, View } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, useColorScheme } from 'react-native';
+import { StyleSheet, useColorScheme } from 'react-native';
 
 export const StopssRender = ({stop}) => {
 

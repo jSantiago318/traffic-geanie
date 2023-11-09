@@ -120,7 +120,7 @@ export const Auth = () => {
             style={{
               width: 125,
               height: 125,
-              marginTop: "40%",
+              marginTop: "25%",
               marginBottom: 20,
               padding: 5,
               alignSelf: "center",
@@ -146,6 +146,8 @@ export const Auth = () => {
             {showSignUp ? (
               <>
                 <Input
+                              borderRadius={10}
+
                   style={
                     colorScheme == "dark" ? darkMode.Input : lightMode.Input
                   }
@@ -180,6 +182,7 @@ export const Auth = () => {
                 />
 
                 <Input
+                  borderRadius={10}
                   style={
                     colorScheme == "dark" ? darkMode.Input : lightMode.Input
                   }
@@ -225,6 +228,7 @@ export const Auth = () => {
                   ? colorsDark.backgroundColor
                   : colorsLight.backgroundColor
               }
+              borderRadius={10}
               borderColor={"transparent"}
               placeholder="email"
               color={
@@ -251,6 +255,8 @@ export const Auth = () => {
               style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
               onChangeText={(text) => setPassword(text)}
               value={password}
+              borderRadius={10}
+
               placeholder="password"
               backgroundColor={
                 colorScheme == "dark"
@@ -486,7 +492,7 @@ export const Auth = () => {
                 paddingRight={10}
                 marginBottom={5}
                 onPress={() => {
-                  if (email.length == 0 || password.length == 0) {
+                  if (email.length == 0 || password.length == 0 || name.length == 0 || number.length == 0) {
                     Alert.alert("Please fill out all fields");
                   } else {
                     if (termsCheck && ageCheck) {

@@ -8,31 +8,37 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  useColorScheme
+  useColorScheme,
 } from "react-native";
 import {
   Box,
   Button,
-  Center,
-  Container,
   Divider,
   FlatList,
   HStack,
-  Input,
+  Icon,
   ScrollView,
-  SectionList,
-  Select,
   Stack,
   Text,
   VStack,
-  ZStack,
 } from "native-base";
-import { Callout, CalloutSubview, Marker, PROVIDER_GOOGLE, Polyline } from "react-native-maps";
-import { Camera, CameraType } from 'expo-camera';
+import {
+  Callout,
+  CalloutSubview,
+  Marker,
+  PROVIDER_GOOGLE,
+  Polyline,
+} from "react-native-maps";
+import { Camera, CameraType } from "expo-camera";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { colorsDark, colorsLight, darkMode, lightMode } from "../config";
-import { getOnlineById, getPosition, getStopTime, getTrip } from "../components/URLFetcher";
+import {
+  getOnlineById,
+  getPosition,
+  getStopTime,
+  getTrip,
+} from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import { getStopById, getStops } from "../assets/gtfs/stops";
 
@@ -40,10 +46,12 @@ import { FlashList } from "@shopify/flash-list";
 import MapView from "react-native-map-clustering";
 import { P } from "@expo/html-elements";
 import { Platform } from "react-native";
+import { RightSideMenu } from "../components/RightSideMenu.jsx";
 import Shapes from "../assets/gtfs/shapes.json";
 import { StopRender } from "../components/OBAFetches/StopRender";
+import {TimeArrivalReturn} from '../components/TimeArrivalReturn'
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-import openMap from 'react-native-open-maps';
+import openMap from "react-native-open-maps";
 import { supabase } from "../utils/supabase";
 import { useStopwatch } from "react-timer-hook";
 
@@ -82,8 +90,14 @@ export const MapScreen = () => {
   const [alertProblem, setAlertProblem] = useState("");
   const [alertCat, setAlertCat] = useState("");
   const [alertStatus, setAlertStatus] = useState(1);
-
-const [expFade, setExpFade] = useState('transparent')
+  const [type, setType] = useState(CameraType.back);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
+  function toggleCameraType() {
+    setType((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back
+    );
+  }
+  const [expFade, setExpFade] = useState("transparent");
 
   async function getTime() {
     const h = hours > 9 ? hours : "0" + hours;
@@ -152,7 +166,6 @@ const [expFade, setExpFade] = useState('transparent')
         if (user) {
           setUid(user.email);
         }
-
       }
 
       if (location == null || runTime == true) {
@@ -163,7 +176,7 @@ const [expFade, setExpFade] = useState('transparent')
         }
         // Make sure that foreground location tracking is not running
         // foregroundSubscription?.remove()
-        
+
         // Start watching position in real-time
         foregroundSubscription = await Location.watchPositionAsync(
           {
@@ -176,13 +189,11 @@ const [expFade, setExpFade] = useState('transparent')
             //   setBackLoc(backLoc => [...backLoc, [location.coords.latitude, location.coords.longitude]])
             // }
             // check no nulll values
-            
+
             setLocation(location);
           }
-
         );
       }
-        
     })();
   }, [uid, location]);
 
@@ -208,43 +219,38 @@ const [expFade, setExpFade] = useState('transparent')
     }
   }
 
-  async function getTrips(){
-    const { data: {
-      datas
-    } } = await supabase
-    .from("trips")
-    .select("*")
-    .eq("email", uid)
-    .order("id", { ascending: false });
-  if (datas) {
-    console.log(datas)  
-    setTrips(datas);
-  
-  }
+  async function getTrips() {
+    const {
+      data: { datas },
+    } = await supabase
+      .from("trips")
+      .select("*")
+      .eq("email", uid)
+      .order("id", { ascending: false });
+    if (datas) {
+      console.log(datas);
+      setTrips(datas);
+    }
   }
 
-
-  function getDirs(){
-    if(travelingBy == 'walk'){
-      return 'walk'
-    }
-    else if(travelingBy == 'car'){
-      return 'drive'
-    }
-    else if(travelingBy == 'scooter'){
-      return 'drive'
+  function getDirs() {
+    if (travelingBy == "walk") {
+      return "walk";
+    } else if (travelingBy == "car") {
+      return "drive";
+    } else if (travelingBy == "scooter") {
+      return "drive";
     }
   }
-  function ShowStopTime({stopId}){
+  function ShowStopTime({ stopId }) {
     // let val = getStopTime(stopId)
-    console.log(timememo)
+    console.log(timememo);
     // if(val){
     //   return <Text>{val}</Text>
     // }
     // else{
     //   return <Text>Not Available</Text>
     // }
-
   }
   function returnStop(stopId, stopName) {
     if (
@@ -257,40 +263,51 @@ const [expFade, setExpFade] = useState('transparent')
             source={require("../assets/busStopArrival.png")}
             style={{ height: 40, width: 40 }}
           />
-           <Callout
+          <Callout
             style={{
               width: 250,
               zIndex: 100,
               borderRadius: 10,
             }}
           >
-           <HStack justifyContent={'space-between'} >
-            <Stack>
-            <Text>{stopName}</Text>
-            <Text>{stopId}</Text>
-            </Stack>
-            <CalloutSubview onPress={() => {
-              if (Platform.OS == 'android'){
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'google' })
-              } else if(Platform.OS == 'ios'){
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'apple' })
-
-              }
-            } }>
-              <MaterialCommunityIcons
-                name={"google-maps"}
-                size={24}
-                
-                backgroundColor={"transparent"}
-                color={
-                  colorScheme == "dark"
-                    ? colorsDark.textColor
-                    : colorsLight.textColor
-                }
-              />
-            </CalloutSubview>
-        
-           </HStack>
+            <HStack justifyContent={"space-between"}>
+              <Stack>
+                <Text>{stopName}</Text>
+                <Text>{stopId}</Text>
+              </Stack>
+              <CalloutSubview
+                onPress={() => {
+                  if (Platform.OS == "android") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "google",
+                    });
+                  } else if (Platform.OS == "ios") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "apple",
+                    });
+                  }
+                }}
+              >
+                <MaterialCommunityIcons
+                  name={"google-maps"}
+                  size={24}
+                  backgroundColor={"transparent"}
+                  color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  }
+                />
+              </CalloutSubview>
+            </HStack>
           </Callout>
         </>
       );
@@ -311,61 +328,44 @@ const [expFade, setExpFade] = useState('transparent')
               borderRadius: 10,
             }}
           >
-           <HStack justifyContent={'space-between'} >
-            <Stack>
-            <Text>{stopName}</Text>
-            <Text>{stopId}</Text>
-            </Stack>
-            {/* <HStack space={1}>
-            <Button>
-              <MaterialCommunityIcons 
-              name={'google-maps'}
-              size={24}
-              backgroundColor={'transparent'}
-              color={colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor}
-              onPress={() => {
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'google' })
-              }
-              }
-              />
-              
-            </Button>
-            <Button>
-              <MaterialCommunityIcons 
-              name={'directions'}
-              size={24}
-              backgroundColor={'transparent'}
-              color={colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor}
-              onPress={() => {
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'apple' })
-              }
-              }
-              />
-              
-            </Button>
-            </HStack> */}
-            <CalloutSubview onPress={() => {
-              if (Platform.OS == 'android'){
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'google' })
-              } else if(Platform.OS == 'ios'){
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'apple' })
-
-              }
-            } }>
-              <MaterialCommunityIcons
-                name={"google-maps"}
-                size={24}
-                
-                backgroundColor={"transparent"}
-                color={
-                  colorScheme == "dark"
-                    ? colorsDark.textColor
-                    : colorsLight.textColor
-                }
-              />
-            </CalloutSubview>
-        
-           </HStack>
+            <HStack justifyContent={"space-between"}>
+              <Stack>
+                <Text>{stopName}</Text>
+                <Text>{stopId}</Text>
+              </Stack>
+              <CalloutSubview
+                onPress={() => {
+                  if (Platform.OS == "android") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "google",
+                    });
+                  } else if (Platform.OS == "ios") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "apple",
+                    });
+                  }
+                }}
+              >
+                <MaterialCommunityIcons
+                  name={"google-maps"}
+                  size={24}
+                  backgroundColor={"transparent"}
+                  color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  }
+                />
+              </CalloutSubview>
+            </HStack>
           </Callout>
         </>
       );
@@ -384,12 +384,12 @@ const [expFade, setExpFade] = useState('transparent')
               borderRadius: 10,
             }}
           >
-           <HStack justifyContent={'space-between'} >
-            <Stack>
-            <Text>{stopName}</Text>
-            <Text>{stopId}</Text>
-            </Stack>
-            {/* <HStack space={1}>
+            <HStack justifyContent={"space-between"}>
+              <Stack>
+                <Text>{stopName}</Text>
+                <Text>{stopId}</Text>
+              </Stack>
+              {/* <HStack space={1}>
             <Button>
               <MaterialCommunityIcons 
               name={'google-maps'}
@@ -417,28 +417,39 @@ const [expFade, setExpFade] = useState('transparent')
               
             </Button>
             </HStack> */}
-            <CalloutSubview onPress={() => {
-              if (Platform.OS == 'android'){
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'google' })
-              } else if(Platform.OS == 'ios'){
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'apple' })
-
-              }
-            } }>
-              <MaterialCommunityIcons
-                name={"google-maps"}
-                size={24}
-                
-                backgroundColor={"transparent"}
-                color={
-                  colorScheme == "dark"
-                    ? colorsDark.textColor
-                    : colorsLight.textColor
-                }
-              />
-            </CalloutSubview>
-        
-           </HStack>
+              <CalloutSubview
+                onPress={() => {
+                  if (Platform.OS == "android") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "google",
+                    });
+                  } else if (Platform.OS == "ios") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "apple",
+                    });
+                  }
+                }}
+              >
+                <MaterialCommunityIcons
+                  name={"google-maps"}
+                  size={24}
+                  backgroundColor={"transparent"}
+                  color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  }
+                />
+              </CalloutSubview>
+            </HStack>
           </Callout>
         </>
       );
@@ -545,22 +556,21 @@ const [expFade, setExpFade] = useState('transparent')
       console.log(error);
     }
   }
-const [startCamera, setStartCamera] = useState(false);
+  const [startCamera, setStartCamera] = useState(false);
 
   const __startCamera = async () => {
-    const { status } = await Camera.requestPermissionsAsync()
-    if (status === 'granted') {
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    if (status === "granted") {
       // start the camera
-      setStartCamera(true)
+      setStartCamera(true);
     } else {
-      Alert.alert('Access denied')
+      Alert.alert("Access denied");
     }
-  }
+  };
   const __takePicture = async () => {
-    if (!camera) return
-    const photo = await camera.takePictureAsync()
-   
-  }
+    if (!camera) return;
+    const photo = await camera.takePictureAsync();
+  };
   async function submitTripSupa() {
     const d1 = new Date(startLocData?.timestamp);
     const d2 = new Date(location?.timestamp);
@@ -602,6 +612,7 @@ const [startCamera, setStartCamera] = useState(false);
       reset();
       pause();
       setLastTripId(0);
+      setMenu("main");
     }
   }
   const _mapRef = useRef();
@@ -626,21 +637,25 @@ const [startCamera, setStartCamera] = useState(false);
       }
     });
   }
-function getRouteWidth (routeId){
-  // if route is start Stop
+  function getRouteWidth(routeId) {
+    // if route is start Stop
 
-  if (startStop && finalStop && (startStop.includes(routeId) || finalStop.includes(routeId))){
-    return 5
+    if (
+      startStop &&
+      finalStop &&
+      (startStop.includes(routeId) || finalStop.includes(routeId))
+    ) {
+      return 5;
+    }
+    // if route is selected route
+    else if (selectedRoute && selectedRoute.includes(routeId)) {
+      return 5;
+    }
+    // if route is not selected
+    else {
+      return 2;
+    }
   }
-  // if route is selected route
-  else if(selectedRoute && (selectedRoute.includes(routeId))){
-    return 5
-  }
-  // if route is not selected
-  else{
-    return 2
-  }
-}
   const animateToRegion = () => {
     let region = {
       latitude: 18.201025,
@@ -661,17 +676,18 @@ function getRouteWidth (routeId){
   return (
     <View style={styles.container}>
       <MapView
-      onPress={(e) => {
-        if(travelingBy == 'walk' ||
-        travelingBy == "car" ||
-        travelingBy == "scooter" 
-        ){
-          setMark({
-            lat: e.nativeEvent.coordinate.latitude,
-            lon: e.nativeEvent.coordinate.longitude
-          })
-        }
-      }}
+        onPress={(e) => {
+          if (
+            travelingBy == "walk" ||
+            travelingBy == "car" ||
+            travelingBy == "scooter"
+          ) {
+            setMark({
+              lat: e.nativeEvent.coordinate.latitude,
+              lon: e.nativeEvent.coordinate.longitude,
+            });
+          }
+        }}
         minPoints={3}
         nodeSize={2}
         provider={
@@ -684,15 +700,15 @@ function getRouteWidth (routeId){
         ref={_mapRef}
       >
         {getRoutes().map((route, index) => {
-          if(runTime && route.id.includes(selectedRoute) ){
+          if (runTime && route.id.includes(selectedRoute)) {
             return (
-            <Polyline
-              key={index}
-              coordinates={getShapeByRouteId(route.id)}
-              strokeColor={getRouteColor(route.id)}
-              strokeWidth={getRouteWidth(route.id)}
-            />
-          );
+              <Polyline
+                key={index}
+                coordinates={getShapeByRouteId(route.id)}
+                strokeColor={getRouteColor(route.id)}
+                strokeWidth={getRouteWidth(route.id)}
+              />
+            );
           } else {
             return (
               <Polyline
@@ -753,7 +769,12 @@ function getRouteWidth (routeId){
                   setSelectedRoute(stop.id);
                 }
                 setSelectedStop(stop.id);
+                if(stop.name.length > 19) {
+                  setSelectedStopName(stop.name.slice(0, 19) + "...")
+                } else { 
                 setSelectedStopName(stop.name);
+
+                }
               }}
             >
               {returnStop(stop.id, stop.name)}
@@ -761,142 +782,60 @@ function getRouteWidth (routeId){
           );
         })}
 
-
-
-
-
-
-        {
-          mark ? (
-            <Marker
-              zIndex={10}
-              coordinate={{
-                latitude: mark.lat,
-                longitude: mark.lon,
-              }}
-            />
-          ) : null
-          
-        }
+        {mark ? (
+          <Marker
+            zIndex={10}
+            coordinate={{
+              latitude: mark.lat,
+              longitude: mark.lon,
+            }}
+          />
+        ) : null}
         {backLoc ? (
           <Polyline
             coordinates={backLoc}
-            strokeColors={["#f4ca", "#adfc", "#4f44"]}
+            strokeColors={["#adfc", "#4f44"]}
             strokeWidth={6}
           />
         ) : null}
       </MapView>
-      {/* vertical right pannel button menu */}
-      <VStack
+      {/* Modal overlay */}
+      <Box
         style={{
-          zIndex: 100,
+          width: "90%",
+          height: "100%",
+          height: "35%",
           position: "absolute",
-          alignContent: "flex-end",
-          justifyContent: "flex-end",
-          top: "20%",
-          padding: 2,
-          right: "1%",
+          top: "50%",
           backgroundColor: "transparent",
-          backgroundColor: colorsLight.backgroundColor,
-          borderRadius: 10,
         }}
       >
-        {/* <Button
-          onPress={() => {
-              // setShowTrips(!showTrips); 
-            setSelectTraveler(!selectTraveler);
-            // setShowTrips(false)
-          }}
-          style={{
-            zIndex: 100,
-            margin: 2,
-            padding: 2,
-            borderRadius: 10,
-            maxHeight: 50,
-            maxWidth: 50,
-            backgroundColor: "#1DA15D",
-          }}
-        >
-          <MaterialCommunityIcons
-            name={travelingBy}
-            size={24}
-            color={
-              colorScheme == "dark" ? colorsDark.backgroundColor : colorsLight.backgroundColor
+       <HStack padding={2} justifyContent={'space-between'}  >
+       <Button
+            backgroundColor={ colorsLight.secondaryColor }
+            borderRadius={10}
+            m={1}
+            // p={2}
+            onPress={() => 
+              {
+          setMenu('stops')
+          }
             }
-          />
-        </Button> */}
-        {/* <Button
-          style={{
-            zIndex: 100,
-            margin: 2,
-            padding: 2,
-            borderRadius: 10,
-            maxHeight: 50,
-            maxWidth: 50,
-            backgroundColor: "#36B24A",
-          }}
+          >
+           <Text style={{color: 'black'}}>Show Stops</Text>
+          </Button>
+       <HStack
+          space={2}
+          alignItems="center"
+          // padding={3}
+          justifyContent={"flex-end"}
         >
-          <MaterialCommunityIcons
-            // name={"book-open-page-variant-outline"}
-            name="map-marker-question"
-            size={24}
-            color={
-              colorScheme == "dark"
-                ? colorsDark.backgroundColor
-                : colorsLight.backgroundColor
-            }
-          />
-        </Button> */}
-        <Button
-          onPress={__startCamera}
-          style={{
-            zIndex: 100,
-            margin: 2,
-            padding: 2,
-            borderRadius: 10,
-            maxHeight: 50,
-            maxWidth: 50,
-            backgroundColor: "#36B24A",
-          }}
-        >
-          <MaterialCommunityIcons
-            name={"camera"}
-            size={24}
-            color={
-              colorScheme == "dark"
-                ? colorsDark.backgroundColor
-                : colorsLight.backgroundColor
-            }
-          />
-        </Button>
-
-        <Button
-          onPress={() => {
-            // setSelectTraveler(!selectTraveler);
-            setMenu("alert");
-          }}
-          style={{
-            zIndex: 100,
-            margin: 2,
-            padding: 2,
-            borderRadius: 10,
-            maxHeight: 50,
-            maxWidth: 50,
-            backgroundColor: "#FACA2D",
-          }}
-        >
-          <MaterialCommunityIcons
-            name={"alert-box-outline"}
-            size={24}
-            color={
-              colorScheme == "dark"
-                ? colorsDark.backgroundColor
-                : colorsLight.backgroundColor
-            }
-          />
-        </Button>
-        <Button
-          onPress={() => {
+          {/* bubble option menu */}
+          <Button
+            backgroundColor={'#BF2834' }
+            borderRadius={10}
+            onPress={() => 
+              {
             // console.log(location);
             _mapRef.current.animateToRegion(
               {
@@ -907,1454 +846,408 @@ function getRouteWidth (routeId){
               },
               1000
             );
-          }}
-          style={{
-            zIndex: 100,
-            margin: 2,
-            padding: 2,
-            borderRadius: 10,
-            maxHeight: 50,
-            maxWidth: 50,
-            backgroundColor: "#BF2834",
-          }}
-        >
-          <MaterialCommunityIcons
-            name={"map-marker-account"}
-            size={24}
-            color={
-              colorScheme == "dark"
-                ? colorsDark.backgroundColor
-                : colorsLight.backgroundColor
-            }
-          />
-        </Button>
-       
-      </VStack>
-
-      {/* Modal overlay */}
-
-      {startCamera ? (
-        <Camera
-          style={{width:"100%", height:"100%", zIndex: 100, 
-          }}
-          ref={(r) => {
-            camera = r
-          }}
-        >
-            <View
-        style={{
-        position: 'absolute',
-        bottom: 0,
-        flexDirection: 'row',
-        flex: 1,
-        width: '100%',
-        padding: 20,
-        justifyContent: 'space-between'
-        }}
-      >
-        <View
-        style={{
-        alignSelf: 'center',
-        flex: 1,
-        alignItems: 'center'
-        }}
-        >
-        <HStack space={2} padding={2}>
-        <TouchableOpacity
-            onPress={
-              () => { setStartCamera(false) }
-            }
-            style={{
-            width: 70,
-            height: 70,
-            bottom: 0,
-            borderRadius: 50,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#fff'
-            }}
-            >
-              <MaterialCommunityIcons name={'arrow-left'} size={24} color={'black'} />
-            </TouchableOpacity>
-           <TouchableOpacity
-            onPress={__takePicture}
-            style={{
-            width: 70,
-            height: 70,
-            bottom: 0,
-            borderRadius: 50,
-            justifyContent: 'center',
-            alignItems: 'center',
-            backgroundColor: '#fff'
-            }}
-            >
-              <MaterialCommunityIcons name={'camera'} size={24} color={'black'} />
-            </TouchableOpacity>
-            
-            </HStack>
-    </View>
-    </View>
-        </Camera>
-      ) : null}
-     
-
-      {menu == "main" ? (
-        <Container
-          backgroundColor={
-            colorScheme == "dark"
-              ? colorsDark.backgroundColor
-              : colorsLight.backgroundColor
           }
-          top={Dimensions.get("window").height * 0.7}
-          padding={2}
-          borderRadius={10}
-          shadow={2}
-        >
-          <Center>
-            <HStack space={2} padding={2}>
-              <Button
-                w={"100%"}
-                leftIcon={<MaterialCommunityIcons name={'ticket-confirmation-outline'} size={24} color={colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor} />}
-
-                onPress={() => {
-                  setMenu("trip");
-                }}
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-              >
-                <Text bold fontSize={"md"}
-                >Start Trip</Text>
-              </Button>
-              {/* <Button
-                w={"50%"}
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setMenu("travel");
-                }}
-              >
-                <Text  bold fontSize={"md"}>Travel</Text>
-              </Button> */}
-            </HStack>
-            <HStack space={2} padding={2}>
-              <Button
-                w={"50%"}
-                onPress={() => {
-                  setMenu("stats");
-                }}
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-              >
-                <Text bold fontSize={"md"}>Show Stats</Text>
-              </Button>
-              <Button
-                w={"50%"}
-                onPress={() => {
-                  setMenu("history");
-                  getTrips()
-                }}
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-              >
-                <Text bold fontSize={"md"}>History</Text>
-              </Button>
-            </HStack>
-          </Center>
-        </Container>
-      ) : null}
-      {menu == "trip" ? (
-       <Box 
-        backgroundColor={
-          colorScheme == "dark"
-            ? colorsDark.backgroundColor
-            : colorsLight.backgroundColor
-        }
-                  top={Dimensions.get("window").height * 0.7}
-
-        width={"100%"}
-       >
-       <Box
-       >
-       <ZStack
-          // top={Dimensions.get("window").height * 0.7}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {selectTraveler ? (
-            <HStack
-              zIndex={100}
-              bottom={Dimensions.get("window").height * 0.15}
-              // right={Dimensions.get("window").width * 0.02}
-             
-              borderRadius={5}
-              p={2}
-              space={1}
-              alignItems={"center"}
-            
-            >
-              <Button
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"close"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-              <Button
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setTravelingBy("car");
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"car"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-              <Button
-                backgroundColor={
-                  colorScheme == "walk"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setTravelingBy("scooter");
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"scooter"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-              <Button
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setTravelingBy("walk");
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"walk"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-              <Button
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setTravelingBy("bus");
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"bus"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-            </HStack>
-          ) : null}
-         
-            <Box
-              width={"90%"}
-              backgroundColor={
-              colorScheme == "dark"
-                ? colorsDark.backgroundColor
-                : colorsLight.backgroundColor
             }
-            borderRadius={5}
-            shadow={1}
-            >
-            
-            <Box  
-            
-            backgroundColor={
-              colorScheme == "dark"
-                ? colorsDark.backgroundColor
-                : colorsLight.backgroundColor
-            } 
-            
-            >
-          
-              <Box margin={1}    >
-              {/* <Box margin={1}   backgroundColor={'blue.100'} > */}
-              <ZStack marginBottom={'10'} >
-              
-                {/* <Box 
-                  borderColor={
-                    colorScheme == "dark"
-                      ? colorsDark.backgroundColor
-                      : colorsLight.backgroundColor
-                  }
-                  borderRadius={1}
-                  borderWidth={10}
-                />
-                 <Box 
-                  borderColor={
-                    colorScheme == "dark"
-                      ? colorsDark.backgroundColor
-                      : colorsLight.backgroundColor
-                  }
-                  borderRadius={25}
-                  borderWidth={13}
-                /> */}
-                
-              <HStack
-                zIndex={110}
-                space={2}
-                padding={2}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                width={"100%"}
-                borderRadius={5}
-              >
-                <Button
-                  p={1}
-                  m={1}
-                  variant="ghost"
-                  onPress={() => {
-                    setMenu("main");
-                  }}
-                >
-                  <MaterialIcons
-                    name="arrow-back"
-                    size={24}
-                    color={
-                      colorScheme == "dark"
-                        ? colorsDark.textColor
-                        : colorsLight.textColor
-                    }
-                    onPress={() => {
-                      setMenu("main");
-                    }}
-                  />
-                </Button>
-
-                <Button
-                  p={1}
-                  m={1}
-                  variant="ghost"
-                  onPress={() => {
-                    setSelectTraveler(!selectTraveler);
-                  }}
-                >
-                  <HStack justifyContent={"center"} alignItems={"center"}>
-                    <Text bold fontSize={12}>
-                      traveling by:{" "}
-                    </Text>
-                    <MaterialCommunityIcons
-                      name={travelingBy}
-                      size={24}
-                      color={
-                        colorScheme == "dark"
-                          ? colorsDark.textColor
-                          : colorsLight.textColor
-                      }
-                    />
-                  </HStack>
-                </Button>
-              </HStack>
-              </ZStack>
-             
-          
-            {
-              travelingBy == "bus" ? (
-                <><HStack
-                      space={2}
-                      padding={1}
-                      margin={1}
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                      width={"95%"}
-                    >
-                      <Stack space={0} alignItems={"flex-start"}>
-                        <Text fontSize={12} color={"gray.500"} bold>
-                          First Stop
-                        </Text>
-                        {selectedStopName && startStopName != null ? (<Text bold fontSize={16}>
-                          {startStopName}
-                        </Text>) : (<Text bold fontSize={16}> Choose first stop</Text>)}
-                      </Stack>
-                      <Stack
-                      >
-                        {!startStopName ? (
-                          <Button
-                            onPress={() => {
-                              setStartStop(selectedStop);
-                              setStartStopName(selectedStopName);
-                            } }
-                            padding={1}
-                            margin={1}
-                            backgroundColor={colorScheme == "dark"
-                              ? colorsDark.secondaryColor
-                              : colorsLight.secondaryColor}
-                          >
-                            <MaterialIcons
-                              name="check"
-                              size={24}
-                              color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                          </Button>
-                        ) : (
-                          <Button
-                            onPress={() => {
-                              setStartStop(null);
-                              setStartStopName(null);
-                              setSelectedStopName(null);
-                              setSelectedStop(null);
-                            } }
-                            padding={1}
-                            margin={1}
-                            backgroundColor={colorScheme == "dark"
-                              ? colorsDark.secondaryColor
-                              : colorsLight.secondaryColor}
-                          >
-                            <MaterialCommunityIcons
-                              name="trash-can"
-                              size={24}
-                              color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                          </Button>
-                        )}
-                      </Stack>
-                    </HStack><HStack
-                      space={2}
-                      padding={1}
-                      margin={1}
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                      width={"95%"}
-                    >
-                        <Stack space={0} alignItems={"flex-start"}>
-                          <Text fontSize={12} color={"gray.500"} bold>
-                            Final Stop
-                          </Text>
-                          {finalStop != null ? (<Text bold fontSize={16}>
-                            {finalStopName}
-                          </Text>) : (<Text bold fontSize={16}> Choose stop</Text>)}
-                        </Stack>
-                        <Stack
-                        >
-                          {!finalStopName ? (
-                            <Button
-                              onPress={() => {
-                                setFinalStop(selectedStop);
-                                setFinalStopName(selectedStopName);
-                              } }
-                              padding={1}
-                              margin={1}
-                              backgroundColor={colorScheme == "dark"
-                                ? colorsDark.secondaryColor
-                                : colorsLight.secondaryColor}
-                            >
-                              <MaterialIcons
-                                name="check"
-                                size={24}
-                                color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                            </Button>
-                          ) : (
-                            <Button
-                              onPress={() => {
-                                setFinalStop(null);
-                                setFinalStopName(null);
-                                setSelectedStopName(null);
-                                setSelectedStop(null);
-                              } }
-                              padding={1}
-                              margin={1}
-                              backgroundColor={colorScheme == "dark"
-                                ? colorsDark.secondaryColor
-                                : colorsLight.secondaryColor}
-                            >
-                              <MaterialCommunityIcons
-                                name="trash-can"
-                                size={24}
-                                color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                            </Button>
-                          )}
-                        </Stack>
-                      </HStack></>
-              ) : null
-            }
-            {
-              travelingBy == "car" || travelingBy == 'walk' || travelingBy == 'scooter' ? (
-                <>
-                <HStack
-                      space={2}
-                      padding={1}
-                      margin={1}
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                      width={"95%"}
-                    >
-                      <Stack space={0} alignItems={"flex-start"}>
-                        <Text fontSize={12} color={"gray.500"} bold>
-                          Stop
-                        </Text>
-                        {mark != null ? (<Text bold fontSize={16}>
-                          Destination added
-                        </Text>) : (<Text bold fontSize={16}> Select Destination</Text>)}
-                      </Stack>
-                      <Stack
-                      >
-                        {mark ? (
-                         <HStack space={2}>
-                         <Button
-                            onPress={() => {
-                              setMark(null)
-                            } }
-                            padding={1}
-                            margin={1}
-                            backgroundColor={colorScheme == "dark"
-                              ? colorsDark.secondaryColor
-                              : colorsLight.secondaryColor}
-                          >
-                            <MaterialCommunityIcons
-                              name="trash-can"
-                              size={24}
-                              color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                          </Button>
-                          <Button
-                          
-                          padding={1}
-                            margin={1}
-                            backgroundColor={colorScheme == "dark"
-                              ? colorsDark.secondaryColor
-                              : colorsLight.secondaryColor}
-                               onPress={() => {
-              if (Platform.OS == 'android'){
-                openMap({latitude:  mark.lat , longitude: mark.lon ,  query:  'destination' ,  travelType: getDirs(), provider: 'google' })
-              } else if(Platform.OS == 'ios'){
-                openMap({latitude: mark.lat , longitude: mark.lon,query: 'destination',  travelType: getDirs(), provider: 'apple' })
-              }
-            } }>
-              <MaterialCommunityIcons
-                name={"google-maps"}
-                size={24}
-                
-                backgroundColor={"transparent"}
-                color={
-                  colorScheme == "dark"
-                    ? colorsDark.textColor
-                    : colorsLight.textColor
-                }
-              />
-            </Button>
-                         </HStack>
-                        ) : null}
-                      </Stack>
-                    </HStack>
-                    
-                    </>
-              ):null
-            }
-
-              <HStack
-                space={2}
-                padding={2}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                width={"100%"}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color:
-                      colorScheme == "dark"
-                        ? darkMode.Text.color
-                        : lightMode.Text.color,
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="timer-outline"
-                    size={18}
-                    color={
-                      colorScheme == "dark"
-                        ? darkMode.Text.color
-                        : lightMode.Text.color
-                    }
-                  />{" "}
-                  {tripTime}
-                </Text>
-                <HStack 
-                  paddingRight={5}
-                space={0}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color:
-                      colorScheme == "dark"
-                        ? darkMode.Text.color
-                        : lightMode.Text.color,
-                  }}
-                  justifyContent={'center'}
-                  alignItems={'center'}
-                >
-                 {'cycle '+ (seq+1 )+ ' '}
-                  
-                 
-                </Text>
-                <MaterialCommunityIcons
-                    name="bus-stop"
-                    size={24}
-                    color={
-                      colorScheme == "dark"
-                        ? darkMode.Text.color
-                        : lightMode.Text.color
-                    }
-                  />
-                  </HStack>
-              </HStack>
-            
-              <HStack
-                space={2}
-                padding={2}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                width={"100%"}
-              >
-               {
-                runTime? (
-               <>
-               <Button
-                leftIcon={
-                  <MaterialCommunityIcons
-                    name={"plus"}
-                    size={24}
-                    color={"#1DA15D"}
-                  />
-                }
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.primaryColor
-                    : colorsLight.primaryColor 
-                }
-                onPress={() => continueTripSupa()}
-                
-              >
-                <Text
-                 fontSize={"md"}
-                 bold
-                >
-                  New Cycle
-                </Text>
-              </Button>
-              <Button
-             
-             backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.primaryColor
-                    : colorsLight.primaryColor 
-                }
-                onPress={() => submitTripSupa()}
-                
-              >
-                <Text
-                 fontSize={"md"}
-                 bold
-                >
-                  End Trip
-                </Text>
-              </Button>
-               </>
-                ) : (
-                 
-                  <Button
-                leftIcon={   
-                  <MaterialCommunityIcons
-                    name={"play"}
-                    size={24}
-                    color={"#1DA15D"}
-                  />
-                }
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.primaryColor
-                    : colorsLight.primaryColor 
-                }
-                onPress={() => startTripSupa()}
-              >
-                <Text
-                  fontSize={"lg"}
-                  bold
-                >
-                  Start Trip
-                </Text>
-              </Button>
-                )
-               }
-               
-              </HStack>
-            </Box>
-            </Box>
-            </Box>
-        </ZStack>
-        </Box>
-       </Box>
-      ) : null}
-      {menu == "history" ? (
-        <Container
-          backgroundColor={
-            colorScheme == "dark"
-              ? colorsDark.backgroundColor
-              : colorsLight.backgroundColor
-          }
-          top={Dimensions.get("window").height * 0.7}
-          
-          padding={2}
-          borderRadius={10}
-          shadow={2}
-        >
-          <Center> 
-            
-            <HStack space={2} padding={2}>
-              <Button
-                w={"50%"}
-                onPress={() => {
-                  setMenu("stats");
-                }}
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-              >
-                <Text bold fontSize={"md"}>Show Stats</Text>
-              </Button>
-              <Button
-                w={"50%"}
-                onPress={() => {
-                  setMenu("history");
-                }}
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-              >
-                <Text bold fontSize={"md"}>History</Text>
-              </Button>
-            </HStack>
-          </Center>
-        </Container>
-      ) : null}
-      {menu == "stats" ? (
-       <Box 
-        backgroundColor={
-          colorScheme == "dark"
-            ? colorsDark.backgroundColor
-            : colorsLight.backgroundColor
-        }
-                  top={Dimensions.get("window").height * 0.7}
-
-        width={"100%"}
-       >
-       <ZStack
-          // top={Dimensions.get("window").height * 0.7}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
-          {selectTraveler ? (
-            <HStack
-              zIndex={100}
-              bottom={Dimensions.get("window").height * 0.15}
-              // right={Dimensions.get("window").width * 0.02}
-              backgroundColor={
-                colorScheme == "dark" ? colorsDark.backgroundColor : colorsLight.backgroundColor
-              }
-              borderRadius={5}
-              p={2}
-              space={1}
-              alignItems={"center"}
-            
-            >
-              <Button
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"close"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-              <Button
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setTravelingBy("car");
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"car"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-              <Button
-                backgroundColor={
-                  colorScheme == "walk"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setTravelingBy("scooter");
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"scooter"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-              <Button
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setTravelingBy("walk");
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"walk"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-              <Button
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.secondaryColor
-                    : colorsLight.secondaryColor
-                }
-                onPress={() => {
-                  setTravelingBy("bus");
-                  setSelectTraveler(false);
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"bus"}
-                  size={24}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </Button>
-            </HStack>
-          ) : null}
-         
-            <Box
-              width={"90%"}
-              backgroundColor={
-              colorScheme == "dark"
-                ? colorsDark.backgroundColor
-                : colorsLight.backgroundColor
-            }
-            borderRadius={5}
-            shadow={1}
-            >
-              <HStack
-                space={2}
-                padding={2}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                width={"100%"}
-              >
-                <Button
-                  p={1}
-                  m={1}
-                  variant="ghost"
-                  onPress={() => {
-                    setMenu("main");
-                  }}
-                >
-                  <MaterialIcons
-                    name="arrow-back"
-                    size={24}
-                    color={
-                      colorScheme == "dark"
-                        ? colorsDark.textColor
-                        : colorsLight.textColor
-                    }
-                    onPress={() => {
-                      setMenu("main");
-                    }}
-                  />
-                </Button>
-
-                <Button
-                  p={1}
-                  m={1}
-                  variant="ghost"
-                  onPress={() => {
-                    setSelectTraveler(!selectTraveler);
-                  }}
-                >
-                  <HStack justifyContent={"center"} alignItems={"center"}>
-                    <Text bold fontSize={12}>
-                      traveling by:{" "}
-                    </Text>
-                    <MaterialCommunityIcons
-                      name={travelingBy}
-                      size={24}
-                      color={
-                        colorScheme == "dark"
-                          ? colorsDark.textColor
-                          : colorsLight.textColor
-                      }
-                    />
-                  </HStack>
-                </Button>
-              </HStack>
-          
-            {
-              travelingBy == "bus" ? (
-                <><HStack
-                      space={2}
-                      padding={1}
-                      margin={1}
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                      width={"95%"}
-                    >
-                      <Stack space={0} alignItems={"flex-start"}>
-                        <Text fontSize={12} color={"gray.500"} bold>
-                          First Stop
-                        </Text>
-                        {selectedStopName && startStopName != null ? (<Text bold fontSize={16}>
-                          {startStopName}
-                        </Text>) : (<Text bold fontSize={16}> Choose first stop</Text>)}
-                      </Stack>
-                      <Stack
-                      >
-                        {!startStopName ? (
-                          <Button
-                            onPress={() => {
-                              setStartStop(selectedStop);
-                              setStartStopName(selectedStopName);
-                            } }
-                            padding={1}
-                            margin={1}
-                            backgroundColor={colorScheme == "dark"
-                              ? colorsDark.secondaryColor
-                              : colorsLight.secondaryColor}
-                          >
-                            <MaterialIcons
-                              name="check"
-                              size={24}
-                              color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                          </Button>
-                        ) : (
-                          <Button
-                            onPress={() => {
-                              setStartStop(null);
-                              setStartStopName(null);
-                              setSelectedStopName(null);
-                              setSelectedStop(null);
-                            } }
-                            padding={1}
-                            margin={1}
-                            backgroundColor={colorScheme == "dark"
-                              ? colorsDark.secondaryColor
-                              : colorsLight.secondaryColor}
-                          >
-                            <MaterialCommunityIcons
-                              name="trash-can"
-                              size={24}
-                              color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                          </Button>
-                        )}
-                      </Stack>
-                    </HStack><HStack
-                      space={2}
-                      padding={1}
-                      margin={1}
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                      width={"95%"}
-                    >
-                        <Stack space={0} alignItems={"flex-start"}>
-                          <Text fontSize={12} color={"gray.500"} bold>
-                            Final Stop
-                          </Text>
-                          {finalStop != null ? (<Text bold fontSize={16}>
-                            {finalStopName}
-                          </Text>) : (<Text bold fontSize={16}> Choose stop</Text>)}
-                        </Stack>
-                        <Stack
-                        >
-                          {!finalStopName ? (
-                            <Button
-                              onPress={() => {
-                                setFinalStop(selectedStop);
-                                setFinalStopName(selectedStopName);
-                              } }
-                              padding={1}
-                              margin={1}
-                              backgroundColor={colorScheme == "dark"
-                                ? colorsDark.secondaryColor
-                                : colorsLight.secondaryColor}
-                            >
-                              <MaterialIcons
-                                name="check"
-                                size={24}
-                                color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                            </Button>
-                          ) : (
-                            <Button
-                              onPress={() => {
-                                setFinalStop(null);
-                                setFinalStopName(null);
-                                setSelectedStopName(null);
-                                setSelectedStop(null);
-                              } }
-                              padding={1}
-                              margin={1}
-                              backgroundColor={colorScheme == "dark"
-                                ? colorsDark.secondaryColor
-                                : colorsLight.secondaryColor}
-                            >
-                              <MaterialCommunityIcons
-                                name="trash-can"
-                                size={24}
-                                color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                            </Button>
-                          )}
-                        </Stack>
-                      </HStack></>
-              ) : null
-            }
-            {
-              travelingBy == "car" || travelingBy == 'walk' || travelingBy == 'scooter' ? (
-                <>
-                <HStack
-                      space={2}
-                      padding={1}
-                      margin={1}
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                      width={"95%"}
-                    >
-                      <Stack space={0} alignItems={"flex-start"}>
-                        <Text fontSize={12} color={"gray.500"} bold>
-                          Stop
-                        </Text>
-                        {mark != null ? (<Text bold fontSize={16}>
-                          Destination added
-                        </Text>) : (<Text bold fontSize={16}> Select Destination</Text>)}
-                      </Stack>
-                      <Stack
-                      >
-                        {mark ? (
-                          <Button
-                            onPress={() => {
-                              setMark(null);
-                            } }
-                            padding={1}
-                            margin={1}
-                            backgroundColor={colorScheme == "dark"
-                              ? colorsDark.secondaryColor
-                              : colorsLight.secondaryColor}
-                          >
-                            <MaterialCommunityIcons
-                              name="trash-can"
-                              size={24}
-                              color={colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor} />
-                          </Button>
-                        ) : null}
-                      </Stack>
-                    </HStack>
-                    
-                    </>
-              ):null
-            }
-
-              <HStack
-                space={2}
-                padding={2}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                width={"100%"}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color:
-                      colorScheme == "dark"
-                        ? darkMode.Text.color
-                        : lightMode.Text.color,
-                  }}
-                >
-                  <MaterialCommunityIcons
-                    name="timer-outline"
-                    size={18}
-                    color={
-                      colorScheme == "dark"
-                        ? darkMode.Text.color
-                        : lightMode.Text.color
-                    }
-                  />{" "}
-                  {tripTime}
-                </Text>
-                 <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color:
-                      colorScheme == "dark"
-                        ? darkMode.Text.color
-                        : lightMode.Text.color,
-                  }}
-                  justifyContent={'center'}
-                  alignItems={'center'}
-                >
-                  <MaterialCommunityIcons
-                    name="bus-stop"
-                    size={24}
-                    color={
-                      colorScheme == "dark"
-                        ? darkMode.Text.color
-                        : lightMode.Text.color
-                    }
-                  />
-                  {seq+1}
-                </Text>
-              </HStack>
-            
-              <HStack
-                space={2}
-                padding={2}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                width={"100%"}
-              >
-               {
-                runTime? (
-               <>
-               <Button
-                leftIcon={
-                  <MaterialCommunityIcons
-                    name={"plus"}
-                    size={24}
-                    color={"#1DA15D"}
-                  />
-                }
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.primaryColor
-                    : colorsLight.primaryColor 
-                }
-                onPress={() => continueTripSupa()}
-                
-              >
-                <Text
-                 fontSize={"md"}
-                 bold
-                >
-                  New Cycle
-                </Text>
-              </Button>
-              <Button
-             
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.primaryColor
-                    : colorsLight.primaryColor 
-                }
-                onPress={() => endTripSupa()}
-                
-              >
-                <Text
-                 fontSize={"md"}
-                 bold
-                >
-                  End Trip
-                </Text>
-              </Button>
-               </>
-                ) : (
-                 
-                  <Button
-                leftIcon={   
-                  <MaterialCommunityIcons
-                    name={"play"}
-                    size={24}
-                    color={"#1DA15D"}
-                  />
-                }
-                backgroundColor={
-                  colorScheme == "dark"
-                    ? colorsDark.primaryColor
-                    : colorsLight.primaryColor 
-                }
-                onPress={() => startTripSupa()}
-              >
-                <Text
-                  fontSize={"lg"}
-                  bold
-                >
-                  Start Trip
-                </Text>
-              </Button>
-                )
-               }
-               
-              </HStack>
-            </Box>
-        </ZStack>
-       </Box>
-      ) : null}
-      {menu == "alert" ? (
-        <VStack
-          style={{
-            backgroundColor:
-              colorScheme == "dark"
-                ? colorsDark.backgroundColor
-                : colorsLight.backgroundColor,
-            borderRadius: 10,
-            padding: 5,
-            justifyContent: "center",
-            alignItems: "center", //flex-start
-            margin: 3,
-            position: "absolute",
-            top: "55%",
-            zIndex: 100,
-            // left: '10%',
-
-            width: "90%",
-          }}
-        >
-          <HStack
-            p={1}
-            width={"100%"}
-            space={1}
-            alignItems="center"
-            justifyContent="space-between"
           >
-            <MaterialCommunityIcons
-              size={24}
-              name="close"
-              onPress={() => {
-                if(runTime || startStop != null){
-                  setMenu("trip")
-                } else {
-                  setMenu("main")
-                }
-              }}
-              color={
-                colorScheme == "dark"
-                  ? colorsDark.textColor
-                  : colorsLight.textColor
-              }
+            <Icon
+              size={"md"}
+              as={<MaterialCommunityIcons name="map-marker-account" />}
+              color="black"
             />
-            <Text
-            fontSize={"xl"}
-            bold
-            >
-              Alert
-            </Text>
-           
-          </HStack>
-          <Text
-            m={2}
-            fontSize={"md"}
-          >
-            Select Category
-          </Text>
-          <Select
-            selectedValue={alertCat}
-            borderColor={'transparent'}
-            padding={3}
-            width={"90%"}
-            size={"md"}
-            // borderColor={'transparent'}
-
+          </Button>
+          <Button
             backgroundColor={
-              colorScheme == "dark"
-                ? colorsDark.primaryColor
-                : colorsLight.primaryColor
+             '#FACA2D'
             }
-            accessibilityLabel="Select Category"
-            placeholder="Select Category"
-            color={
-              colorScheme == "dark"
-                ? colorsDark.textColor
-                : colorsLight.textColor
-            }
-            onValueChange={(itemValue) => setAlertCat(itemValue)}
-            _selectedItem={{
-              bg: "cyan.600",
-            }}
+            borderRadius={10}
+            onPress={() => setMenu("camera")}
           >
-            <Select.Item label="Bus" value="bus" />
-            <Select.Item
-              label="Bus and system predictions"
-              value="predictions"
+            <Icon
+              size={"md"}
+              as={<MaterialCommunityIcons name="camera" />}
+              color="black"
             />
-            <Select.Item label="Bus stops" value="bus-stops" />
-            <Select.Item label="New Feature" value="new-feature" />
-            <Select.Item label="Other" value="other" />
-          </Select>
-
-          {/*        
-              <Input
-              w={'100%'}
-              onChangeText={text => setAlertTitle(text)}
-               p={3} m={3} variant="filled" size="md" placeholder="Title" backgroundColor={'blueGray.300'} /> */}
-          <Text
-            marginTop={2}
-            fontSize={"md"}
+          </Button>
+          <Button
+            backgroundColor={'#36B24A' }
+            borderRadius={10}
+            onPress={() => setMenu("main")}
           >
-            Problem
-          </Text>
-          <Input
-            onChangeText={(text) => setAlertProblem(text)}
-            w={"90%"}
-            p={3}
-            m={3}
-            size="md"
-            color={
-              colorScheme == "dark"
-                ? colorsDark.textColor
-                : colorsLight.textColor
-            }
-            borderColor={"transparent"}
-            placeholder="Problem"
-            backgroundColor={
-              colorScheme == "dark"
-                ? colorsDark.primaryColor
-                : colorsLight.primaryColor
-            }
-          >
-            <Text
-            >
-              {alertProblem}
-            </Text>
-          </Input>
-         <HStack space={2} 
-         justifyContent={'space-between'}
-         >
-         <Button
-            m={3}
-             onPress={async () => {
-              const { data, error } = await supabase.from("feedback").insert([
-                {
-                  title: alertTitle,
-                  conv: alertProblem,
-                  cat: alertCat,
-                  status: alertStatus,
-                },
-              ]);
-              if (error) {
-                console.log(error);
-              }
-              Alert.alert(
-                        "Please read and agree to the terms and conditions"
-                      );
-              
-            }}
-            fontSize={"md"}
-            backgroundColor={
-              colorScheme == "dark"
-                ? colorsDark.secondaryColor
-                : colorsLight.secondaryColor
-            }
-          >
-            <Text fontSize={"md"}>Submit</Text>
+            <Icon
+              size={"md"}
+              as={<MaterialCommunityIcons name="ticket" />}
+              color="black"
+            />
           </Button>
         
-         </HStack>
-        </VStack>
-      ) : null}
+        </HStack>
+       </HStack>
+        {menu == "main" ? (
+          <Box
+            style={{
+              borderRadius: 10,
+              backgroundColor: colorsLight.backgroundColor,
+            }}
+          >
+            <HStack
+              space={2}
+              alignItems="center"
+              padding={3}
+              justifyContent={"flex-start"}
+            >
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                Create Trip
+              </Text>
+            </HStack>
+
+            <HStack
+              space={2}
+              alignItems="center"
+              paddingLeft={4}
+              justifyContent={"flex-start"}
+            >
+              <Button
+                borderRadius={10}
+                backgroundColor={
+                  travelingBy == "bus"
+                    ? colorsLight.primaryColor
+                    : colorsLight.secondaryColor
+                }
+                onPress={() => setTravelingBy("bus")}
+              >
+                <Icon
+                  size={"md"}
+                  as={<MaterialCommunityIcons name="bus" />}
+                  color="black"
+                />
+              </Button>
+              <Button
+                borderRadius={10}
+                backgroundColor={
+                  travelingBy == "walk"
+                    ? colorsLight.primaryColor
+                    : colorsLight.secondaryColor
+                }
+                onPress={() => setTravelingBy("walk")}
+              >
+                <Icon
+                  size={"md"}
+                  as={<MaterialCommunityIcons name="walk" />}
+                  color="black"
+                />
+              </Button>
+              <Button
+                borderRadius={10}
+                backgroundColor={
+                  travelingBy == "car"
+                    ? colorsLight.primaryColor
+                    : colorsLight.secondaryColor
+                }
+                onPress={() => setTravelingBy("car")}
+              >
+                <Icon
+                  size={"md"}
+                  as={<MaterialCommunityIcons name="car" />}
+                  color="black"
+                />
+              </Button>
+              <Button
+                borderRadius={10}
+                backgroundColor={
+                  travelingBy == "scooter"
+                    ? colorsLight.primaryColor
+                    : colorsLight.secondaryColor
+                }
+                onPress={() => setTravelingBy("scooter")}
+              >
+                <Icon
+                  size={"md"}
+                  as={<MaterialCommunityIcons name="scooter" />}
+                  color="black"
+                />
+              </Button>
+            </HStack>
+            {/* list for active stop predictions and route */}
+            {/* hstack space between */}
+            <HStack
+              space={2}
+              padding={2}
+              width={"100%"}
+              alignItems="center"
+              justifyContent={"space-between"}
+            >
+              <VStack space={0} alignItems="flex-start">
+                <Text style={{ fontSize: 14 }}>
+                  First Stop: {startStop || selectedStop}
+                </Text>
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                  P1 - {startStopName || selectedStopName || "Select a Stop"}
+                </Text>
+              </VStack>
+              <HStack space={1} alignItems="flex-start">
+                {startStop == null ? (
+                  <Button
+                    borderColor={"transparent"}
+                    variant={"outline"}
+                    onPress={
+                      // set selected stop to start stop
+                      () => {
+                        setStartStop(selectedStop);
+                        if(selectedStopName.length > 19) {
+                          setStartStopName(selectedStopName.slice(0, 19) + "...")
+                        }else {
+
+                        setStartStopName(selectedStopName);
+                        }
+                      }
+                    }
+                  >
+                    <Icon
+                      size={"md"}
+                      as={<MaterialIcons name="check" />}
+                      color="black"
+                    />
+                  </Button>
+                ) : null}
+                <Button
+                  borderColor={"transparent"}
+                  variant={"outline"}
+                  onPress={() => setStartStop(null)}
+                >
+                  <Icon
+                    size={"md"}
+                    as={<MaterialIcons name="cancel" />}
+                    color="black"
+                  />
+                </Button>
+              </HStack>
+            </HStack>
+            {startStop != null ? (
+              <>
+                <Divider margin={2} />
+                <HStack
+                  space={2}
+                  padding={2}
+                  paddingBottom={"4"}
+                  width={"100%"}
+                  alignItems="center"
+                  justifyContent={"space-between"}
+                >
+                  <VStack space={0} alignItems="flex-start">
+                    <Text style={{ fontSize: 14 }}>
+                      Final Stop: {finalStop || selectedStop}
+                    </Text>
+                    <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                      P2 - {finalStopName || selectedStopName}
+                    </Text>
+                  </VStack>
+                  <HStack space={1} alignItems="flex-start">
+                    {finalStop == null ? (
+                      <Button
+                        borderColor={"transparent"}
+                        variant={"outline"}
+                        onPress={
+                          // set selected stop to start stop
+                          () => {
+                            setFinalStop(selectedStop);
+                            if(selectedStopName.length > 19) {
+                              setFinalStopName(selectedStopName.slice(0, 19) + "...")
+                            }else {
+                            setFinalStopName(selectedStopName);
+                            }
+                          }
+                        }
+                      >
+                        <Icon
+                          size={"md"}
+                          as={<MaterialIcons name="check" />}
+                          color="black"
+                        />
+                      </Button>
+                    ) : null}
+                    <Button
+                      borderColor={"transparent"}
+                      variant={"outline"}
+                      onPress={() => setFinalStop(null)}
+                    >
+                      <Icon
+                        size={"md"}
+                        as={<MaterialIcons name="cancel" />}
+                        color="black"
+                      />
+                    </Button>
+                  </HStack>
+                </HStack>
+              </>
+            ) : null}
+          </Box>
+        ) : null}
+        {menu == "camera" ? (
+          <Box
+            style={{
+              borderRadius: 10,
+              backgroundColor: colorsLight.backgroundColor,
+            }}
+          >
+            <Camera
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+              type={type}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  padding: 20,
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  position: "absolute",
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: colorsLight.primaryColor,
+                    borderRadius: 10,
+                    padding: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={__takePicture}
+                >
+                  <Text
+                    style={{
+                      color: colorsLight.textColor,
+                      fontSize: 14,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Snap
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Camera>
+          </Box>
+        ) : null}
+        {menu == "stops" ? (
+          <Box
+            style={{
+              borderRadius: 10,
+              backgroundColor: colorsLight.backgroundColor,
+            }}
+          >
+            <HStack
+              space={2}
+              alignItems="center"
+              padding={3}
+              justifyContent={"flex-start"}
+            >
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                Stops
+              </Text>
+            </HStack>
+             <TimeArrivalReturn stops={memoStop} startStop={startStop} finalStop={finalStop} />
+            
+
+          
+          </Box>
+        ) : null}
+        {menu == "activeTrip" ? (
+          <Box
+            style={{
+              borderRadius: 10,
+              backgroundColor: colorsLight.backgroundColor,
+            }}
+          >
+            <HStack
+              space={2}
+              alignItems="center"
+              padding={3}
+              justifyContent={"flex-start"}
+            >
+              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+                Active Trip
+              </Text>
+            </HStack>
+
+            {/* list for active stop predictions and route */}
+            {/* hstack space between */}
+            <HStack
+              space={2}
+              padding={2}
+              width={"100%"}
+              alignItems="center"
+              justifyContent={"space-between"}
+            >
+              <VStack space={0} alignItems="flex-start">
+                <Text style={{  fontSize: 14  }}>
+                  Time: {tripTime || "00:00:00"}
+                </Text>
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                  From: {startStopName || "Select a Stop"}
+                </Text>
+                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                To: {finalStopName || "Select a Stop"}
+                </Text>
+
+
+              </VStack>
+            </HStack>
+          
+          </Box>
+        ) : null}
+        {startStop != null && finalStop != null ? (
+          <HStack
+            space={2}
+            padding={2}
+            width={"100%"}
+            alignItems="center"
+            justifyContent={"space-between"}
+          >
+            <Button
+              borderRadius={10}
+              backgroundColor={colorsLight.primaryColor}
+              onPress={() => {
+                startTripSupa()
+                start();
+                setMenu("activeTrip");
+              }}
+            >
+              <Icon
+                size={"md"}
+                as={<MaterialCommunityIcons name="play" />}
+                color="black"
+              />
+              <Text>Start Trip </Text>
+            </Button>
+            <Button
+              borderRadius={10}
+              backgroundColor={colorsLight.primaryColor}
+              onPress={() => continueTripSupa()}
+            >
+              <Icon
+                size={"md"}
+                as={<MaterialCommunityIcons name="bus-stop" />}
+                color="black"
+              />
+              <Text>Add Stop </Text>
+            </Button>
+            <Button
+              borderRadius={10}
+              backgroundColor={colorsLight.primaryColor}
+              onPress={() => submitTripSupa()}
+            >
+              <Icon
+                size={"md"}
+                as={<MaterialCommunityIcons name="stop" />}
+                color="black"
+              />
+              <Text>Stop Trip </Text>
+            </Button>
+          </HStack>
+        ) : null}
+      </Box>
     </View>
   );
 };
@@ -2380,25 +1273,26 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   scrollView: {
-    backgroundColor: "pink",
-    marginHorizontal: 20,
+    backgroundColor: colorsLight.primaryColor,
+   
   },
   stopListTitle: {
     fontSize: 15, //hykj8LmMrfnx
     fontWeight: "bold",
-    color: "white",
+    color: "black",
   },
   stopListDescription: {
-    fontSize: 10,
+    fontSize: 12,
     color: "black",
   },
   stopListContainer: {
-    padding: 10,
-    margin: 10,
+    padding: 5,
+    margin: 5,
     borderRadius: 10,
-    width: Dimensions.get("window").width * 0.8,
-    maxHeight: Dimensions.get("window").height * 0.2,
-    backgroundColor: "white",
+    width: '90%',
+
+    // maxHeight: Dimensions.get("window").height * 0.2,
+    backgroundColor: colorsLight.secondaryColor ,
   },
   container: {
     flex: 1,
@@ -2475,7 +1369,7 @@ const styles = StyleSheet.create({
     // display: flex;
     // flex-wrap: nowrap;
   },
-  card :{
+  card: {
     flex: 1,
     height: 150,
     display: "inline-block",
@@ -2486,5 +1380,5 @@ const styles = StyleSheet.create({
     // display: inline-block;
     // margin: 5px;
     // border: 1px solid;
-  }
+  },
 });
