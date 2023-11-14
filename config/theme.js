@@ -10,8 +10,8 @@ const colorsLight1 = {
 const colorsLight = {
   textColor : '#040316',
   backgroundColor : '#eef4fc',
-  primaryColor : '#67a6ef',
-  secondaryColor : '#a9c9ef',
+  primaryColor : '#5ABCFC',
+  secondaryColor : '#CCDCF4',
   accentColor : '#215fab',
 }
 // const colorsDark = {

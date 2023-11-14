@@ -40,7 +40,7 @@ import {
   getTrip,
 } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
-import { getStopById, getStops } from "../assets/gtfs/stops";
+import { getStopById, getStops, getStopsByRouteIdSelect } from "../assets/gtfs/stops";
 
 import { FlashList } from "@shopify/flash-list";
 import MapView from "react-native-map-clustering";
@@ -50,7 +50,6 @@ import { RightSideMenu } from "../components/RightSideMenu.jsx";
 import Shapes from "../assets/gtfs/shapes.json";
 import { StopRender } from "../components/OBAFetches/StopRender";
 import {TimeArrivalReturn} from '../components/TimeArrivalReturn'
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import openMap from "react-native-open-maps";
 import { supabase } from "../utils/supabase";
 import { useStopwatch } from "react-timer-hook";
@@ -74,6 +73,7 @@ export const MapScreen = () => {
   const [lastTripId, setLastTripId] = useState(0);
   const memoRt = React.useMemo(() => Shapes, []);
   const memoStop = React.useMemo(() => getStops(), []);
+  const memoSelRoute = React.useMemo(() => getStopsByRouteIdSelect(selectedRoute), [selectedRoute]);
   const [selectTraveler, setSelectTraveler] = useState(false);
   const [runTime, setRunTime] = useState(false);
   const [startLocData, setStartLocData] = useState(null);
@@ -800,39 +800,82 @@ export const MapScreen = () => {
         ) : null}
       </MapView>
       {/* Modal overlay */}
+      {menu == "camera" ? (
+          <Box
+            style={{
+              backgroundColor: colorsLight.backgroundColor,
+              position: "absolute",
+              left: "55%",
+              top: '10%',
+              transform: [{ translateX: -Dimensions.get("window").width / 2 }],
+              width: "90%",
+              height: "60%",
+
+            }}
+          >
+            <Camera
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+              type={type}
+            >
+              <View
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  padding: 20,
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  position: "absolute",
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: colorsLight.primaryColor,
+                    borderRadius: 10,
+                    padding: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={__takePicture}
+                >
+                  <Text
+                    style={{
+                      color: colorsLight.textColor,
+                      fontSize: 14,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Scan
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </Camera>
+          </Box>
+        ) : null}
       <Box
+      // push to bottom of screen
         style={{
           width: "90%",
-          height: "100%",
-          height: "35%",
+          // height: "100%",
+          // height: "35%",
           position: "absolute",
-          top: "50%",
+          // top: "50%",
+          bottom: '3%',
           backgroundColor: "transparent",
         }}
       >
-       <HStack padding={2} justifyContent={'space-between'}  >
-       <Button
-            backgroundColor={ colorsLight.secondaryColor }
-            borderRadius={10}
-            m={1}
-            // p={2}
-            onPress={() => 
-              {
-          setMenu('stops')
-          }
-            }
-          >
-           <Text style={{color: 'black'}}>Show Stops</Text>
-          </Button>
-       <HStack
+      
+      <HStack
           space={2}
           alignItems="center"
-          // padding={3}
-          justifyContent={"flex-end"}
+          paddingBottom={2}
+          justifyContent={"space-between"}
         >
           {/* bubble option menu */}
           <Button
-            backgroundColor={'#BF2834' }
+            backgroundColor={'#FC6C64' }
             borderRadius={10}
             onPress={() => 
               {
@@ -849,39 +892,51 @@ export const MapScreen = () => {
           }
             }
           >
+          <HStack  >
+
             <Icon
               size={"md"}
               as={<MaterialCommunityIcons name="map-marker-account" />}
-              color="black"
+              color={"black"}
             />
+      <Text style={{color: 'black'}}>My location</Text>
+          </HStack>
           </Button>
           <Button
             backgroundColor={
-             '#FACA2D'
+             '#FCEC7C'
             }
             borderRadius={10}
             onPress={() => setMenu("camera")}
           >
+          <HStack>
+            
             <Icon
               size={"md"}
               as={<MaterialCommunityIcons name="camera" />}
               color="black"
             />
+            <Text style={{color: 'black'}}> Scan Bus</Text>
+          </HStack>
           </Button>
           <Button
-            backgroundColor={'#36B24A' }
+            backgroundColor={'#ACFCCC' }
             borderRadius={10}
             onPress={() => setMenu("main")}
           >
+          <HStack>
+
             <Icon
               size={"md"}
               as={<MaterialCommunityIcons name="ticket" />}
               color="black"
             />
+            <Text style={{color: 'black'}}>New Trip</Text>
+          </HStack>
           </Button>
         
         </HStack>
-       </HStack>
+        
         {menu == "main" ? (
           <Box
             style={{
@@ -893,11 +948,24 @@ export const MapScreen = () => {
               space={2}
               alignItems="center"
               padding={3}
-              justifyContent={"flex-start"}
+              justifyContent={"space-between"}
             >
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Create Trip
               </Text>
+              <Button
+            backgroundColor={ colorsLight.secondaryColor }
+            borderRadius={5}
+            // m={1}
+            // p={2}
+            onPress={() => 
+              {
+          setMenu('stops')
+          }
+            }
+          >
+           <Text style={{color: 'black'}}>Show Stops</Text>
+          </Button>
             </HStack>
 
             <HStack
@@ -989,6 +1057,10 @@ export const MapScreen = () => {
                   <Button
                     borderColor={"transparent"}
                     variant={"outline"}
+                    backgroundColor={colorsLight.secondaryColor }
+                    borderRadius={12}
+                    marginRight={1}
+
                     onPress={
                       // set selected stop to start stop
                       () => {
@@ -1004,6 +1076,7 @@ export const MapScreen = () => {
                   >
                     <Icon
                       size={"md"}
+
                       as={<MaterialIcons name="check" />}
                       color="black"
                     />
@@ -1011,6 +1084,9 @@ export const MapScreen = () => {
                 ) : null}
                 <Button
                   borderColor={"transparent"}
+                  backgroundColor={colorsLight.secondaryColor }
+                  borderRadius={12}
+                  marginRight={1}
                   variant={"outline"}
                   onPress={() => setStartStop(null)}
                 >
@@ -1044,7 +1120,9 @@ export const MapScreen = () => {
                   <HStack space={1} alignItems="flex-start">
                     {finalStop == null ? (
                       <Button
-                        borderColor={"transparent"}
+                        backgroundColor={colorsLight.secondaryColor}
+                        marginRight={1}
+                        borderRadius={12}
                         variant={"outline"}
                         onPress={
                           // set selected stop to start stop
@@ -1067,6 +1145,9 @@ export const MapScreen = () => {
                     ) : null}
                     <Button
                       borderColor={"transparent"}
+                      backgroundColor={colorsLight.secondaryColor}
+                        marginRight={1}
+                      borderRadius={12}
                       variant={"outline"}
                       onPress={() => setFinalStop(null)}
                     >
@@ -1082,72 +1163,32 @@ export const MapScreen = () => {
             ) : null}
           </Box>
         ) : null}
-        {menu == "camera" ? (
-          <Box
-            style={{
-              borderRadius: 10,
-              backgroundColor: colorsLight.backgroundColor,
-            }}
-          >
-            <Camera
-              style={{
-                width: "100%",
-                height: "100%",
-              }}
-              type={type}
-            >
-              <View
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  padding: 20,
-                  justifyContent: "flex-end",
-                  alignItems: "center",
-                  position: "absolute",
-                }}
-              >
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: colorsLight.primaryColor,
-                    borderRadius: 10,
-                    padding: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                  onPress={__takePicture}
-                >
-                  <Text
-                    style={{
-                      color: colorsLight.textColor,
-                      fontSize: 14,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Snap
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </Camera>
-          </Box>
-        ) : null}
+       
         {menu == "stops" ? (
           <Box
             style={{
               borderRadius: 10,
               backgroundColor: colorsLight.backgroundColor,
+              maxHeight: Dimensions.get("window").height * 0.35,
+              
             }}
           >
             <HStack
               space={2}
               alignItems="center"
-              padding={3}
-              justifyContent={"flex-start"}
+              m={2}
+              justifyContent={"space-between"}
             >
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Stops
+                Stops - TIM {selectedRoute}
               </Text>
+             {/* back button */}
+             <Button backgroundColor={colorsLight.secondaryColor} > 
+              <Icon  size={"md"} as={<MaterialCommunityIcons name="arrow-left" />} color="black" onPress={() => setMenu("main")} />
+              </Button>
+              
             </HStack>
-             <TimeArrivalReturn stops={memoStop} startStop={startStop} finalStop={finalStop} />
+             <TimeArrivalReturn stops={memoSelRoute} startStop={startStop} finalStop={finalStop} />
             
 
           
@@ -1167,22 +1208,89 @@ export const MapScreen = () => {
               justifyContent={"flex-start"}
             >
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Active Trip
+                Active Trip - TIM {selectedRoute}
               </Text>
             </HStack>
-
+            <HStack
+              space={2}
+              alignItems="center"
+              paddingLeft={4}
+              justifyContent={"flex-start"}
+            >
+              <Button
+                borderRadius={10}
+                backgroundColor={
+                  travelingBy == "bus"
+                    ? colorsLight.primaryColor
+                    : colorsLight.secondaryColor
+                }
+                onPress={() => setTravelingBy("bus")}
+              >
+                <Icon
+                  size={"md"}
+                  as={<MaterialCommunityIcons name="bus" />}
+                  color="black"
+                />
+              </Button>
+              <Button
+                borderRadius={10}
+                backgroundColor={
+                  travelingBy == "walk"
+                    ? colorsLight.primaryColor
+                    : colorsLight.secondaryColor
+                }
+                onPress={() => setTravelingBy("walk")}
+              >
+                <Icon
+                  size={"md"}
+                  as={<MaterialCommunityIcons name="walk" />}
+                  color="black"
+                />
+              </Button>
+              <Button
+                borderRadius={10}
+                backgroundColor={
+                  travelingBy == "car"
+                    ? colorsLight.primaryColor
+                    : colorsLight.secondaryColor
+                }
+                onPress={() => setTravelingBy("car")}
+              >
+                <Icon
+                  size={"md"}
+                  as={<MaterialCommunityIcons name="car" />}
+                  color="black"
+                />
+              </Button>
+              <Button
+                borderRadius={10}
+                backgroundColor={
+                  travelingBy == "scooter"
+                    ? colorsLight.primaryColor
+                    : colorsLight.secondaryColor
+                }
+                onPress={() => setTravelingBy("scooter")}
+              >
+                <Icon
+                  size={"md"}
+                  as={<MaterialCommunityIcons name="scooter" />}
+                  color="black"
+                />
+              </Button>
+            </HStack>
             {/* list for active stop predictions and route */}
             {/* hstack space between */}
             <HStack
               space={2}
               padding={2}
+              paddingBottom={1.5}
               width={"100%"}
               alignItems="center"
               justifyContent={"space-between"}
             >
               <VStack space={0} alignItems="flex-start">
                 <Text style={{  fontSize: 14  }}>
-                  Time: {tripTime || "00:00:00"}
+                  Time: {tripTime || "00:00:00"} - {seq}
                 </Text>
                 <Text style={{ fontSize: 16, fontWeight: "bold" }}>
                   From: {startStopName || "Select a Stop"}
@@ -1203,48 +1311,52 @@ export const MapScreen = () => {
             padding={2}
             width={"100%"}
             alignItems="center"
-            justifyContent={"space-between"}
+            justifyContent={"center"}
           >
-            <Button
-              borderRadius={10}
-              backgroundColor={colorsLight.primaryColor}
-              onPress={() => {
-                startTripSupa()
-                start();
-                setMenu("activeTrip");
-              }}
-            >
-              <Icon
-                size={"md"}
-                as={<MaterialCommunityIcons name="play" />}
-                color="black"
-              />
+         
+
+            <HStack space={1} paddingTop={1.5} paddingBottom={1.5} borderRadius={10} alignItems="center" backgroundColor={colorsLight.backgroundColor} >
+            <Button 
+            backgroundColor={"transparent"}
+            borderRadius={10}
+            
+            onPress={() => {
+              startTripSupa()
+              start();
+              setMenu("activeTrip");
+              }
+              }>
+              <HStack>
+              <Icon size={"md"} as={<MaterialCommunityIcons name="play" />} color="black" />
               <Text>Start Trip </Text>
+              </HStack>
+
             </Button>
-            <Button
-              borderRadius={10}
-              backgroundColor={colorsLight.primaryColor}
-              onPress={() => continueTripSupa()}
-            >
-              <Icon
-                size={"md"}
-                as={<MaterialCommunityIcons name="bus-stop" />}
-                color="black"
-              />
+            <Text>|</Text>
+            <Button 
+            backgroundColor={"transparent"}
+            borderRadius={10}
+            
+            onPress={() => continueTripSupa()}>
+              <HStack>
+              <Icon size={"md"} as={<MaterialCommunityIcons name="bus-stop" />} color="black" />
               <Text>Add Stop </Text>
+              </HStack>
+
             </Button>
-            <Button
+            <Text>|</Text>
+            <Button 
+            backgroundColor={"transparent"}
               borderRadius={10}
-              backgroundColor={colorsLight.primaryColor}
-              onPress={() => submitTripSupa()}
-            >
-              <Icon
-                size={"md"}
-                as={<MaterialCommunityIcons name="stop" />}
-                color="black"
-              />
+              onPress={() => submitTripSupa()}>
+              <HStack>
+              <Icon size={"md"} as={<MaterialCommunityIcons name="stop" />} color="black" />
               <Text>Stop Trip </Text>
-            </Button>
+              </HStack>
+              </Button>
+              
+            
+            </HStack>
           </HStack>
         ) : null}
       </Box>

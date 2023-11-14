@@ -116,7 +116,7 @@ export function getStops() {
     const val = stops.filter((s) => s.id.startsWith(routeId))
     let arr = []
     for (let index = 0; index < val.length; index++) {
-      arr.push({label: val[index].name, value: val[index].id})
+      arr.push({name: val[index].name, id: val[index].id})
     }
     return arr
   }
