@@ -40,7 +40,11 @@ import {
   getTrip,
 } from "../components/URLFetcher";
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
-import { getStopById, getStops, getStopsByRouteIdSelect } from "../assets/gtfs/stops";
+import {
+  getStopById,
+  getStops,
+  getStopsByRouteIdSelect,
+} from "../assets/gtfs/stops";
 
 import { FlashList } from "@shopify/flash-list";
 import MapView from "react-native-map-clustering";
@@ -49,7 +53,7 @@ import { Platform } from "react-native";
 import { RightSideMenu } from "../components/RightSideMenu.jsx";
 import Shapes from "../assets/gtfs/shapes.json";
 import { StopRender } from "../components/OBAFetches/StopRender";
-import {TimeArrivalReturn} from '../components/TimeArrivalReturn'
+import { TimeArrivalReturn } from "../components/TimeArrivalReturn";
 import openMap from "react-native-open-maps";
 import { supabase } from "../utils/supabase";
 import { useStopwatch } from "react-timer-hook";
@@ -73,7 +77,10 @@ export const MapScreen = () => {
   const [lastTripId, setLastTripId] = useState(0);
   const memoRt = React.useMemo(() => Shapes, []);
   const memoStop = React.useMemo(() => getStops(), []);
-  const memoSelRoute = React.useMemo(() => getStopsByRouteIdSelect(selectedRoute), [selectedRoute]);
+  const memoSelRoute = React.useMemo(
+    () => getStopsByRouteIdSelect(selectedRoute),
+    [selectedRoute]
+  );
   const [selectTraveler, setSelectTraveler] = useState(false);
   const [runTime, setRunTime] = useState(false);
   const [startLocData, setStartLocData] = useState(null);
@@ -625,7 +632,10 @@ export const MapScreen = () => {
     requestAnimationFrame(() => {
       {
         if (travelingBy == "bus") {
-          if (startStop && finalStop) {
+          if (
+            (startStop && finalStop) ||
+            (travelingBy != "bus" && mark != null)
+          ) {
             setRunTime(true);
             reset();
             start();
@@ -773,11 +783,10 @@ export const MapScreen = () => {
                   setSelectedRoute(stop.id);
                 }
                 setSelectedStop(stop.id);
-                if(stop.name.length > 19) {
-                  setSelectedStopName(stop.name.slice(0, 19) + "...")
-                } else { 
-                setSelectedStopName(stop.name);
-
+                if (stop.name.length > 19) {
+                  setSelectedStopName(stop.name.slice(0, 19) + "...");
+                } else {
+                  setSelectedStopName(stop.name);
                 }
               }}
             >
@@ -805,73 +814,71 @@ export const MapScreen = () => {
       </MapView>
       {/* Modal overlay */}
       {menu == "camera" ? (
-          <Box
+        <Box
+          style={{
+            backgroundColor: colorsLight.backgroundColor,
+            position: "absolute",
+            left: "55%",
+            top: "10%",
+            transform: [{ translateX: -Dimensions.get("window").width / 2 }],
+            width: "90%",
+            height: "60%",
+          }}
+        >
+          <Camera
             style={{
-              backgroundColor: colorsLight.backgroundColor,
-              position: "absolute",
-              left: "55%",
-              top: '10%',
-              transform: [{ translateX: -Dimensions.get("window").width / 2 }],
-              width: "90%",
-              height: "60%",
-
+              width: "100%",
+              height: "100%",
             }}
+            type={type}
           >
-            <Camera
+            <View
               style={{
                 width: "100%",
                 height: "100%",
+                padding: 20,
+                justifyContent: "flex-end",
+                alignItems: "center",
+                position: "absolute",
               }}
-              type={type}
             >
-              <View
+              <TouchableOpacity
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  padding: 20,
-                  justifyContent: "flex-end",
+                  backgroundColor: colorsLight.primaryColor,
+                  borderRadius: 10,
+                  padding: 10,
+                  justifyContent: "center",
                   alignItems: "center",
-                  position: "absolute",
                 }}
+                onPress={__takePicture}
               >
-                <TouchableOpacity
+                <Text
                   style={{
-                    backgroundColor: colorsLight.primaryColor,
-                    borderRadius: 10,
-                    padding: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
+                    color: colorsLight.textColor,
+                    fontSize: 14,
+                    fontWeight: "bold",
                   }}
-                  onPress={__takePicture}
                 >
-                  <Text
-                    style={{
-                      color: colorsLight.textColor,
-                      fontSize: 14,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Scan
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </Camera>
-          </Box>
-        ) : null}
+                  Scan
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </Camera>
+        </Box>
+      ) : null}
       <Box
-      // push to bottom of screen
+        // push to bottom of screen
         style={{
           width: "90%",
           // height: "100%",
           // height: "35%",
           position: "absolute",
           // top: "50%",
-          bottom: '3%',
+          bottom: "3%",
           backgroundColor: "transparent",
         }}
       >
-      
-      <HStack
+        <HStack
           space={2}
           alignItems="center"
           paddingBottom={2}
@@ -879,73 +886,66 @@ export const MapScreen = () => {
         >
           {/* bubble option menu */}
           <Button
-            backgroundColor={'#FC6C64' }
+            backgroundColor={"#FC6C64"}
             borderRadius={10}
-            onPress={() => 
-              {
-            // console.log(location);
-            _mapRef.current.animateToRegion(
-              {
-                latitude: location.coords?.latitude,
-                longitude: location.coords?.longitude,
-                latitudeDelta: 0.0092,
-                longitudeDelta: 0.0091,
-              },
-              1000
-            );
-          }
-            }
+            onPress={() => {
+              // console.log(location);
+              _mapRef.current.animateToRegion(
+                {
+                  latitude: location.coords?.latitude,
+                  longitude: location.coords?.longitude,
+                  latitudeDelta: 0.0092,
+                  longitudeDelta: 0.0091,
+                },
+                1000
+              );
+            }}
           >
-          <HStack  >
-
-            <Icon
-              size={"md"}
-              as={<MaterialCommunityIcons name="map-marker-account" />}
-              color={"black"}
-            />
-      <Text style={{color: 'black'}}>My location</Text>
-          </HStack>
+            <HStack>
+              <Icon
+                size={"md"}
+                as={<MaterialCommunityIcons name="map-marker-account" />}
+                color={"black"}
+              />
+              <Text style={{ color: "black" }}>My location</Text>
+            </HStack>
           </Button>
           <Button
-            backgroundColor={
-             '#FCEC7C'
-            }
+            backgroundColor={"#FCEC7C"}
             borderRadius={10}
             onPress={() => setMenu("camera")}
           >
-          <HStack>
-            
-            <Icon
-              size={"md"}
-              as={<MaterialCommunityIcons name="camera" />}
-              color="black"
-            />
-            <Text style={{color: 'black'}}> Scan Bus</Text>
-          </HStack>
+            <HStack>
+              <Icon
+                size={"md"}
+                as={<MaterialCommunityIcons name="camera" />}
+                color="black"
+              />
+              <Text style={{ color: "black" }}> Scan Bus</Text>
+            </HStack>
           </Button>
           <Button
-            backgroundColor={'#ACFCCC' }
+            backgroundColor={"#ACFCCC"}
             borderRadius={10}
             onPress={() => setMenu("main")}
           >
-          <HStack>
-
-            <Icon
-              size={"md"}
-              as={<MaterialCommunityIcons name="ticket" />}
-              color="black"
-            />
-            <Text style={{color: 'black'}}>New Trip</Text>
-          </HStack>
+            <HStack>
+              <Icon
+                size={"md"}
+                as={<MaterialCommunityIcons name="ticket" />}
+                color="black"
+              />
+              <Text style={{ color: "black" }}>New Trip</Text>
+            </HStack>
           </Button>
-        
         </HStack>
-        
+
         {menu == "main" ? (
           <Box
             style={{
               borderRadius: 10,
-              backgroundColor: colorsLight.backgroundColor,
+              backgroundColor: colorScheme == "dark" ? 
+                colorsLight.accentColor : colorsLight.backgroundColor,
             }}
           >
             <HStack
@@ -958,18 +958,16 @@ export const MapScreen = () => {
                 Create Trip
               </Text>
               <Button
-            backgroundColor={ colorsLight.secondaryColor }
-            borderRadius={5}
-            // m={1}
-            // p={2}
-            onPress={() => 
-              {
-          setMenu('stops')
-          }
-            }
-          >
-           <Text style={{color: 'black'}}>Show Stops</Text>
-          </Button>
+                backgroundColor={colorsLight.secondaryColor}
+                borderRadius={5}
+                // m={1}
+                // p={2}
+                onPress={() => {
+                  setMenu("stops");
+                }}
+              >
+                <Text style={{ color: "black" }}>Show Stops</Text>
+              </Button>
             </HStack>
 
             <HStack
@@ -1041,69 +1039,112 @@ export const MapScreen = () => {
             </HStack>
             {/* list for active stop predictions and route */}
             {/* hstack space between */}
-            <HStack
-              space={2}
-              padding={2}
-              width={"100%"}
-              alignItems="center"
-              justifyContent={"space-between"}
-            >
-              <VStack space={0} alignItems="flex-start">
-                <Text style={{ fontSize: 14 }}>
-                  First Stop: {startStop || selectedStop}
-                </Text>
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                  P1 - {startStopName || selectedStopName || "Select a Stop"}
-                </Text>
-              </VStack>
-              <HStack space={1} alignItems="flex-start">
-                {startStop == null ? (
+            {travelingBy != "bus" ? (
+              <HStack
+                space={2}
+                padding={2}
+                width={"100%"}
+                alignItems="center"
+                justifyContent={"space-between"}
+              >
+                <VStack space={0} alignItems="flex-start">
+                  <Text style={{ fontSize: 16 }}>
+                    Destination:{" "}
+                    {mark ? (
+                      <Text style={{ fontSize: 14 }}>Marked</Text>
+                    ) : (
+                      <Text style={{ fontSize: 14 }}>select your stop</Text>
+                    )}
+                  </Text>
+                </VStack>
+                <HStack space={1} alignItems="flex-start">
                   <Button
                     borderColor={"transparent"}
-                    variant={"outline"}
-                    backgroundColor={colorsLight.secondaryColor }
+                    backgroundColor={colorsLight.secondaryColor}
                     borderRadius={12}
                     marginRight={1}
-
-                    onPress={
-                      // set selected stop to start stop
-                      () => {
-                        setStartStop(selectedStop);
-                         if(selectedStopName && selectedStopName.length > 19) {
-                          setStartStopName(selectedStopName.slice(0, 19) + "...")
-                        }else if(selectedStopName && selectedStopName.length > 0) {
-
-                        setStartStopName(selectedStopName);
-                        } else {
-                          setStartStopName(null)
-                        }
-                      }
-                    }
+                    variant={"outline"}
+                    onPress={() => setMark(null)}
                   >
                     <Icon
                       size={"md"}
-
-                      as={<MaterialIcons name="check" />}
+                      as={<MaterialIcons name="cancel" />}
                       color="black"
                     />
                   </Button>
-                ) : null}
-                <Button
-                  borderColor={"transparent"}
-                  backgroundColor={colorsLight.secondaryColor }
-                  borderRadius={12}
-                  marginRight={1}
-                  variant={"outline"}
-                  onPress={() => setStartStop(null)}
-                >
-                  <Icon
-                    size={"md"}
-                    as={<MaterialIcons name="cancel" />}
-                    color="black"
-                  />
-                </Button>
+                </HStack>
               </HStack>
-            </HStack>
+            ) : null}
+            {travelingBy == "bus" ? (
+              <HStack
+                space={2}
+                padding={2}
+                width={"100%"}
+                alignItems="center"
+                justifyContent={"space-between"}
+              >
+                <VStack space={0} alignItems="flex-start">
+                  <Text style={{ fontSize: 14 }}>
+                    First Stop: {startStop || selectedStop}
+                  </Text>
+                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                    P1 - {startStopName || selectedStopName || "Select a Stop"}
+                  </Text>
+                </VStack>
+                <HStack space={1} alignItems="flex-start">
+                  {startStop == null ? (
+                    <Button
+                      borderColor={"transparent"}
+                      variant={"outline"}
+                      backgroundColor={colorsLight.secondaryColor}
+                      borderRadius={12}
+                      marginRight={1}
+                      onPress={
+                        // set selected stop to start stop
+                        () => {
+                          setStartStop(selectedStop);
+                          if (
+                            selectedStopName &&
+                            selectedStopName.length > 19
+                          ) {
+                            setStartStopName(
+                              selectedStopName.slice(0, 19) + "..."
+                            );
+                          } else if (
+                            selectedStopName &&
+                            selectedStopName.length > 0
+                          ) {
+                            setStartStopName(selectedStopName);
+                          } else {
+                            setStartStopName(null);
+                          }
+                        }
+                      }
+                    >
+                      <Icon
+                        size={"md"}
+                        as={<MaterialIcons name="check" />}
+                        color="black"
+                      />
+                    </Button>
+                  ) : null}
+                  <Button
+                    borderColor={"transparent"}
+                    backgroundColor={colorsLight.secondaryColor}
+                    borderRadius={12}
+                    marginRight={1}
+                    variant={"outline"}
+                    onPress={() => setStartStop(null)}
+                  >
+                    <Icon
+                      size={"md"}
+                      as={<MaterialIcons name="cancel" />}
+                      color="black"
+                    />
+                  </Button>
+                </HStack>
+              </HStack>
+            ) : null}
             {startStop != null ? (
               <>
                 <Divider margin={2} />
@@ -1134,10 +1175,12 @@ export const MapScreen = () => {
                           // set selected stop to start stop
                           () => {
                             setFinalStop(selectedStop);
-                            if(selectedStopName.length > 19) {
-                              setFinalStopName(selectedStopName.slice(0, 19) + "...")
-                            }else {
-                            setFinalStopName(selectedStopName);
+                            if (selectedStopName.length > 19) {
+                              setFinalStopName(
+                                selectedStopName.slice(0, 19) + "..."
+                              );
+                            } else {
+                              setFinalStopName(selectedStopName);
                             }
                           }
                         }
@@ -1152,7 +1195,7 @@ export const MapScreen = () => {
                     <Button
                       borderColor={"transparent"}
                       backgroundColor={colorsLight.secondaryColor}
-                        marginRight={1}
+                      marginRight={1}
                       borderRadius={12}
                       variant={"outline"}
                       onPress={() => setFinalStop(null)}
@@ -1169,14 +1212,15 @@ export const MapScreen = () => {
             ) : null}
           </Box>
         ) : null}
-       
+
         {menu == "stops" ? (
           <Box
+          
             style={{
               borderRadius: 10,
-              backgroundColor: colorsLight.backgroundColor,
+              backgroundColor: colorScheme == "dark" ? 
+                colorsLight.accentColor : colorsLight.backgroundColor,
               maxHeight: Dimensions.get("window").height * 0.35,
-              
             }}
           >
             <HStack
@@ -1188,23 +1232,30 @@ export const MapScreen = () => {
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                 Stops - TIM {selectedRoute}
               </Text>
-             {/* back button */}
-             <Button backgroundColor={colorsLight.secondaryColor} > 
-              <Icon  size={"md"} as={<MaterialCommunityIcons name="arrow-left" />} color="black" onPress={() => setMenu("main")} />
+              {/* back button */}
+              <Button backgroundColor={colorsLight.secondaryColor}>
+                <Icon
+                  size={"md"}
+                  as={<MaterialCommunityIcons name="arrow-left" />}
+                  color="black"
+                  onPress={() => setMenu("main")}
+                />
               </Button>
-              
             </HStack>
-             <TimeArrivalReturn selectedStop={selectedStop} stops={memoSelRoute} startStop={startStop} finalStop={finalStop} />
-            
-
-          
+            <TimeArrivalReturn
+              selectedStop={selectedStop}
+              stops={memoSelRoute}
+              startStop={startStop}
+              finalStop={finalStop}
+            />
           </Box>
         ) : null}
         {menu == "activeTrip" ? (
           <Box
             style={{
               borderRadius: 10,
-              backgroundColor: colorsLight.backgroundColor,
+              backgroundColor: colorScheme == "dark" ? 
+                colorsLight.accentColor : colorsLight.backgroundColor,
             }}
           >
             <HStack
@@ -1214,7 +1265,7 @@ export const MapScreen = () => {
               justifyContent={"flex-start"}
             >
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                Active Trip - TIM {selectedRoute}
+                Active Trip
               </Text>
             </HStack>
             <HStack
@@ -1295,23 +1346,30 @@ export const MapScreen = () => {
               justifyContent={"space-between"}
             >
               <VStack space={0} alignItems="flex-start">
-                <Text style={{  fontSize: 14  }}>
+                <Text style={{ fontSize: 14 }}>
                   Time: {tripTime || "00:00:00"} - {seq}
                 </Text>
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                  From: {startStopName || "Select a Stop"}
-                </Text>
-                <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-                To: {finalStopName || "Select a Stop"}
-                </Text>
-
-
+                {startStopName && mark == null ? (
+                  <>
+                    <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                      From: {startStopName || "Select a Stop"}
+                    </Text>
+                    <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                      To: {finalStopName || "Select a Stop"}
+                    </Text>
+                  </>
+                ) : null}
+                {mark != null ? (
+                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                    Destination Selected
+                  </Text>
+                ) : null}
               </VStack>
             </HStack>
-          
           </Box>
         ) : null}
-        {startStop != null && finalStop != null ? (
+        {(startStop != null && finalStop != null) ||
+        (travelingBy != "bus" && mark != null) ? (
           <HStack
             space={2}
             padding={2}
@@ -1319,68 +1377,82 @@ export const MapScreen = () => {
             alignItems="center"
             justifyContent={"center"}
           >
-         
-
-            <HStack space={1} paddingTop={1.5} paddingBottom={1.5} borderRadius={10} alignItems="center" backgroundColor={colorsLight.backgroundColor} >
-            <Button 
-            backgroundColor={"transparent"}
-            borderRadius={10}
-            
-            onPress={() => {
-              // if trip is not active start 
-              if (!runTime) {
-                startTripSupa()
-              start();
-              setMenu("activeTrip");
-              } else {
-                Alert.alert("Trip has already started");
-              }
-              }
-              }>
-              <HStack>
-              <Icon size={"md"} as={<MaterialCommunityIcons name="play" />} color="black" />
-              <Text>Start Trip </Text>
-              </HStack>
-
-            </Button>
-            <Text>|</Text>
-            <Button 
-            backgroundColor={"transparent"}
-            borderRadius={10}
-            
-            onPress={() => {
-              if (runTime) {
-                continueTripSupa();
-              } else {
-                Alert.alert("Trip has not started");
-            }
-            }
-            }>
-              <HStack>
-              <Icon size={"md"} as={<MaterialCommunityIcons name="bus-stop" />} color="black" />
-              <Text>Add Stop </Text>
-              </HStack>
-
-            </Button>
-            <Text>|</Text>
-            <Button 
-            backgroundColor={"transparent"}
+            <HStack
+              space={1}
+              paddingTop={1.5}
+              paddingBottom={1.5}
               borderRadius={10}
-              onPress={() => {
-                // if trip is active submit else end trip
-                if (runTime) {
-                  submitTripSupa();
-                } else {
-                  Alert.alert("Trip has not started");
-                }
-              }}>
-              <HStack>
-              <Icon size={"md"} as={<MaterialCommunityIcons name="stop" />} color="black" />
-              <Text>Stop Trip </Text>
-              </HStack>
+              alignItems="center"
+              backgroundColor={
+                colorScheme == "dark" ? colorsLight.accentColor : colorsLight.backgroundColor
+              }
+            >
+              <Button
+                backgroundColor={"transparent"}
+                borderRadius={10}
+                onPress={() => {
+                  // if trip is not active start
+                  if (!runTime) {
+                    startTripSupa();
+                    start();
+                    setMenu("activeTrip");
+                  } else {
+                    Alert.alert("Trip has already started");
+                  }
+                }}
+              >
+                <HStack>
+                  <Icon
+                    size={"md"}
+                    as={<MaterialCommunityIcons name="play" />}
+                    color="black"
+                  />
+                  <Text>Start Trip </Text>
+                </HStack>
               </Button>
-              
-            
+              <Text>|</Text>
+              <Button
+                backgroundColor={"transparent"}
+                borderRadius={10}
+                onPress={() => {
+                  if (runTime) {
+                    continueTripSupa();
+                  } else {
+                    Alert.alert("Trip has not started");
+                  }
+                }}
+              >
+                <HStack>
+                  <Icon
+                    size={"md"}
+                    as={<MaterialCommunityIcons name="bus-stop" />}
+                    color="black"
+                  />
+                  <Text>Add Stop </Text>
+                </HStack>
+              </Button>
+              <Text>|</Text>
+              <Button
+                backgroundColor={"transparent"}
+                borderRadius={10}
+                onPress={() => {
+                  // if trip is active submit else end trip
+                  if (runTime) {
+                    submitTripSupa();
+                  } else {
+                    Alert.alert("Trip has not started");
+                  }
+                }}
+              >
+                <HStack>
+                  <Icon
+                    size={"md"}
+                    as={<MaterialCommunityIcons name="stop" />}
+                    color="black"
+                  />
+                  <Text>Stop Trip </Text>
+                </HStack>
+              </Button>
             </HStack>
           </HStack>
         ) : null}
@@ -1411,7 +1483,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     backgroundColor: colorsLight.primaryColor,
-   
   },
   stopListTitle: {
     fontSize: 15, //hykj8LmMrfnx
@@ -1426,10 +1497,10 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 5,
     borderRadius: 10,
-    width: '90%',
+    width: "90%",
 
     // maxHeight: Dimensions.get("window").height * 0.2,
-    backgroundColor: colorsLight.secondaryColor ,
+    backgroundColor: colorsLight.secondaryColor,
   },
   container: {
     flex: 1,

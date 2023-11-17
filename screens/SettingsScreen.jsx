@@ -104,16 +104,26 @@ export const SettingsScreen = () => {
     >
       {/* <Center> */}
       <Container>
-        <Heading>Account</Heading>
+        <Heading color={
+              colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
+            } >Account</Heading>
 
-        <Text fontSize={16}>{email || "..."}</Text>
+        <Text color={
+              colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
+            }  fontSize={16}>{email || "..."}</Text>
 
         <Button variant={"ghost"} onPress={() => setShowTripsModal(true)}>
-          <Heading fontSize={16}>Trip History</Heading>
+          <Heading color={
+              colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
+            } fontSize={16}>Trip History</Heading>
         </Button>
-        <Heading>Profile</Heading>
+        <Heading color={
+              colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
+            }>Profile</Heading>
         <Button variant={"ghost"} onPress={() => setShowModal(true)}>
-          <Text fontSize={16}>Delete Account</Text>
+          <Text color={
+              colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
+            } fontSize={16}>Delete Account</Text>
         </Button>
 
         <Modal isOpen={showTripsModal} onClose={() => setShowTripsModal(false)}>
@@ -138,7 +148,7 @@ export const SettingsScreen = () => {
                         <HStack alignContent={'center'} justifyContent="space-between">
                           <HStack alignContent={'center'}  justifyContent="flex-start">
                           {/* add tripStatus for continued 0, ended */}
-                          <Text bold fontSize={16}>{item.id}:</Text>
+                          <Text  bold fontSize={16}>{item.id}:</Text>
                           {
                               item.trip_status === 'ended' && item.seq === 0 ? <Text bold color={'yellow.500'} fontSize={16}>One Stop</Text> : null
                             }
@@ -188,7 +198,7 @@ export const SettingsScreen = () => {
                           <Stack>
                           <Text bold fontSize={16}>
                           {/* if longer than 15 char cut */}
-                          {item.location_start.startStop.length > 15 ? item.location_start.startStop.substring(0, 15 - 3) + '...' : item.location_start.startStop}
+                          {item.location_start.startStop && item.location_start.startStop.length > 15 ? item.location_start.startStop.substring(0, 15 - 3) + '...' : item.location_start.startStop}
                           </Text>
                           <Text fontSize={12}>{item.location_start.startTime}</Text>
                           </Stack>
@@ -196,7 +206,7 @@ export const SettingsScreen = () => {
                          <Stack>
                          <Text bold fontSize={16}>
                           {/* if longer than 15 char cut */}
-                          {item.location_end.finalStop.length > 15 ? item.location_end.finalStop.substring(0, 15 - 3) + '...' : item.location_end.finalStop}
+                          {item.location_end.finalStop && item.location_end.finalStop.length > 15 ? item.location_end.finalStop.substring(0, 15 - 3) + '...' : item.location_end.finalStop}
                          </Text>
                           <Text fontSize={12}>{item.location_end.endTime}</Text>
 
@@ -254,7 +264,9 @@ export const SettingsScreen = () => {
 
         <Button fontSize={16} variant={"ghost"}>
           <A href="https://www.privacypolicies.com/live/bd65ed16-5509-4ee2-8c18-e874d08103a7">
-            <Text fontSize={16}>Privacy Policy</Text>
+            <Text color={
+              colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
+            } fontSize={16}>Privacy Policy</Text>
           </A>
         </Button>
 
@@ -266,7 +278,9 @@ export const SettingsScreen = () => {
           variant={"ghost"}
           onPress={handleLogout}
         >
-          <Text fontSize={16}>Log Out</Text>
+          <Text  color={
+              colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
+            } fontSize={16}>Log Out</Text>
         </Button>
       </Container>
       {/* </Center> */}

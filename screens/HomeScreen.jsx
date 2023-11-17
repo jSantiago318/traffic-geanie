@@ -120,7 +120,7 @@ export const HomeScreen = () => {
           alignItems: "flex-start",
           borderRadius: 10,
           width: "100%",
-          backgroundColor: colorScheme == "dark" ? colorsDark.primaryColor : colorsLight.primaryColor,
+          backgroundColor: colorScheme == "dark" ? colorsLight.primaryColor : colorsLight.primaryColor,
           padding: 10,
           // margin: 2,
         }
@@ -185,7 +185,7 @@ export const HomeScreen = () => {
    
               <Select
                 // style={colorScheme == 'dark' ? darkMode.Select : lightMode.Select}
-                backgroundColor={colorScheme == 'dark' ? colorsDark.secondaryColor : colorsLight.secondaryColor}
+                backgroundColor={colorScheme == 'dark' ? colorsLight.accentColor : colorsLight.secondaryColor}
                 selectedValue={selectedRoute}
                 size={'lg'}
                 accessibilityLabel="Choose a route"

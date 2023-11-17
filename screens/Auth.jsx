@@ -156,7 +156,7 @@ export const Auth = () => {
                   size={"md"}
                   backgroundColor={
                     colorScheme == "dark"
-                      ? colorsDark.backgroundColor
+                      ? colorsDark.accentColor
                       : colorsLight.backgroundColor
                   }
                   borderColor={"transparent"}
@@ -195,7 +195,7 @@ export const Auth = () => {
                   borderColor={"transparent"}
                   backgroundColor={
                     colorScheme == "dark"
-                      ? colorsDark.backgroundColor
+                      ? colorsDark.accentColor
                       : colorsLight.backgroundColor
                   }
                   color={
@@ -225,7 +225,7 @@ export const Auth = () => {
               size="md"
               backgroundColor={
                 colorScheme == "dark"
-                  ? colorsDark.backgroundColor
+                  ? colorsDark.accentColor
                   : colorsLight.backgroundColor
               }
               borderRadius={10}
@@ -260,7 +260,7 @@ export const Auth = () => {
               placeholder="password"
               backgroundColor={
                 colorScheme == "dark"
-                  ? colorsDark.backgroundColor
+                  ? colorsDark.accentColor
                   : colorsLight.backgroundColor
               }
               size="md"
@@ -509,7 +509,11 @@ export const Auth = () => {
                   Sign Up
                 </Text>
               </Button>
-              <Text fontSize={"sm"}>
+              <Text  color={
+                      colorScheme == "dark"
+                        ? darkMode.Title.color
+                        : lightMode.Title.color
+                    } fontSize={"sm"}>
                 Have an account?{" "}
                 <Text
                   fontSize={"md"}

@@ -42,7 +42,7 @@ export const RoutesList = ({ route }) => {
   return (
     <Center 
       style={{
-        backgroundColor: colorScheme === "light" ? colorsLight.secondaryColor : colorsDark.secondaryColor,
+        backgroundColor: colorScheme === "light" ? colorsLight.secondaryColor : colorsLight.primaryColor,
         borderRadius: 10,
         width: "90%",
         padding: 5,
@@ -63,7 +63,7 @@ export const RoutesList = ({ route }) => {
             alignItems={"flex-start"}
             paddingLeft={2}
             borderRadius={10}
-            backgroundColor={colorScheme === "light" ? colorsLight.primaryColor : colorsDark.primaryColor}
+            backgroundColor={colorScheme === "light" ? colorsLight.primaryColor : colorsLight.accentColor}
           >
             <Heading fontSize="lg" p={2} color={
               colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
