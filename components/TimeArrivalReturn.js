@@ -1,6 +1,6 @@
 import { HStack, Icon, ScrollView, Text, View } from "native-base";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { StyleSheet, useColorScheme } from "react-native";
 
 import { lightMode } from "../config";
@@ -119,7 +119,9 @@ const StopRender = ({ stop, index }) => {
   return <TimePred />;
 };
 
-export const TimeArrivalReturn = ({ stops, startStop, finalStop }) => {
+export const TimeArrivalReturn = ({ stops, startStop, finalStop, selectedStop }) => {
+  // memo stops to prevent rerender
+  const memoStops = useMemo(() => stops, [stops]);
 
   return (
     <ScrollView
@@ -127,17 +129,30 @@ export const TimeArrivalReturn = ({ stops, startStop, finalStop }) => {
       // limit height to 50% of screen
       p={1}
     >
-      {stops.map((stop, index) => {
+    {
+      memoStops.length == 0 ? <Text> Select a stop </Text> : null
+    }
+      {memoStops.map((stop, index) => {
         console.log(stop);
         return (
           <HStack paddingBottom={1.5} key={index} justifyContent={"space-between"}>
            
-            <Text>{index}: {stop.name}</Text>
+            <Text>{index+1}: {stop.name}</Text>
               <HStack 
                 justifyContent={"flex-start"}
                 alignItems={"center"}
-                
               >
+              {
+                selectedStop === stop.id ? (
+                  <MaterialCommunityIcons
+                    name="bus-marker"
+                    size={24}
+                    color="black"
+                  />
+                ) : (null
+                )
+
+              }
             {startStop === stop.id ? (
                 <><MaterialCommunityIcons
                   name="bus"

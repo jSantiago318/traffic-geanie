@@ -568,8 +568,12 @@ export const MapScreen = () => {
     }
   };
   const __takePicture = async () => {
-    if (!camera) return;
-    const photo = await camera.takePictureAsync();
+    if (!Camera) return;
+    // const photo = await Camera.takePictureAsync();
+    Alert.alert("Bus scaning feature will soon be available");
+    // CLose camera
+    setStartCamera(false);
+    setMenu("main");
   };
   async function submitTripSupa() {
     const d1 = new Date(startLocData?.timestamp);
@@ -1065,11 +1069,13 @@ export const MapScreen = () => {
                       // set selected stop to start stop
                       () => {
                         setStartStop(selectedStop);
-                        if(selectedStopName.length > 19) {
+                         if(selectedStopName && selectedStopName.length > 19) {
                           setStartStopName(selectedStopName.slice(0, 19) + "...")
-                        }else {
+                        }else if(selectedStopName && selectedStopName.length > 0) {
 
                         setStartStopName(selectedStopName);
+                        } else {
+                          setStartStopName(null)
                         }
                       }
                     }
@@ -1188,7 +1194,7 @@ export const MapScreen = () => {
               </Button>
               
             </HStack>
-             <TimeArrivalReturn stops={memoSelRoute} startStop={startStop} finalStop={finalStop} />
+             <TimeArrivalReturn selectedStop={selectedStop} stops={memoSelRoute} startStop={startStop} finalStop={finalStop} />
             
 
           
@@ -1321,9 +1327,14 @@ export const MapScreen = () => {
             borderRadius={10}
             
             onPress={() => {
-              startTripSupa()
+              // if trip is not active start 
+              if (!runTime) {
+                startTripSupa()
               start();
               setMenu("activeTrip");
+              } else {
+                Alert.alert("Trip has already started");
+              }
               }
               }>
               <HStack>
@@ -1337,7 +1348,14 @@ export const MapScreen = () => {
             backgroundColor={"transparent"}
             borderRadius={10}
             
-            onPress={() => continueTripSupa()}>
+            onPress={() => {
+              if (runTime) {
+                continueTripSupa();
+              } else {
+                Alert.alert("Trip has not started");
+            }
+            }
+            }>
               <HStack>
               <Icon size={"md"} as={<MaterialCommunityIcons name="bus-stop" />} color="black" />
               <Text>Add Stop </Text>
@@ -1348,7 +1366,14 @@ export const MapScreen = () => {
             <Button 
             backgroundColor={"transparent"}
               borderRadius={10}
-              onPress={() => submitTripSupa()}>
+              onPress={() => {
+                // if trip is active submit else end trip
+                if (runTime) {
+                  submitTripSupa();
+                } else {
+                  Alert.alert("Trip has not started");
+                }
+              }}>
               <HStack>
               <Icon size={"md"} as={<MaterialCommunityIcons name="stop" />} color="black" />
               <Text>Stop Trip </Text>
