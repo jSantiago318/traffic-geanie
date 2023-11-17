@@ -26,7 +26,7 @@ export default {
     "ios": {
       supportsTablet: true,
       
-      buildNumber: '9.0.24',
+      buildNumber: '9.0.25',
       bundleIdentifier: 'com.josiba.mayatransit',
       config:{
         googleMapsApiKey: process.env.EXPO_PUBLIC_MAPS_API_IOS
