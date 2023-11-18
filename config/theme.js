@@ -107,8 +107,8 @@ StopText:{
   width: '90%',
   // height: '40%',
   borderRadius: 10,
-  padding: 10,
-  margin: 10,
+  padding: 5,
+  margin: 5,
  
   
 },

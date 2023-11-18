@@ -260,123 +260,7 @@ export const MapScreen = () => {
     // }
   }
   function returnStop(stopId, stopName) {
-    if (
-      selectedSeq != null &&
-      selectedSeq.location_start.startStop == stopName
-    ) {
-      return (
-        <>
-          <Image
-            source={require("../assets/busStopArrival.png")}
-            style={{ height: 40, width: 40 }}
-          />
-          <Callout
-            style={{
-              width: 250,
-              zIndex: 100,
-              borderRadius: 10,
-            }}
-          >
-            <HStack justifyContent={"space-between"}>
-              <Stack>
-                <Text>{stopName}</Text>
-                <Text>{stopId}</Text>
-              </Stack>
-              <CalloutSubview
-                onPress={() => {
-                  if (Platform.OS == "android") {
-                    openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
-                      query: stopName,
-                      travelType: getDirs(),
-                      provider: "google",
-                    });
-                  } else if (Platform.OS == "ios") {
-                    openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
-                      query: stopName,
-                      travelType: getDirs(),
-                      provider: "apple",
-                    });
-                  }
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"google-maps"}
-                  size={24}
-                  backgroundColor={"transparent"}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </CalloutSubview>
-            </HStack>
-          </Callout>
-        </>
-      );
-    } else if (
-      selectedSeq != null &&
-      selectedSeq.location_end.finalStop == stopName
-    ) {
-      return (
-        <>
-          <Image
-            source={require("../assets/busStopArrival.png")}
-            style={{ height: 40, width: 40 }}
-          />
-          <Callout
-            style={{
-              width: 250,
-              zIndex: 100,
-              borderRadius: 10,
-            }}
-          >
-            <HStack justifyContent={"space-between"}>
-              <Stack>
-                <Text>{stopName}</Text>
-                <Text>{stopId}</Text>
-              </Stack>
-              <CalloutSubview
-                onPress={() => {
-                  if (Platform.OS == "android") {
-                    openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
-                      query: stopName,
-                      travelType: getDirs(),
-                      provider: "google",
-                    });
-                  } else if (Platform.OS == "ios") {
-                    openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
-                      query: stopName,
-                      travelType: getDirs(),
-                      provider: "apple",
-                    });
-                  }
-                }}
-              >
-                <MaterialCommunityIcons
-                  name={"google-maps"}
-                  size={24}
-                  backgroundColor={"transparent"}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
-                />
-              </CalloutSubview>
-            </HStack>
-          </Callout>
-        </>
-      );
-    }
+   
     if (stopId == startStop) {
       return (
         <>
@@ -396,36 +280,12 @@ export const MapScreen = () => {
                 <Text>{stopName}</Text>
                 <Text>{stopId}</Text>
               </Stack>
-              {/* <HStack space={1}>
-            <Button>
-              <MaterialCommunityIcons 
-              name={'google-maps'}
-              size={24}
-              backgroundColor={'transparent'}
-              color={colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor}
+              <HStack space={1}>
+          
+              <Button
+                backgroundColor={colorsLight.secondaryColor
+                }
               onPress={() => {
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'google' })
-              }
-              }
-              />
-              
-            </Button>
-            <Button>
-              <MaterialCommunityIcons 
-              name={'directions'}
-              size={24}
-              backgroundColor={'transparent'}
-              color={colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor}
-              onPress={() => {
-                openMap({latitude: getStopById(startStop).lat , longitude: getStopById(startStop).lon, query: stopName, travelType: getDirs(), provider: 'apple' })
-              }
-              }
-              />
-              
-            </Button>
-            </HStack> */}
-              <CalloutSubview
-                onPress={() => {
                   if (Platform.OS == "android") {
                     openMap({
                       latitude: getStopById(startStop).lat,
@@ -444,18 +304,17 @@ export const MapScreen = () => {
                     });
                   }
                 }}
-              >
-                <MaterialCommunityIcons
-                  name={"google-maps"}
+                 >
+              <MaterialCommunityIcons
+                  name={"map-marker-outline"}
                   size={24}
                   backgroundColor={"transparent"}
-                  color={
-                    colorScheme == "dark"
-                      ? colorsDark.textColor
-                      : colorsLight.textColor
-                  }
+                  color={'black'}
                 />
-              </CalloutSubview>
+                              </Button>
+           
+            </HStack>
+            
             </HStack>
           </Callout>
         </>
@@ -474,8 +333,47 @@ export const MapScreen = () => {
               borderRadius: 10,
             }}
           >
-            <Text>{stopName}</Text>
-            <Text>{stopId}</Text>
+             <HStack justifyContent={"space-between"}>
+              <Stack>
+                <Text>{stopName}</Text>
+                <Text>{stopId}</Text>
+              </Stack>
+              <HStack space={1}>
+          
+              <Button
+                backgroundColor={colorsLight.secondaryColor
+                }
+              onPress={() => {
+                  if (Platform.OS == "android") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "google",
+                    });
+                  } else if (Platform.OS == "ios") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "apple",
+                    });
+                  }
+                }}
+                 >
+              <MaterialCommunityIcons
+                  name={"map-marker-outline"}
+                  size={24}
+                  backgroundColor={"transparent"}
+                  color={'black'}
+                />
+                              </Button>
+           
+            </HStack>
+            
+            </HStack>
           </Callout>
         </>
       );
@@ -493,8 +391,47 @@ export const MapScreen = () => {
               borderRadius: 10,
             }}
           >
-            <Text>{stopName}</Text>
-            <Text>{stopId}</Text>
+            <HStack justifyContent={"space-between"}>
+              <Stack>
+                <Text>{stopName}</Text>
+                <Text>{stopId}</Text>
+              </Stack>
+              <HStack space={1}>
+          
+              <Button
+                backgroundColor={colorsLight.secondaryColor
+                }
+              onPress={() => {
+                  if (Platform.OS == "android") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "google",
+                    });
+                  } else if (Platform.OS == "ios") {
+                    openMap({
+                      latitude: getStopById(startStop).lat,
+                      longitude: getStopById(startStop).lon,
+                      query: stopName,
+                      travelType: getDirs(),
+                      provider: "apple",
+                    });
+                  }
+                }}
+                 >
+              <MaterialCommunityIcons
+                  name={"map-marker-outline"}
+                  size={24}
+                  backgroundColor={"transparent"}
+                  color={'black'}
+                />
+                              </Button>
+           
+            </HStack>
+            
+            </HStack>
           </Callout>
         </>
       );
@@ -944,8 +881,10 @@ export const MapScreen = () => {
           <Box
             style={{
               borderRadius: 10,
-              backgroundColor: colorScheme == "dark" ? 
-                colorsLight.accentColor : colorsLight.backgroundColor,
+              backgroundColor:
+                colorScheme == "dark"
+                  ? colorsLight.accentColor
+                  : colorsLight.backgroundColor,
             }}
           >
             <HStack
@@ -954,12 +893,16 @@ export const MapScreen = () => {
               padding={3}
               justifyContent={"space-between"}
             >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  } style={{ fontSize: 20, fontWeight: "bold" }}>
                 Create Trip
               </Text>
               <Button
                 backgroundColor={colorsLight.secondaryColor}
-                borderRadius={5}
+                borderRadius={10}
                 // m={1}
                 // p={2}
                 onPress={() => {
@@ -1077,21 +1020,31 @@ export const MapScreen = () => {
             ) : null}
             {travelingBy == "bus" ? (
               <HStack
-                space={2}
-                padding={2}
+                space={1}
+                padding={3}
                 width={"100%"}
                 alignItems="center"
                 justifyContent={"space-between"}
               >
                 <VStack space={0} alignItems="flex-start">
-                  <Text style={{ fontSize: 14 }}>
+                  <Text 
+                  color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  }
+                   style={{ fontSize: 16 }}>
                     First Stop: {startStop || selectedStop}
                   </Text>
-                  <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                  <Text color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  } style={{ fontSize: 18, fontWeight: "bold" }}>
                     P1 - {startStopName || selectedStopName || "Select a Stop"}
                   </Text>
                 </VStack>
-                <HStack space={1} alignItems="flex-start">
+                <HStack space={1} alignItems="flex-end">
                   {startStop == null ? (
                     <Button
                       borderColor={"transparent"}
@@ -1147,7 +1100,6 @@ export const MapScreen = () => {
             ) : null}
             {startStop != null ? (
               <>
-                <Divider margin={2} />
                 <HStack
                   space={2}
                   padding={2}
@@ -1157,10 +1109,18 @@ export const MapScreen = () => {
                   justifyContent={"space-between"}
                 >
                   <VStack space={0} alignItems="flex-start">
-                    <Text style={{ fontSize: 14 }}>
+                    <Text color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  } style={{ fontSize: 14 }}>
                       Final Stop: {finalStop || selectedStop}
                     </Text>
-                    <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+                    <Text color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  } style={{ fontSize: 16, fontWeight: "bold" }}>
                       P2 - {finalStopName || selectedStopName}
                     </Text>
                   </VStack>
@@ -1187,8 +1147,8 @@ export const MapScreen = () => {
                       >
                         <Icon
                           size={"md"}
+                          color={'black'}
                           as={<MaterialIcons name="check" />}
-                          color="black"
                         />
                       </Button>
                     ) : null}
@@ -1215,11 +1175,12 @@ export const MapScreen = () => {
 
         {menu == "stops" ? (
           <Box
-          
             style={{
               borderRadius: 10,
-              backgroundColor: colorScheme == "dark" ? 
-                colorsLight.accentColor : colorsLight.backgroundColor,
+              backgroundColor:
+                colorScheme == "dark"
+                  ? colorsLight.accentColor
+                  : colorsLight.backgroundColor,
               maxHeight: Dimensions.get("window").height * 0.35,
             }}
           >
@@ -1229,7 +1190,11 @@ export const MapScreen = () => {
               m={2}
               justifyContent={"space-between"}
             >
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  } style={{ fontSize: 20, fontWeight: "bold" }}>
                 Stops - TIM {selectedRoute}
               </Text>
               {/* back button */}
@@ -1254,8 +1219,10 @@ export const MapScreen = () => {
           <Box
             style={{
               borderRadius: 10,
-              backgroundColor: colorScheme == "dark" ? 
-                colorsLight.accentColor : colorsLight.backgroundColor,
+              backgroundColor:
+                colorScheme == "dark"
+                  ? colorsLight.accentColor
+                  : colorsLight.backgroundColor,
             }}
           >
             <HStack
@@ -1378,13 +1345,15 @@ export const MapScreen = () => {
             justifyContent={"center"}
           >
             <HStack
-              space={1}
+              space={0}
               paddingTop={1.5}
               paddingBottom={1.5}
               borderRadius={10}
               alignItems="center"
               backgroundColor={
-                colorScheme == "dark" ? colorsLight.accentColor : colorsLight.backgroundColor
+                colorScheme == "dark"
+                  ? colorsLight.accentColor
+                  : colorsLight.backgroundColor
               }
             >
               <Button
@@ -1403,11 +1372,19 @@ export const MapScreen = () => {
               >
                 <HStack>
                   <Icon
-                    size={"md"}
+                    size={"lg"}
                     as={<MaterialCommunityIcons name="play" />}
-                    color="black"
+                    color={
+                      colorScheme == "dark"
+                        ? colorsDark.textColor
+                        : colorsLight.textColor
+                    }
                   />
-                  <Text>Start Trip </Text>
+                  <Text color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  } bold fontSize={'sm'} >Start Trip </Text>
                 </HStack>
               </Button>
               <Text>|</Text>
@@ -1424,11 +1401,19 @@ export const MapScreen = () => {
               >
                 <HStack>
                   <Icon
-                    size={"md"}
+                    size={"lg"}
                     as={<MaterialCommunityIcons name="bus-stop" />}
-                    color="black"
+                    color={
+                      colorScheme == "dark"
+                        ? colorsDark.textColor
+                        : colorsLight.textColor
+                    }
                   />
-                  <Text>Add Stop </Text>
+                  <Text  color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  } bold fontSize={'sm'}>Add Stop </Text>
                 </HStack>
               </Button>
               <Text>|</Text>
@@ -1446,11 +1431,19 @@ export const MapScreen = () => {
               >
                 <HStack>
                   <Icon
-                    size={"md"}
+                    size={"lg"}
                     as={<MaterialCommunityIcons name="stop" />}
-                    color="black"
+                    color={
+                      colorScheme == "dark"
+                        ? colorsDark.textColor
+                        : colorsLight.textColor
+                    }
                   />
-                  <Text>Stop Trip </Text>
+                  <Text  color={
+                    colorScheme == "dark"
+                      ? colorsDark.textColor
+                      : colorsLight.textColor
+                  } bold fontSize={'sm'} >Stop Trip </Text>
                 </HStack>
               </Button>
             </HStack>

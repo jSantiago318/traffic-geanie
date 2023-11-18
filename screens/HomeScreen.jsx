@@ -227,10 +227,7 @@ export const HomeScreen = () => {
             marginTop: "1%",
             marginBottom: "1%",
             padding: 2,
-            color:
-              colorScheme == "dark"
-                ? colorsDark.textColor
-                : colorsLight.textColor,
+            color: 'black'
           }}
         > Finding Stops ... </Text>
       )}

@@ -156,13 +156,13 @@ export const Auth = () => {
                   size={"md"}
                   backgroundColor={
                     colorScheme == "dark"
-                      ? colorsDark.accentColor
+                      ? colorsLight.accentColor
                       : colorsLight.backgroundColor
                   }
                   borderColor={"transparent"}
                   color={
                     colorScheme == "dark"
-                      ? darkMode.Title.color
+                      ? 'black'
                       : lightMode.Title.color
                   }
                   autoCapitalize={"none"}
@@ -195,7 +195,7 @@ export const Auth = () => {
                   borderColor={"transparent"}
                   backgroundColor={
                     colorScheme == "dark"
-                      ? colorsDark.accentColor
+                      ? colorsLight.accentColor
                       : colorsLight.backgroundColor
                   }
                   color={
@@ -225,7 +225,7 @@ export const Auth = () => {
               size="md"
               backgroundColor={
                 colorScheme == "dark"
-                  ? colorsDark.accentColor
+                  ? colorsLight.accentColor
                   : colorsLight.backgroundColor
               }
               borderRadius={10}
@@ -260,7 +260,7 @@ export const Auth = () => {
               placeholder="password"
               backgroundColor={
                 colorScheme == "dark"
-                  ? colorsDark.accentColor
+                  ? colorsLight.accentColor
                   : colorsLight.backgroundColor
               }
               size="md"

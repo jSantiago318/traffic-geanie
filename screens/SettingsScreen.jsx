@@ -112,7 +112,7 @@ export const SettingsScreen = () => {
               colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
             }  fontSize={16}>{email || "..."}</Text>
 
-        <Button variant={"ghost"} onPress={() => setShowTripsModal(true)}>
+        <Button m={2} p={1} variant={"outline"} onPress={() => setShowTripsModal(true)}>
           <Heading color={
               colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
             } fontSize={16}>Trip History</Heading>
@@ -126,11 +126,14 @@ export const SettingsScreen = () => {
             } fontSize={16}>Delete Account</Text>
         </Button>
 
-        <Modal isOpen={showTripsModal} onClose={() => setShowTripsModal(false)}>
-          <Modal.Content width="90%" height={"80%"}>
+        <Modal  isOpen={showTripsModal} onClose={() => setShowTripsModal(false)}>
+          <Modal.Content 
+            
+          width="90%" height={"80%"}>
             <Modal.CloseButton />
             <Modal.Header>Trip History</Modal.Header>
-            <Modal.Body>
+            <Modal.Body 
+            >
               <FormControl>
                 <FormControl.Label>
                   Removing data is non recoverable
