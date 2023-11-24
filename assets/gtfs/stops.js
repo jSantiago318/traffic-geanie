@@ -96,6 +96,14 @@ export function getStops() {
   export function getStopById(id) {
     return stops.find((s) => s.id === id)
   }
+  export function getStopLatById(id) {
+    const val = stops.find((s) => s.id === id)
+    return val.lat
+  }
+  export function getStopLonById(id) {
+    const val = stops.find((s) => s.id === id)
+    return val.lon
+  }
  
   export function getStopsByRouteId(routeId) {
     return stops.filter((s) => s.id.startsWith(routeId))

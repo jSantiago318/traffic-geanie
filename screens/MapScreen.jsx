@@ -42,6 +42,8 @@ import {
 import { getRouteColor, getRoutes } from "../assets/gtfs/route";
 import {
   getStopById,
+  getStopLatById,
+  getStopLonById,
   getStops,
   getStopsByRouteIdSelect,
 } from "../assets/gtfs/stops";
@@ -76,6 +78,7 @@ export const MapScreen = () => {
   const [finalStop, setFinalStop] = useState(null);
   const [lastTripId, setLastTripId] = useState(0);
   const memoRt = React.useMemo(() => Shapes, []);
+  const [polyline, setPolyline] = useState([])
   const memoStop = React.useMemo(() => getStops(), []);
   const memoSelRoute = React.useMemo(
     () => getStopsByRouteIdSelect(selectedRoute),
@@ -198,6 +201,7 @@ export const MapScreen = () => {
             // check no nulll values
 
             setLocation(location);
+          
           }
         );
       }
@@ -288,16 +292,16 @@ export const MapScreen = () => {
               onPress={() => {
                   if (Platform.OS == "android") {
                     openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
+                      latitude: getStopLatById(stopId),
+                      longitude: getStopLonById(stopId),
                       query: stopName,
                       travelType: getDirs(),
                       provider: "google",
                     });
                   } else if (Platform.OS == "ios") {
                     openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
+                      latitude: getStopLatById(stopId),
+                      longitude: getStopLonById(stopId),
                       query: stopName,
                       travelType: getDirs(),
                       provider: "apple",
@@ -346,16 +350,16 @@ export const MapScreen = () => {
               onPress={() => {
                   if (Platform.OS == "android") {
                     openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
+                      latitude: getStopLatById(stopId),
+                      longitude: getStopLonById(stopId),
                       query: stopName,
                       travelType: getDirs(),
                       provider: "google",
                     });
                   } else if (Platform.OS == "ios") {
                     openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
+                      latitude: getStopLatById(stopId),
+                      longitude: getStopLonById(stopId),
                       query: stopName,
                       travelType: getDirs(),
                       provider: "apple",
@@ -404,16 +408,16 @@ export const MapScreen = () => {
               onPress={() => {
                   if (Platform.OS == "android") {
                     openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
+                      latitude: getStopLatById(stopId),
+                      longitude: getStopLonById(stopId),
                       query: stopName,
                       travelType: getDirs(),
                       provider: "google",
                     });
                   } else if (Platform.OS == "ios") {
                     openMap({
-                      latitude: getStopById(startStop).lat,
-                      longitude: getStopById(startStop).lon,
+                      latitude: getStopLatById(stopId),
+                      longitude: getStopLonById(stopId),
                       query: stopName,
                       travelType: getDirs(),
                       provider: "apple",
@@ -540,7 +544,7 @@ export const MapScreen = () => {
         travel: travelingBy,
         trip_duration: tripTime,
         email: uid, //email
-        polyline: [],
+        polyline: [location?.coords],
         seq: seqs(1),
         trip_status: "ended",
         tripId: lastTripId,

@@ -74,16 +74,11 @@ export const Auth = () => {
         Alert.alert("Email already exists", "Please try again or sign in");
       }
     }
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    const uid = user.id;
-    const { data } = await supabase.from("profiles").insert([
+    const { data, err } = await supabase.from("profiles").insert([
       {
         email: email, 
         username: name,
         exp: 5,
-        user_id: uid,
         phone: number,
         data: {
           first_name: name,
@@ -91,7 +86,9 @@ export const Auth = () => {
         },
       },
     ]);
-
+    if (err) {
+      console.log(err);
+    }
     setLoading(false);
   }
   const colorScheme = useColorScheme();

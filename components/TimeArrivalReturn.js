@@ -15,7 +15,7 @@ const StopRender = ({ stop, index }) => {
   setInterval(() => {
     counter++;
   }, 3000);
-
+  const colorScheme = useColorScheme();
   useEffect(() => {
     async function dataFetch() {
       await fetch(
@@ -109,7 +109,11 @@ const StopRender = ({ stop, index }) => {
     } else if (predStop[0] === false) {
       const val = new Date(predStop[2]).toLocaleTimeString();
       // return (<Text style={styles.timeSch}> {new Date(predStop[2]).toLocaleTimeString() } </Text>)
-      return <Text style={styles.timeSch}> {val} </Text>;
+      return <Text style={{
+        fontSize: 14,
+        fontWeight: "normal",
+        color: colorScheme === "dark" ? "white" : "black"
+      }}> {val} </Text>;
     } else {
       // return (<Text> {new Date(getNextStop())} </Text>)
       const val = getNextStop();
@@ -122,7 +126,7 @@ const StopRender = ({ stop, index }) => {
 export const TimeArrivalReturn = ({ stops, startStop, finalStop, selectedStop }) => {
   // memo stops to prevent rerender
   const memoStops = useMemo(() => stops, [stops]);
-
+  const colorScheme = useColorScheme();
   return (
     <ScrollView
       m={2}
@@ -137,7 +141,13 @@ export const TimeArrivalReturn = ({ stops, startStop, finalStop, selectedStop })
         return (
           <HStack paddingBottom={1.5} key={index} justifyContent={"space-between"}>
            
-            <Text>{index+1}: {stop.name}</Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "bold",
+                color: colorScheme === "dark" ? "white" : "black",
+              }}
+            >{index+1}: {stop.name}</Text>
               <HStack 
                 justifyContent={"flex-start"}
                 alignItems={"center"}
@@ -147,7 +157,7 @@ export const TimeArrivalReturn = ({ stops, startStop, finalStop, selectedStop })
                   <MaterialCommunityIcons
                     name="bus-marker"
                     size={24}
-                    color="black"
+                    color={colorScheme === "dark" ? "white" : "black"}
                   />
                 ) : (null
                 )
@@ -157,7 +167,7 @@ export const TimeArrivalReturn = ({ stops, startStop, finalStop, selectedStop })
                 <><MaterialCommunityIcons
                   name="bus"
                   size={24}
-                  color="black" /><MaterialCommunityIcons
+                  color={colorScheme === "dark" ? "white" : "black"} /><MaterialCommunityIcons
                     name="chevron-right"
                     size={24}
                     color="green" /></>
@@ -166,7 +176,8 @@ export const TimeArrivalReturn = ({ stops, startStop, finalStop, selectedStop })
                 <><MaterialCommunityIcons
                   name="bus"
                   size={24}
-                  color="black" /><MaterialCommunityIcons
+                  color={colorScheme === "dark" ? "white" : "black"}
+                   /><MaterialCommunityIcons
                     name="chevron-left"
                     size={24}
                     color="red" /></>
@@ -201,7 +212,7 @@ const styles = StyleSheet.create({
   },
   timeSch: {
     fontSize: 14,
-    fontWeight: "bold",
+    fontWeight: "normal",
     color: "black",
   },
 });
