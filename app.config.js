@@ -56,7 +56,7 @@ export default {
           "apiKey": process.env.EXPO_PUBLIC_MAPS_API
         }
       },
-      "versionCode": 9027,
+      "versionCode": 10599,
       "package": "com.josiba.mayatransit",
 
     },
