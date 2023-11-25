@@ -81,7 +81,7 @@ export const StopRender = ({ stop, index }) => {
       return (
         <Text fontSize={14} color={
           colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor 
-        } italic> //test
+        } > 
           {new Date(predStop[1]).toLocaleTimeString()} -
           {Math.floor((predStop[1] - currentTime) / 60000) < 0
             ? "" + Math.floor((predStop[1] - currentTime) / 60000) * -1 + " min"
@@ -120,10 +120,11 @@ export const StopRender = ({ stop, index }) => {
       {stopName.length > 0 ? (
         <Text
         style={{
-          fontSize: colorScheme == "dark" ? darkMode.Text.fontSize : lightMode.Text.fontSize,
+          fontSize: 14,
           fontWeight: "normal",
           color: colorScheme == "dark" ? '#000' : colorsLight.textColor,
           width: '80%',
+          color: colorScheme == "dark" ? colorsDark.textColor : colorsLight.textColor,
         }}
          >
           

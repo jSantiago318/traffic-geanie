@@ -116,6 +116,12 @@ export const HomeScreen = () => {
        >
         <Heading
             padding={5}
+            size="md"
+           color={
+            colorScheme == "dark"
+              ? colorsDark.textColor
+              : colorsLight.textColor
+           }
           >
             Travel Transit Tracker
           </Heading>
@@ -140,6 +146,11 @@ export const HomeScreen = () => {
                 bold
                   fontSize={16}
                   padding={1}
+                  color={
+                  colorScheme == "dark"
+                    ? colorsDark.textColor
+                    : colorsLight.textColor
+                }
                 >
                   Online Buses: {busCount}
                 </Text>
@@ -147,6 +158,11 @@ export const HomeScreen = () => {
                 bold
                    fontSize={16}
                   padding={1}
+                  color={
+                  colorScheme == "dark"
+                    ? colorsDark.textColor
+                    : colorsLight.textColor
+                }
                 >
                   Active predictions: {activeTripCount}
                 </Text>
@@ -163,6 +179,11 @@ export const HomeScreen = () => {
               <Text
                 bold
                 fontSize={16}
+                color={
+                  colorScheme == "dark"
+                    ? colorsDark.textColor
+                    : colorsLight.textColor
+                }
                 padding={1}
                >Select Route: </Text>
    
