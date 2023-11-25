@@ -648,7 +648,7 @@ export const MapScreen = () => {
         provider={
           Platform.OS == "android" ? PROVIDER_GOOGLE : MapView.PROVIDER_DEFAULT
         }
-        customMapStyle={MapVal}
+        // customMapStyle={MapVal}
         showsUserLocation={true}
         style={styles.map}
         initialRegion={INITIAL_REGION}
@@ -724,8 +724,8 @@ export const MapScreen = () => {
                   setSelectedRoute(stop.id);
                 }
                 setSelectedStop(stop.id);
-                if (stop.name.length > 19) {
-                  setSelectedStopName(stop.name.slice(0, 19) + "...");
+                if (stop.name.length > 15) {
+                  setSelectedStopName(stop.name.slice(0, 15) + "..");
                 } else {
                   setSelectedStopName(stop.name);
                 }
@@ -1030,7 +1030,7 @@ export const MapScreen = () => {
                 alignItems="center"
                 justifyContent={"space-between"}
               >
-                <VStack space={0} alignItems="flex-start">
+                <VStack paddingBottom={5} space={0} alignItems="flex-start">
                   <Text 
                   color={
                     colorScheme == "dark"
@@ -1062,10 +1062,10 @@ export const MapScreen = () => {
                           setStartStop(selectedStop);
                           if (
                             selectedStopName &&
-                            selectedStopName.length > 19
+                            selectedStopName.length > 15
                           ) {
                             setStartStopName(
-                              selectedStopName.slice(0, 19) + "..."
+                              selectedStopName.slice(0, 15) + ".."
                             );
                           } else if (
                             selectedStopName &&
@@ -1139,9 +1139,9 @@ export const MapScreen = () => {
                           // set selected stop to start stop
                           () => {
                             setFinalStop(selectedStop);
-                            if (selectedStopName.length > 19) {
+                            if (selectedStopName.length > 15) {
                               setFinalStopName(
-                                selectedStopName.slice(0, 19) + "..."
+                                selectedStopName.slice(0, 15) + ".."
                               );
                             } else {
                               setFinalStopName(selectedStopName);

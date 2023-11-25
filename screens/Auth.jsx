@@ -148,9 +148,13 @@ export const Auth = () => {
                   style={
                     colorScheme == "dark" ? darkMode.Input : lightMode.Input
                   }
+                  placeholderTextColor={
+                    colorScheme == "dark" ? darkMode.Title.color : lightMode.Title.color
+                  }
                   onChangeText={(num) => setName(num)}
                   value={name}
                   size={"md"}
+
                   backgroundColor={
                     colorScheme == "dark"
                       ? colorsLight.accentColor
@@ -162,7 +166,9 @@ export const Auth = () => {
                       ? 'black'
                       : lightMode.Title.color
                   }
-                  autoCapitalize={"none"}
+                  autoCapitalize={
+                    "words"
+                  }
                   placeholder="name"
                   InputLeftElement={
                     <Icon
@@ -177,8 +183,11 @@ export const Auth = () => {
                     />
                   } 
                 />
-
                 <Input
+                         placeholderTextColor={
+                    colorScheme == "dark" ? darkMode.Title.color : lightMode.Title.color
+                  }
+
                   borderRadius={10}
                   style={
                     colorScheme == "dark" ? darkMode.Input : lightMode.Input
@@ -218,7 +227,7 @@ export const Auth = () => {
             <Input
               onChangeText={(text) => setEmail(text)}
               style={colorScheme == "dark" ? darkMode.Input : lightMode.Input}
-              value={email}
+              
               size="md"
               backgroundColor={
                 colorScheme == "dark"
@@ -227,12 +236,15 @@ export const Auth = () => {
               }
               borderRadius={10}
               borderColor={"transparent"}
-              placeholder="email"
               color={
                 colorScheme == "dark"
                   ? darkMode.Title.color
                   : lightMode.Title.color
               }
+              placeholder="email"
+              placeholderTextColor={
+                    colorScheme == "dark" ? darkMode.Title.color : lightMode.Title.color
+                  }
               autoCapitalize={"none"}
               keyboardType="email-address"
               InputLeftElement={
@@ -253,6 +265,9 @@ export const Auth = () => {
               onChangeText={(text) => setPassword(text)}
               value={password}
               borderRadius={10}
+              placeholderTextColor={
+                    colorScheme == "dark" ? darkMode.Title.color : lightMode.Title.color
+                  }
 
               placeholder="password"
               backgroundColor={
@@ -437,6 +452,11 @@ export const Auth = () => {
                 <Text
                   bold
                   fontSize={"lg"}
+                  color={
+                    colorScheme == "dark"
+                      ? darkMode.Title.color
+                      : lightMode.Title.color 
+                  }
                   onPress={() => {
                     if (email.length == 0 || password.length == 0) {
                       Alert.alert("Please fill out all fields");

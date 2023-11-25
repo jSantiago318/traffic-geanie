@@ -63,7 +63,6 @@ export const RoutesList = ({ route }) => {
             alignItems={"flex-start"}
             paddingLeft={2}
             borderRadius={10}
-            backgroundColor={colorScheme === "light" ? colorsLight.primaryColor : colorsLight.accentColor}
           >
             <Heading fontSize="lg" p={2} color={
               colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor

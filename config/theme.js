@@ -1,32 +1,19 @@
 import { StyleSheet } from 'react-native';
 
-const colorsLight1 = {
-  textColor : '#040316',
-  backgroundColor : '#fbfbfe',
-  primaryColor : '#2f27ce',
-  secondaryColor : '#dddbff',
-  accentColor : '#443dff',
-}
 const colorsLight = {
   textColor : '#040316',
-  backgroundColor : '#eef4fc',
-  primaryColor : '#5ABCFC',
+  backgroundColor : '#469ba0',
+  primaryColor : '#3d7588',
   secondaryColor : '#CCDCF4',
-  accentColor : '#215fab',
+  accentColor : '#345070',
 }
-// const colorsDark = {
-//   textColor: '#eae9fc',
-//   backgroundColor: '#010104',
-//   primaryColor: '#3a31d8',
-//   secondaryColor: '#020024',
-//   accentColor: '#0600c2',
-// }
+
 const colorsDark = {
-  textColor : '#FFFBED',
-  backgroundColor : '#040316',
-  primaryColor : '#C8D5B9',
-  secondaryColor : '#8FC0A9',
-  accentColor : '#443dff',
+  textColor : '#ffff',
+  backgroundColor : '#2b2b58',
+  primaryColor : '#345070',
+  secondaryColor : '#3d7588',
+  accentColor : '#469ba0',
 }
 const darkMode ={
   ListItem:{

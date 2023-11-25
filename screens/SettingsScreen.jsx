@@ -1,4 +1,12 @@
 import {
+  Alert,
+  StyleSheet,
+  View,
+  VirtualizedList,
+  useColorScheme,
+} from "react-native";
+import {
+  Box,
   Button,
   Center,
   Container,
@@ -10,6 +18,7 @@ import {
   Input,
   Modal,
   ScrollView,
+  Select,
   Stack,
   Switch,
   Text,
@@ -17,12 +26,6 @@ import {
   useTheme,
 } from "native-base";
 import React, { useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  VirtualizedList,
-  useColorScheme,
-} from "react-native";
 import { colorsDark, colorsLight } from "../config";
 
 import { A } from "@expo/html-elements";
@@ -79,7 +82,10 @@ export const SettingsScreen = () => {
       }
     })();
   }, [email, dbSession]);
-
+  const [showFeedback, setShowFeedback] = React.useState(false);
+  const [title, setTitle] = React.useState("");
+  const [body, setBody] = React.useState("");
+  const [category, setCategory] = React.useState("");
   const deleteTrip = async (tripId) => {
     const { data, error } = await supabase
       .from("trips")
@@ -94,7 +100,7 @@ export const SettingsScreen = () => {
 
 
   return (
-    <Container
+    <Box
       backgroundColor={
         colorScheme === "dark" ? colorsDark.background : colorsLight.background
       }
@@ -103,7 +109,10 @@ export const SettingsScreen = () => {
       alignItems="center"
     >
       {/* <Center> */}
-      <Container>
+      <Container
+        justifyContent={'flex-start'}
+        width={"90%"}
+      >
         <Heading color={
               colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
             } >Account</Heading>
@@ -117,6 +126,11 @@ export const SettingsScreen = () => {
               colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
             } fontSize={16}>Trip History</Heading>
         </Button>
+        <Button m={2} p={1} variant={"outline"} onPress={() => setShowFeedback(true)}>
+          <Heading color={
+              colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
+            } fontSize={16}>Give Feedback</Heading>
+        </Button>
         <Heading color={
               colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
             }>Profile</Heading>
@@ -129,7 +143,7 @@ export const SettingsScreen = () => {
         <Modal  isOpen={showTripsModal} onClose={() => setShowTripsModal(false)}>
           <Modal.Content 
             
-          width="90%" height={"80%"}>
+          width="90%" height={"60%"}>
             <Modal.CloseButton />
             <Modal.Header>Trip History</Modal.Header>
             <Modal.Body 
@@ -159,7 +173,7 @@ export const SettingsScreen = () => {
                               item.trip_status === 'ended'  && item.seq > 0  ? <Text bold color={'red.500'} fontSize={16}>Ended</Text> : null
                             }
                             {
-                              item.trip_status === 'continued' && item.seq !== 0 ? <Text bold color={'green.500'} fontSize={16}>Continued</Text> : null
+                              item.trip_status === 'continued' && item.seq !== 0 ? <Text bold color={'gray.500'} fontSize={16}>Continued</Text> : null
                             }
                             {/* IS first stop in trip? */}
                             {
@@ -229,7 +243,92 @@ export const SettingsScreen = () => {
             </Modal.Footer> */}
           </Modal.Content>
         </Modal>
-
+        <Modal  isOpen={showFeedback} onClose={() => setShowFeedback(false)}>
+          <Modal.Content 
+            
+          width="90%" height={"50%"}>
+            <Modal.CloseButton />
+            <Modal.Header>Feedback</Modal.Header>
+            <Modal.Body >
+              <FormControl>
+                  <FormControl.Label>
+                    Category
+                  </FormControl.Label>
+                  <Select 
+                    selectedValue={category}
+                    minWidth={200}
+                    accessibilityLabel="Select Category"
+                    placeholder="Select Category"
+                    onValueChange={(itemValue) => setCategory(itemValue)}
+                    _selectedItem={{
+                      bg: "cyan.600",
+                      endIcon: <Icon
+                      
+                      as={<MaterialCommunityIcons name="chevron-down" />}
+                      size="sm"
+                      mr={2}
+                    />,
+                    }}
+                  >
+                    <Select.Item label="Bug" value="bug" />
+                    <Select.Item label="Feature Request" value="feature" />
+                    <Select.Item label="Other" value="other" />
+                  </Select>
+                  
+                <FormControl.Label>
+                  Title
+                </FormControl.Label>
+                <Input
+                  variant="outline"
+                  placeholder="Feedback"
+                  onChangeText={(text) => {
+                    setTitle(text);
+                  }}
+                  value={title}
+                />
+                 <FormControl.Label>
+                  Description
+                </FormControl.Label>
+                <Input
+                  variant="outline"
+                  placeholder="Details"
+                  onChangeText={(text) => {
+                    setBody(text);
+                  }}
+                  value={body}
+                />
+                {/* add select  */}
+              </FormControl>
+              
+            </Modal.Body>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button
+                  variant="ghost"
+                  colorScheme="blueGray"
+                  onPress={() => {
+                    setShowFeedback(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onPress={async () => {
+                    await supabase.from("feedback").insert([
+                      { title: title, body: body, category: category, email: email },
+                    ]);
+                    setShowFeedback(false);
+                    setTitle("");
+                    setBody("");
+                    setCategory("");
+                  }}
+                >
+                  Submit
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
         <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
           <Modal.Content maxWidth="70%">
             <Modal.CloseButton />
@@ -279,7 +378,24 @@ export const SettingsScreen = () => {
           }
           title="Log Out"
           variant={"ghost"}
-          onPress={handleLogout}
+          onPress={() => {
+            Alert.alert(
+              "Log Out",
+              "Are you sure you want to log out?",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel",
+                },
+                {
+                  text: "Log Out",
+                  onPress: () => handleLogout(),
+                },
+              ],
+              { cancelable: false }
+            )
+            } }
         >
           <Text  color={
               colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
@@ -287,7 +403,7 @@ export const SettingsScreen = () => {
         </Button>
       </Container>
       {/* </Center> */}
-    </Container>
+    </Box>
   );
 };
 

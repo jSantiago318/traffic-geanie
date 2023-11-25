@@ -94,13 +94,14 @@ export const HomeScreen = () => {
         backgroundColor:
           colorScheme == "dark"
             ? colorsDark.backgroundColor
-            : colorsLight.backgroundColor,
+            : '#ffff',
         width: "100%",
       }}
     >
       <Container
         style={{
           flex: 1,
+          borderRadius: 10,
           alignItems: "center",
           justifyContent: "center",
           padding: 2,
@@ -113,6 +114,11 @@ export const HomeScreen = () => {
           width: "100%",
         }}
        >
+        <Heading
+            padding={5}
+          >
+            Travel Transit Tracker
+          </Heading>
         <Center 
         //  flex start
         style={{
@@ -120,33 +126,25 @@ export const HomeScreen = () => {
           alignItems: "flex-start",
           borderRadius: 10,
           width: "100%",
-          backgroundColor: colorScheme == "dark" ? colorsLight.primaryColor : colorsLight.primaryColor,
           padding: 10,
           // margin: 2,
         }
         }
          
           >
-          <Center
-            width={'100%'}
-          >
-
-          <Heading
-            padding={1}
-          >
-            Travel Transit Tracker
-          </Heading>
-          </Center>
+      
         
             <HStack>
               <Stack>
                 <Text
+                bold
                   fontSize={16}
                   padding={1}
                 >
                   Online Buses: {busCount}
                 </Text>
                 <Text
+                bold
                    fontSize={16}
                   padding={1}
                 >

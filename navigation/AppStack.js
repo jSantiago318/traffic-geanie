@@ -13,6 +13,7 @@ const Tab = createBottomTabNavigator();
 
 export const AppStack = () => {
   const colorScheme = useColorScheme();
+  
   return (
     <Tab.Navigator
     screenOptions={({ route }) => ({

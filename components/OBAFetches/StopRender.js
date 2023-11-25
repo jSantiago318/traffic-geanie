@@ -79,7 +79,9 @@ export const StopRender = ({ stop, index }) => {
   const TimePred = () => {
     if (predStop[0] === true) {
       return (
-        <Text fontSize={14} italic> //test
+        <Text fontSize={14} color={
+          colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor 
+        } italic> //test
           {new Date(predStop[1]).toLocaleTimeString()} -
           {Math.floor((predStop[1] - currentTime) / 60000) < 0
             ? "" + Math.floor((predStop[1] - currentTime) / 60000) * -1 + " min"
@@ -92,7 +94,9 @@ export const StopRender = ({ stop, index }) => {
       const val = new Date(predStop[2]).toLocaleTimeString();//test
       // return (<Text style={styles.timeSch}> {new Date(predStop[2]).toLocaleTimeString() } </Text>)
       return (
-        <Text fontSize={14} bold>
+        <Text color={
+          colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor 
+        }  fontSize={14} bold>
           {val}
         </Text>
       );
@@ -100,7 +104,9 @@ export const StopRender = ({ stop, index }) => {
       // return (<Text> {new Date(getNextStop())} </Text>)
       const val = getNextStop();//test
       return (
-        <Text fontSize={14} >
+        <Text color={
+          colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor 
+        }  fontSize={14} >
           {val}
         </Text>
       );
@@ -124,7 +130,9 @@ export const StopRender = ({ stop, index }) => {
           #{index + 1} {stopName} 
         </Text>
       ) : (
-        <Text style={colorScheme == "dark" ? darkMode.Text : lightMode.Text}>
+        <Text color={
+          colorScheme == 'dark' ? colorsDark.textColor : colorsLight.textColor 
+        } >
           {stop} - loading...
         </Text>
       )}
