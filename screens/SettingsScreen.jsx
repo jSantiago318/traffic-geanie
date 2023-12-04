@@ -30,6 +30,7 @@ import { colorsDark, colorsLight } from "../config";
 
 import { A } from "@expo/html-elements";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { getUserEmail } from "../utils/sapi";
 import { supabase } from "../utils/supabase";
 
 export const SettingsScreen = () => {
@@ -119,7 +120,7 @@ export const SettingsScreen = () => {
 
         <Text color={
               colorScheme === "light" ? colorsLight.textColor : colorsDark.textColor
-            }  fontSize={16}>{email || "..."}</Text>
+            }  fontSize={16}>{getUserEmail() || "..."}</Text>
 
         <Button m={2} p={1} variant={"outline"} onPress={() => setShowTripsModal(true)}>
           <Heading color={

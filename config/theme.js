@@ -187,7 +187,7 @@ StopText:{
     flex: 1,
       alignItems: 'center',
       padding: 2,
-      backgroundColor: colorsLight.secondaryColor,
+      backgroundColor: '#ffff',
       width:'100%',
       
   },
